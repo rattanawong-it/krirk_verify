@@ -17,9 +17,18 @@ type Props = {
   issuedBy?: boolean;
   actions?: ReactNode;
   children?: ReactNode;
+  // หน้าที่มีหัวข้อหลักของตัวเองอยู่แล้ว (เช่น หน้าพิจารณา) ใช้ h2 เพื่อไม่ให้มี h1 ซ้ำ (F-UX-10)
+  headingLevel?: "h1" | "h2";
 };
 
-export async function ResultCard({ result, meta, issuedBy = false, actions, children }: Props) {
+export async function ResultCard({
+  result,
+  meta,
+  issuedBy = false,
+  actions,
+  children,
+  headingLevel: Heading = "h1",
+}: Props) {
   const [t, format, locale] = await Promise.all([
     getTranslations("verify"),
     getFormatter(),
@@ -74,9 +83,9 @@ export async function ResultCard({ result, meta, issuedBy = false, actions, chil
           <p className="text-[10.5px] font-bold tracking-[0.16em] text-white sm:text-[11px]">
             {t("detail.verifiedStamp")}
           </p>
-          <h1 className="mt-1 text-base font-bold text-white sm:text-xl">
+          <Heading className="mt-1 text-base font-bold text-white sm:text-xl">
             {t("detail.resultTitle")}
-          </h1>
+          </Heading>
           <p className="mt-1 font-mono text-[11px] break-all text-white/75 sm:text-xs">{meta}</p>
         </div>
         {issuedBy && (

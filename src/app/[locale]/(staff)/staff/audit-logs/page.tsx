@@ -158,6 +158,7 @@ export default async function AuditLogsPage({
     getFormatter(),
   ]);
 
+  const tc = await getTranslations("common");
   const label = (action: string) => {
     const key = `actions.${action.replaceAll(".", "_")}`;
     return t.has(key as never) ? t(key as never) : action;
@@ -343,8 +344,8 @@ export default async function AuditLogsPage({
           page={query.page}
           pageCount={data.pageCount}
           hrefFor={(page) => buildHref("/staff/audit-logs", baseParams, page)}
-          previousLabel="←"
-          nextLabel="→"
+          previousLabel={tc("previous")}
+          nextLabel={tc("nextPage")}
         />
       </div>
     </div>

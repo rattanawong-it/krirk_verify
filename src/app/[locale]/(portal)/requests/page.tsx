@@ -117,7 +117,7 @@ export default async function RequestsPage({
                   href={query({ status })}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-xs font-semibold whitespace-nowrap",
+                    "inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-xs font-semibold whitespace-nowrap sm:h-9",
                     active
                       ? "border-primary bg-primary text-primary-foreground"
                       : "bg-card text-text-2 hover:bg-surface",

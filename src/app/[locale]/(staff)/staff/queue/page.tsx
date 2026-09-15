@@ -119,7 +119,7 @@ export default async function QueuePage({
   const to = Math.min(query.page * QUEUE_PAGE_SIZE, queue.total);
   const chipClass = (active: boolean, danger = false) =>
     cn(
-      "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-xs font-semibold whitespace-nowrap",
+      "inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-xs font-semibold whitespace-nowrap sm:h-9",
       active
         ? "border-primary bg-primary text-primary-foreground"
         : danger

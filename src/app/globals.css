@@ -263,3 +263,29 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/* F-UX-08 — พิมพ์จากเบราว์เซอร์: พื้นขาว ไม่มีเมนู/ปุ่ม/toast และไม่ตัดการ์ดกลางหน้า */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #000;
+  }
+  [data-sonner-toaster],
+  [role="tooltip"] {
+    display: none !important;
+  }
+  article,
+  section,
+  dl > div,
+  li {
+    break-inside: avoid;
+  }
+  h1,
+  h2 {
+    break-after: avoid;
+  }
+}

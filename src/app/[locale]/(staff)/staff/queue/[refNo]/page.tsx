@@ -450,6 +450,7 @@ export default async function ReviewPage({
             <div className="min-w-0 lg:flex-[1.15]">
               {detail.status === "APPROVED" && detail.result ? (
                 <ResultCard
+                  headingLevel="h2"
                   result={detail.result}
                   meta={[
                     detail.refNo,

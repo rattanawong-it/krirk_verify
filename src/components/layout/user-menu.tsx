@@ -34,7 +34,7 @@ export function UserMenu({ name, email, role, roleLabel, labels }: Props) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex min-h-10 items-center gap-2.5 rounded-lg px-1.5 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring">
+      <DropdownMenuTrigger className="flex min-h-11 min-w-11 items-center justify-center gap-2.5 rounded-lg px-1.5 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring">
         <span className="flex size-8 items-center justify-center rounded-full bg-primary-soft text-[11px] font-bold text-secondary-foreground">
           {initialOf(name)}
         </span>

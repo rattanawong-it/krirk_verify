@@ -368,15 +368,17 @@ submitRequest(input, actor)
 
 ### Phase 8 — i18n, Responsive & Accessibility
 - [x] **F-UX-01** ตั้งค่า `next-intl` + routing `[locale]` + middleware ตรวจภาษา
-- [~] **F-UX-02** ไฟล์แปล `th.json` / `en.json` ครบทุกข้อความ (ไม่มี hardcoded string)
+- [x] **F-UX-02** ไฟล์แปล `th.json` / `en.json` ครบทุกข้อความ (ไม่มี hardcoded string)
 - [x] **F-UX-03** ปุ่มสลับภาษาบน header + จำค่าที่ผู้ใช้เลือก
-- [ ] **F-UX-04** Format วันที่แบบไทย (พ.ศ.) และอังกฤษ (ค.ศ.) ตามภาษาที่เลือก
-- [~] **F-UX-05** App shell responsive — sidebar บนเดสก์ท็อป / bottom nav หรือ drawer บนมือถือ
-- [ ] **F-UX-06** ตารางทุกหน้าแสดงผลบนมือถือได้ (card view หรือ horizontal scroll)
-- [ ] **F-UX-07** ฟอร์มทุกหน้าใช้งานบนมือถือได้สะดวก (touch target ≥ 44px)
-- [ ] **F-UX-08** หน้าผลตรวจสอบอ่านง่ายบนมือถือ + พิมพ์จากเบราว์เซอร์ได้สวยงาม (print stylesheet)
-- [ ] **F-UX-09** Loading / Empty / Error state ครบทุกหน้า (skeleton + error boundary)
-- [ ] **F-UX-10** Accessibility — keyboard navigation, ARIA labels, contrast ผ่าน WCAG AA
+- [x] **F-UX-04** Format วันที่แบบไทย (พ.ศ.) และอังกฤษ (ค.ศ.) ตามภาษาที่เลือก
+- [x] **F-UX-05** App shell responsive — sidebar บนเดสก์ท็อป / bottom nav หรือ drawer บนมือถือ
+- [x] **F-UX-06** ตารางทุกหน้าแสดงผลบนมือถือได้ (card view หรือ horizontal scroll)
+- [x] **F-UX-07** ฟอร์มทุกหน้าใช้งานบนมือถือได้สะดวก (touch target ≥ 44px)
+- [x] **F-UX-08** หน้าผลตรวจสอบอ่านง่ายบนมือถือ + พิมพ์จากเบราว์เซอร์ได้สวยงาม (print stylesheet)
+- [x] **F-UX-09** Loading / Empty / Error state ครบทุกหน้า (skeleton + error boundary)
+- [~] **F-UX-10** Accessibility — keyboard navigation, ARIA labels, contrast ผ่าน WCAG AA
+
+> บันทึกสรุป Phase 8: [`docs/phases/phase-8-ux.md`](phases/phase-8-ux.md) · F-UX-10 `[~]` — keyboard/ARIA/heading ทำแล้ว แต่ยังไม่ได้ตรวจ contrast ด้วยเครื่องมืออัตโนมัติ (axe) · หน้าที่ยังไม่มี (Phase 5, 6, 9) ต้องทำตามข้อกำหนดนี้เมื่อสร้าง
 - [x] **F-UX-11** โหลดฟอนต์ไทยที่อ่านง่าย (เช่น Noto Sans Thai / Sarabun) แบบ self-host
 
 ### Phase 9 — Notifications
@@ -478,3 +480,4 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3  ← MVP ใช้งานได้
 | 1.4     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 3): `accessToken` เก็บเป็น `accessTokenHash` + `accessTokenEnc`, `VerificationRequest` เพิ่ม `organizationId`/`searchValueEnc`/`requesterReference`/`note`/`reviewReason` + enum `RequestPurpose`/`DecisionType`/`ReviewReason`, ตาราง `ref_no_counters`/`rate_limits`, trigger กันแก้ `verification_results`, ศิษย์เก่าตรวจเฉพาะวุฒิตนเอง, หน่วยงานเห็นคำขอทั้งหน่วยงาน, เลื่อนปุ่มฉบับร่าง/Export/ช่วงวันที่, จำกัดเปิด permalink ผิด 20 ครั้ง/IP/ชม. |
 | 1.5     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 4): ตาราง `request_notes`, `rejectReason` เก็บรหัสเหตุผล + `rejectDetail`, `Organization` เพิ่ม `suspendedAt`/`suspendedById`/`statusReason`, ปฏิเสธการลงทะเบียนหน่วยงาน = `SUSPENDED` พร้อมเหตุผล, เหตุผล "ไม่พบข้อมูลที่ตรงกัน" → `NOT_FOUND`, env `REVIEW_SLA_HOURS`, เลื่อนปุ่ม Export/เลือกหลายแถว/กระดิ่ง/ตัวเลขคิว/สถานะอีเมลในไทม์ไลน์ |
 | 1.6     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 7): ค่าตั้งค่าเพิ่ม SLA/แถวแบบชุดต่อวัน/จำนวนครั้งล็อกบัญชี/ระยะเก็บ Audit Log/อายุ permalink (env เป็นค่าเริ่มต้น), `VerificationRequest.anonymizedAt`, retention = anonymise คำขอ + ลบ Audit Log ที่พ้นกำหนดผ่าน `/api/cron/retention`, CSP แบบ `'unsafe-inline'` (ไม่ใช้ nonce), สร้างบัญชีเฉพาะ ADMIN/REGISTRAR ด้วยอีเมลเชิญ, route `/privacy` + `/terms`, ตัวกรองผู้ใช้เป็นช่องค้นหา + เลื่อนหน้า Email Log ไป Phase 9, ข้อความนโยบายเป็นร่างรอฝ่ายกฎหมาย, `pnpm build` ต้องเชื่อมต่อฐานข้อมูล |
+| 1.7     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 8): bottom nav แสดง 3 เมนูแรก + drawer "เมนู" เมื่อมีเมนูมากกว่า 4, ช่อง `input type="date"` แสดงตามปฏิทินของเบราว์เซอร์, skeleton โครงกลางเดียว + `global-error` ข้อความสองภาษาแบบคงที่, เลื่อนการตรวจ contrast ด้วย axe ไป Phase 10, แก้ shadcn `dialog.tsx`/`form.tsx` |

@@ -26,11 +26,6 @@ export async function AppShell({ user, children }: { user: SessionUser; children
     icon: item.icon,
     available: item.available,
   }));
-  const profileItem = items.find((item) => item.href === "/profile");
-  const mobileItems = [
-    ...items.filter((item) => item.href !== "/profile").slice(0, 3),
-    ...(profileItem ? [profileItem] : []),
-  ];
   const orgName = user.organization
     ? locale === "en"
       ? (user.organization.nameEn ?? user.organization.nameTh)
@@ -39,7 +34,14 @@ export async function AppShell({ user, children }: { user: SessionUser; children
 
   return (
     <div className="flex min-h-dvh flex-1">
-      <aside className="sticky top-0 hidden h-dvh w-[236px] shrink-0 flex-col gap-1 bg-[linear-gradient(180deg,#16431a,#0e3a13)] px-3 py-4.5 lg:flex dark:bg-[linear-gradient(180deg,#132a12,#0b1109)]">
+      {/* F-UX-10 — ข้ามเมนูไปยังเนื้อหาด้วยคีย์บอร์ด */}
+      <a
+        href="#main-content"
+        className="sr-only z-50 rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+      >
+        {t("common.skipToContent")}
+      </a>
+      <aside className="sticky top-0 hidden h-dvh w-[236px] shrink-0 flex-col gap-1 bg-[linear-gradient(180deg,#16431a,#0e3a13)] px-3 py-4.5 lg:flex dark:bg-[linear-gradient(180deg,#132a12,#0b1109)] print:hidden">
         <Link href={items[0]?.href ?? "/"} className="mb-3 block px-2 pt-1">
           <Image
             src="/brand/kru-logo-white.png"
@@ -51,7 +53,7 @@ export async function AppShell({ user, children }: { user: SessionUser; children
           <span className="block text-[13px] font-bold text-white">Krirk Verify</span>
           <span className="block text-[10px] text-white/55">{areaLabel}</span>
         </Link>
-        <SidebarNav items={items} comingSoon={t("shell.comingSoon")} />
+        <SidebarNav items={items} comingSoon={t("shell.comingSoon")} label={t("shell.mainNav")} />
         {quota && (
           <div className="mt-auto rounded-xl border border-white/14 bg-white/8 p-3">
             <div className="mb-1.5 flex items-center justify-between">
@@ -88,7 +90,7 @@ export async function AppShell({ user, children }: { user: SessionUser; children
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col bg-surface">
-        <header className="sticky top-0 z-30 flex h-[58px] shrink-0 items-center gap-3 border-b bg-card px-4 sm:px-6">
+        <header className="sticky top-0 z-30 flex h-[58px] shrink-0 items-center gap-3 border-b bg-card px-4 sm:px-6 print:hidden">
           <Link href={items[0]?.href ?? "/"} className="lg:hidden">
             <Image
               src="/brand/kru-logo.png"
@@ -121,10 +123,25 @@ export async function AppShell({ user, children }: { user: SessionUser; children
             />
           </div>
         </header>
-        <main className="flex-1 px-4 py-5 pb-24 sm:px-6 lg:pb-8">{children}</main>
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 px-4 py-5 pb-24 outline-none sm:px-6 lg:pb-8 print:p-0"
+        >
+          {children}
+        </main>
       </div>
 
-      <MobileBottomNav items={mobileItems} />
+      <MobileBottomNav
+        items={items}
+        labels={{
+          nav: t("shell.mainNav"),
+          menu: t("shell.menu"),
+          openMenu: t("shell.openMenu"),
+          closeMenu: t("shell.closeMenu"),
+          comingSoon: t("shell.comingSoon"),
+        }}
+      />
     </div>
   );
 }

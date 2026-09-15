@@ -58,6 +58,7 @@ export default async function UsersPage({
     getLocale(),
   ]);
 
+  const tc = await getTranslations("common");
   const now = new Date();
   const baseParams = { q: query.q, role: query.role, status: query.status };
   const from = data.total === 0 ? 0 : (query.page - 1) * USER_PAGE_SIZE + 1;
@@ -311,8 +312,8 @@ export default async function UsersPage({
           page={query.page}
           pageCount={data.pageCount}
           hrefFor={(page) => buildHref("/staff/users", baseParams, page)}
-          previousLabel="←"
-          nextLabel="→"
+          previousLabel={tc("previous")}
+          nextLabel={tc("nextPage")}
         />
       </section>
     </div>

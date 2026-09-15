@@ -78,7 +78,11 @@ test("เจ้าหน้าที่ค้นหาด้วยตนเอ�
   await page.getByRole("button", { name: "อนุมัติรายการที่เลือก" }).click();
   await expect(page.getByText("อนุมัติคำขอแล้ว และส่งอีเมลแจ้งผู้ขอ")).toBeVisible();
   await expect(page.getByRole("heading", { name: "ผลการตรวจสอบวุฒิการศึกษา" })).toBeVisible();
-  await expect(page.getByText("อนุมัติคำขอ", { exact: true })).toBeVisible();
+  // audit log เขียนแบบ non-blocking (F-AUD-01) — ไทม์ไลน์อาจยังไม่มีเหตุการณ์ในการ render ครั้งแรก
+  await expect(async () => {
+    await page.reload();
+    await expect(page.getByText("อนุมัติคำขอ", { exact: true })).toBeVisible({ timeout: 1_000 });
+  }).toPass({ timeout: 15_000 });
 
   await requester.page.goto(`/requests/${refNo}`);
   await expect(

@@ -37,7 +37,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
           disabled={pending}
           onClick={() => l !== locale && switchTo(l)}
           className={cn(
-            "h-8 min-w-11 rounded-md px-2.5 text-xs font-bold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "h-10 min-w-11 rounded-md px-2.5 text-xs font-bold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring sm:h-8",
             l === locale
               ? "bg-card text-primary shadow-sm"
               : "text-muted-foreground hover:text-foreground",

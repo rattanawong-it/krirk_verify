@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { CopyLinkButton, PrintButton } from "@/components/features/verification/result-actions";
 import { ResultCard } from "@/components/features/verification/result-card";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/i18n/navigation";
@@ -65,12 +66,16 @@ export default async function PublicResultPage({
           <span aria-hidden className="h-5 w-px bg-border" />
           <span className="text-[13px] font-bold">Krirk Verify</span>
         </Link>
-        {outcome.ok && (
-          <span className="ml-auto hidden items-center gap-1.5 rounded-full border bg-card px-3 py-1 text-[11.5px] font-semibold text-text-2 sm:inline-flex print:hidden">
-            <Icon name="key" size={14} />
-            {t("permalink.viaToken")}
-          </span>
-        )}
+        <div className="ml-auto flex items-center gap-2.5 print:hidden">
+          {outcome.ok && (
+            <span className="hidden items-center gap-1.5 rounded-full border bg-card px-3 py-1 text-[11.5px] font-semibold text-text-2 sm:inline-flex">
+              <Icon name="key" size={14} />
+              {t("permalink.viaToken")}
+            </span>
+          )}
+          {/* ปุ่มสลับภาษาเก็บ ?t= ไว้ — ผู้รับลิงก์เปลี่ยนภาษาได้โดยไม่ต้องขอลิงก์ใหม่ (F-UX-08) */}
+          <LocaleSwitcher />
+        </div>
       </header>
 
       <main className="mx-auto max-w-[880px]">
