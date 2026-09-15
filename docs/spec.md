@@ -344,14 +344,16 @@ submitRequest(input, actor)
 - [ ] **F-BAT-07** Audit + rate limit เฉพาะสำหรับ batch (โควตาแยกจากคำขอเดี่ยว)
 
 ### Phase 6 — Dashboard & Reports
-- [ ] **F-RPT-01** Dashboard ผู้ขอ — สรุปคำขอของตนเอง + สถานะล่าสุด
-- [ ] **F-RPT-02** Dashboard เจ้าหน้าที่ — การ์ดตัวเลข (คำขอวันนี้/รอพิจารณา/อนุมัติแล้ว/เวลาเฉลี่ย)
-- [ ] **F-RPT-03** กราฟแนวโน้มคำขอรายวัน/รายเดือน (Recharts)
-- [ ] **F-RPT-04** กราฟสัดส่วนตามสถานะ + Top 10 หน่วยงานที่ขอมากที่สุด
-- [ ] **F-RPT-05** กราฟจำแนกตามคณะ/ระดับการศึกษา
-- [ ] **F-RPT-06** หน้ารายงาน `/reports` — เลือกช่วงวันที่ + เงื่อนไข + แสดงตาราง
-- [ ] **F-RPT-07** Export รายงานเป็น Excel / CSV
-- [ ] **F-RPT-08** รายงานสรุปประจำเดือนส่งอีเมลอัตโนมัติถึงผู้ดูแล (ตั้งค่าเปิด/ปิดได้)
+- [x] **F-RPT-01** Dashboard ผู้ขอ — สรุปคำขอของตนเอง + สถานะล่าสุด
+- [x] **F-RPT-02** Dashboard เจ้าหน้าที่ — การ์ดตัวเลข (คำขอวันนี้/รอพิจารณา/อนุมัติแล้ว/เวลาเฉลี่ย)
+- [x] **F-RPT-03** กราฟแนวโน้มคำขอรายวัน/รายเดือน (Recharts)
+- [x] **F-RPT-04** กราฟสัดส่วนตามสถานะ + Top 10 หน่วยงานที่ขอมากที่สุด
+- [x] **F-RPT-05** กราฟจำแนกตามคณะ/ระดับการศึกษา
+- [x] **F-RPT-06** หน้ารายงาน `/reports` — เลือกช่วงวันที่ + เงื่อนไข + แสดงตาราง
+- [x] **F-RPT-07** Export รายงานเป็น Excel / CSV
+- [x] **F-RPT-08** รายงานสรุปประจำเดือนส่งอีเมลอัตโนมัติถึงผู้ดูแล (ตั้งค่าเปิด/ปิดได้)
+
+> บันทึกสรุป Phase 6: [`docs/phases/phase-6-reports.md`](phases/phase-6-reports.md)
 
 ### Phase 7 — Audit, Admin & PDPA
 - [x] **F-AUD-01** Prisma schema: `AuditLog` + `audit.service.ts` (เขียน log แบบ non-blocking)
@@ -481,3 +483,4 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3  ← MVP ใช้งานได้
 | 1.5     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 4): ตาราง `request_notes`, `rejectReason` เก็บรหัสเหตุผล + `rejectDetail`, `Organization` เพิ่ม `suspendedAt`/`suspendedById`/`statusReason`, ปฏิเสธการลงทะเบียนหน่วยงาน = `SUSPENDED` พร้อมเหตุผล, เหตุผล "ไม่พบข้อมูลที่ตรงกัน" → `NOT_FOUND`, env `REVIEW_SLA_HOURS`, เลื่อนปุ่ม Export/เลือกหลายแถว/กระดิ่ง/ตัวเลขคิว/สถานะอีเมลในไทม์ไลน์ |
 | 1.6     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 7): ค่าตั้งค่าเพิ่ม SLA/แถวแบบชุดต่อวัน/จำนวนครั้งล็อกบัญชี/ระยะเก็บ Audit Log/อายุ permalink (env เป็นค่าเริ่มต้น), `VerificationRequest.anonymizedAt`, retention = anonymise คำขอ + ลบ Audit Log ที่พ้นกำหนดผ่าน `/api/cron/retention`, CSP แบบ `'unsafe-inline'` (ไม่ใช้ nonce), สร้างบัญชีเฉพาะ ADMIN/REGISTRAR ด้วยอีเมลเชิญ, route `/privacy` + `/terms`, ตัวกรองผู้ใช้เป็นช่องค้นหา + เลื่อนหน้า Email Log ไป Phase 9, ข้อความนโยบายเป็นร่างรอฝ่ายกฎหมาย, `pnpm build` ต้องเชื่อมต่อฐานข้อมูล |
 | 1.7     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 8): bottom nav แสดง 3 เมนูแรก + drawer "เมนู" เมื่อมีเมนูมากกว่า 4, ช่อง `input type="date"` แสดงตามปฏิทินของเบราว์เซอร์, skeleton โครงกลางเดียว + `global-error` ข้อความสองภาษาแบบคงที่, เลื่อนการตรวจ contrast ด้วย axe ไป Phase 10, แก้ shadcn `dialog.tsx`/`form.tsx` |
+| 1.8     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 6): KPI แดชบอร์ดเจ้าหน้าที่ตามดีไซน์ (ช่วง 7 วัน/30 วัน/1 ปี + อัตราอนุมัติอัตโนมัติ), route `/staff/dashboard` + `/staff/reports`, แนวโน้มจัดกลุ่มตามวันที่ยื่นและสถานะปัจจุบัน, Export = Excel/CSV รายการคำขอ (จำกัด 100,000 แถว / 366 วัน), อีเมลสรุปรายเดือนแบบตัวเลข + ลิงก์ผ่าน `/api/cron/monthly-report` + ค่าตั้งค่า `report.monthlyEmailEnabled`/`report.monthlyLastSent`, ซ่อนทางลัดตรวจสอบแบบชุดจนถึง Phase 5, เพิ่ม `recharts` + `exceljs` |

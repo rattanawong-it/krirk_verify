@@ -23,7 +23,8 @@ async function newSession(browser: Browser, email: string) {
   const context = await browser.newContext();
   const page = await context.newPage();
   await login(page, email);
-  await expect(page).toHaveURL(/dashboard$/);
+  // การตรวจรหัสผ่าน (hash) ใช้ ~1–2 วินาที เมื่อรันทั้งชุดบางครั้งเกิน 5 วินาทีของค่าเริ่มต้น
+  await expect(page).toHaveURL(/dashboard$/, { timeout: 15_000 });
   return { context, page };
 }
 

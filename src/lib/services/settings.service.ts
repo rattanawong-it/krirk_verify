@@ -9,6 +9,7 @@ import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service
 
 export const SETTING_KEYS: Record<keyof AppSettings, string> = {
   autoApproveEnabled: "verification.autoApproveEnabled",
+  monthlyReportEnabled: "report.monthlyEmailEnabled",
   slaHours: "review.slaHours",
   userPerHour: "rateLimit.userPerHour",
   ipPerHour: "rateLimit.ipPerHour",
@@ -31,6 +32,8 @@ function envInt(name: string, fallback: number): number {
 export function defaultSettings(): AppSettings {
   return {
     autoApproveEnabled: true,
+    // F-RPT-08 — ปิดไว้จนกว่าผู้ดูแลจะเปิดเอง
+    monthlyReportEnabled: false,
     slaHours: envInt("REVIEW_SLA_HOURS", 24),
     userPerHour: envInt("RATE_LIMIT_USER_PER_HOUR", 30),
     ipPerHour: envInt("RATE_LIMIT_IP_PER_HOUR", 60),
@@ -99,3 +102,5 @@ export async function updateSettings(
 
 // ค่าที่งาน retention บันทึกไว้หลังรันแต่ละรอบ (ไม่ใช่ค่าที่ผู้ดูแลแก้ได้)
 export const RETENTION_LAST_RUN_KEY = "retention.lastRun";
+// เดือนล่าสุดที่ส่งรายงานสรุปแล้ว (YYYY-MM) — กัน cron ส่งซ้ำ
+export const MONTHLY_REPORT_LAST_SENT_KEY = "report.monthlyLastSent";

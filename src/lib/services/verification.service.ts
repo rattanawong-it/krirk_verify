@@ -268,7 +268,7 @@ export async function submitRequest(
 
 type Viewer = { id: string; role: AppRole; organizationId: string | null };
 
-async function loadViewer(userId: string): Promise<Viewer | null> {
+export async function loadViewer(userId: string): Promise<Viewer | null> {
   return prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, role: true, organizationId: true },
@@ -276,7 +276,7 @@ async function loadViewer(userId: string): Promise<Viewer | null> {
 }
 
 // หน่วยงานภายนอกเห็นคำขอของทุกคนในหน่วยงานเดียวกัน · ศิษย์เก่าเห็นเฉพาะของตนเอง
-function visibleTo(viewer: Viewer): Prisma.VerificationRequestWhereInput {
+export function visibleTo(viewer: Viewer): Prisma.VerificationRequestWhereInput {
   return viewer.role === "EXTERNAL" && viewer.organizationId
     ? { organizationId: viewer.organizationId }
     : { requesterId: viewer.id };

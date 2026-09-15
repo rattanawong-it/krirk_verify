@@ -44,6 +44,8 @@ export const AuditAction = {
   USER_ACTIVATED: "user.activated",
   USER_UNLOCKED: "user.unlocked",
   USER_RESET_SENT: "user.password_reset_sent",
+  REPORT_EXPORTED: "report.exported",
+  REPORT_MONTHLY_SENT: "report.monthly_sent",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];

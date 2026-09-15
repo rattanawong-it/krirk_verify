@@ -75,7 +75,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     labelKey: "reports",
     icon: "chart",
     roles: STAFF_ROLES,
-    available: false,
+    available: true,
   },
   { href: "/staff/sync", labelKey: "sync", icon: "sync", roles: STAFF_ROLES, available: true },
   {

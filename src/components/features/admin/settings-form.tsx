@@ -22,16 +22,20 @@ import {
 
 type NumberField = Exclude<
   keyof SettingsFormInput,
-  "autoApproveEnabled" | "announcementTh" | "announcementEn"
+  "autoApproveEnabled" | "monthlyReportEnabled" | "announcementTh" | "announcementEn"
 >;
 
 type Row =
-  | { kind: "switch"; name: "autoApproveEnabled" }
+  | { kind: "switch"; name: "autoApproveEnabled" | "monthlyReportEnabled" }
   | { kind: "locked"; label: "alwaysQueueNotFound" }
   | { kind: "number"; name: NumberField; unit?: "hours" | "times" | "years" | "days"; max: number }
   | { kind: "text"; name: "announcementTh" | "announcementEn" };
 
-const GROUPS: { key: "verification" | "quotas" | "pdpa"; icon: IconName; rows: Row[] }[] = [
+const GROUPS: {
+  key: "verification" | "quotas" | "pdpa" | "reports";
+  icon: IconName;
+  rows: Row[];
+}[] = [
   {
     key: "verification",
     icon: "shieldCheck",
@@ -61,6 +65,11 @@ const GROUPS: { key: "verification" | "quotas" | "pdpa"; icon: IconName; rows: R
       { kind: "text", name: "announcementTh" },
       { kind: "text", name: "announcementEn" },
     ],
+  },
+  {
+    key: "reports",
+    icon: "chart",
+    rows: [{ kind: "switch", name: "monthlyReportEnabled" }],
   },
 ];
 

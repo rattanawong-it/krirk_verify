@@ -790,6 +790,116 @@
       "other": "Other event"
     }
   },
+  "dashboard": {
+    "hello": "Hello {name}",
+    "subOrganization": "A summary of your organisation's verification requests",
+    "subOwn": "A summary of your verification requests",
+    "newRequest": "New request",
+    "stats": {
+      "total": "total requests",
+      "pending": "awaiting review",
+      "approved": "approved",
+      "negative": "not found / rejected",
+      "thisYear": "{year}",
+      "sla": "SLA {hours}h"
+    },
+    "recent": "Recent requests",
+    "seeAll": "See all",
+    "recentEmpty": "No requests yet — submit your first verification request",
+    "pendingTitle": "{count, plural, one {# request is} other {# requests are}} awaiting staff review",
+    "pendingBody": "Records the system cannot match with confidence go to the registrar's queue for review, usually within one working day.",
+    "shortcuts": "Shortcuts",
+    "shortcutNew": "Submit a single request",
+    "shortcutList": "View all requests",
+    "shortcutProfile": "Edit profile",
+    "orgTitle": "Your organisation",
+    "orgApprovedAt": "Approved {date}",
+    "orgMembers": "{count, plural, one {# user} other {# users}} in this organisation",
+    "recordTitle": "Your record",
+    "recordBody": "Student code {code} · {key}",
+    "recordMissing": "This account is not linked to a student record yet. Please contact the registrar."
+  },
+  "stats": {
+    "title": "Statistics dashboard",
+    "subtitle": "Verification volume and service performance overview",
+    "rangeLabel": "Time range",
+    "ranges": {
+      "7d": "7 days",
+      "30d": "30 days",
+      "1y": "1 year"
+    },
+    "export": "Export report",
+    "openReports": "Detailed report",
+    "kpi": {
+      "total": "requests ({range})",
+      "autoRate": "auto-approved",
+      "inQueue": "awaiting review now",
+      "avgReview": "avg staff review time",
+      "hours": "{hours} h",
+      "pointsDelta": "{value} pts",
+      "overSla": "{count} over SLA",
+      "sla": "SLA {hours}h",
+      "noPrevious": "No comparison"
+    },
+    "trendTitle": "Request trend",
+    "trendSubDay": "By current status · last {count} days",
+    "trendSubMonth": "By current status · last 12 months",
+    "series": {
+      "approved": "Approved",
+      "pending": "In review",
+      "negative": "Not found / rejected"
+    },
+    "chartSummary": "Stacked bar chart of {total} requests in the selected range by status",
+    "mixTitle": "Status mix",
+    "mixSub": "All requests in the selected range",
+    "requests": "requests",
+    "topOrgs": "Top requesting organisations",
+    "byFaculty": "By faculty",
+    "byLevel": "By education level",
+    "resultNote": "Counted from approved results (excludes requests past their retention period)",
+    "empty": "No data in this range yet"
+  },
+  "reports": {
+    "title": "Verification report",
+    "subtitle": "Choose a date range and filters, then download as Excel or CSV",
+    "from": "From",
+    "to": "To",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "decision": "Decision",
+    "allDecisions": "All decisions",
+    "purpose": "Purpose",
+    "allPurposes": "All purposes",
+    "organization": "Organisation",
+    "allOrganizations": "All organisations",
+    "apply": "Show report",
+    "clear": "Clear filters",
+    "summaryTotal": "Total requests",
+    "summaryAuto": "Auto-approved",
+    "exportXlsx": "Excel",
+    "exportCsv": "CSV",
+    "exportNote": "Files use the same filters as this page (up to 100,000 rows) · no names, ID numbers or student codes of the people verified · exports are written to the audit log",
+    "empty": "No requests match these filters",
+    "pageInfo": "Showing {from}–{to} of {total}",
+    "hours": "{hours} h",
+    "anonymized": "Past retention",
+    "sheetName": "Verification requests",
+    "columns": {
+      "refNo": "Reference",
+      "createdAt": "Submitted",
+      "organization": "Organisation",
+      "purpose": "Purpose",
+      "searchType": "Search key type",
+      "status": "Status",
+      "decisionType": "Decision",
+      "decidedAt": "Decided",
+      "reviewHours": "Review time (h)",
+      "reviewReason": "Queue reason",
+      "faculty": "Faculty",
+      "educationLevel": "Education level",
+      "degree": "Degree"
+    }
+  },
   "settings": {
     "title": "System settings",
     "subtitle": "Values affecting all users · every change is written to the audit log",
@@ -805,6 +915,10 @@
       "pdpa": {
         "title": "PDPA & retention",
         "sub": "Data retention and public notices"
+      },
+      "reports": {
+        "title": "Reports",
+        "sub": "Automatic summaries for administrators"
       }
     },
     "fields": {
@@ -855,6 +969,10 @@
       "announcementEn": {
         "label": "Homepage notice (English)",
         "sub": "Shown when the visitor chooses English"
+      },
+      "monthlyReportEnabled": {
+        "label": "Email a monthly summary report",
+        "sub": "Sent to every administrator at the start of each month · schedule system cron to call /api/cron/monthly-report on the 1st"
       }
     },
     "units": {
@@ -962,7 +1080,9 @@
       "user_suspended": "User suspended",
       "user_activated": "User reactivated",
       "user_unlocked": "User unlocked",
-      "user_password_reset_sent": "Password reset link sent to user"
+      "user_password_reset_sent": "Password reset link sent to user",
+      "report_exported": "Request report exported",
+      "report_monthly_sent": "Monthly summary report sent"
     }
   },
   "users": {
@@ -1252,6 +1372,24 @@
       "decided": "Decided",
       "approvedOn": "Approved on",
       "singleQuota": "Single requests"
+    },
+    "monthlyReport": {
+      "subject": "Monthly verification summary — {month}",
+      "preheader": "Request volume and service performance for {month}",
+      "heading": "Summary for {month}",
+      "body": "Dear {name} — here is last month's summary of the online credential verification service.",
+      "total": "Total requests",
+      "approved": "Approved",
+      "pending": "Still awaiting review",
+      "notFound": "Not found",
+      "rejected": "Rejected",
+      "autoRate": "Auto-approved",
+      "avgReview": "Avg staff review time",
+      "hours": "{hours} hours",
+      "topOrgs": "Top requesting organisations: {list}",
+      "noOrgs": "No requests from external organisations this month.",
+      "cta": "Open this month's report",
+      "ctaNote": "Staff sign-in required · turn this email off on the settings page."
     },
     "invite": {
       "subject": "You're invited to Krirk Verify",

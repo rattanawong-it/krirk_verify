@@ -8,7 +8,7 @@ import type { MailMessage } from "./mailer";
 
 type Rendered = Omit<MailMessage, "to">;
 
-function translator(locale: AppLocale) {
+export function translator(locale: AppLocale) {
   return createTranslator({ locale, messages: locale === "en" ? en : th, namespace: "email" });
 }
 
@@ -48,7 +48,7 @@ type LayoutInput = {
   facts?: { label: string; value: string; mono?: boolean }[];
 };
 
-function layout(input: LayoutInput): string {
+export function layout(input: LayoutInput): string {
   const t = translator(input.locale);
   const appUrl = process.env.APP_URL ?? "http://localhost:3000";
   const font = "'Anuphan','Inter',Tahoma,Arial,sans-serif";

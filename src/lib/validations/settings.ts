@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export const appSettingsSchema = z.object({
   autoApproveEnabled: z.boolean(),
+  monthlyReportEnabled: z.boolean(),
   slaHours: z.number().int().min(1).max(720),
   userPerHour: z.number().int().min(1).max(1000),
   ipPerHour: z.number().int().min(1).max(10_000),
@@ -30,6 +31,7 @@ const int = (min: number, max: number) =>
 export const settingsFormSchema = z
   .object({
     autoApproveEnabled: z.boolean(),
+    monthlyReportEnabled: z.boolean(),
     slaHours: int(1, 720),
     userPerHour: int(1, 1000),
     ipPerHour: int(1, 10_000),
