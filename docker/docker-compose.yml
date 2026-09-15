@@ -1,0 +1,47 @@
+# สภาพแวดล้อมสำหรับพัฒนา (dev) — PostgreSQL + Adminer
+# ใช้งาน: pnpm db:up  (หรือ docker compose -f docker/docker-compose.yml --env-file .env up -d)
+name: krirk-verify-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: krirk-verify-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-krirk}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-krirk_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-krirk_verify}
+      TZ: Asia/Bangkok
+    ports:
+      - "${POSTGRES_PORT:-5435}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-krirk} -d ${POSTGRES_DB:-krirk_verify}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  adminer:
+    image: adminer:latest
+    container_name: krirk-verify-adminer
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+
+  # ดักจับอีเมลขาออกใน dev — ดูอีเมลที่ http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: krirk-verify-mailpit
+    restart: unless-stopped
+    ports:
+      - "${SMTP_PORT:-1025}:1025"
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+
+volumes:
+  postgres_data:

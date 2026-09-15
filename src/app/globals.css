@@ -1,0 +1,265 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* dark mode แบบ class (.dark บน <html>) — สลับด้วย next-themes */
+@custom-variant dark (&:is(.dark *));
+
+/* =============================================================
+   Krirk Verify Design Tokens — อ้างอิง project-ui/Krirk Verify Design System
+   ใช้ชื่อตัวแปรตาม shadcn/ui เพื่อให้ component ใช้ธีมได้ทันที
+   ============================================================= */
+:root {
+  --radius: 0.625rem; /* 10px — ปุ่ม/input */
+
+  --background: #f2f6f1;
+  --foreground: #16210f;
+  --card: #ffffff;
+  --card-foreground: #16210f;
+  --popover: #ffffff;
+  --popover-foreground: #16210f;
+
+  /* เขียวเข้ม #1C6B21 ผ่าน AA — เขียวโลโก้ #38AE36 ห้ามใช้เป็นตัวอักษรบนพื้นขาว */
+  --primary: #1c6b21;
+  --primary-foreground: #ffffff;
+  --primary-hover: #145018;
+  --primary-light: #2c8f2b;
+  --primary-deep: #0e3a13;
+  --primary-soft: #e7f5e5;
+
+  --secondary: #e7f5e5;
+  --secondary-foreground: #145018;
+  --muted: #eef2ec;
+  --muted-foreground: #5e6d58;
+  --text-2: #4b5a47;
+  --accent: #eef2ec;
+  --accent-foreground: #16210f;
+
+  --destructive: #c4322b;
+  --destructive-foreground: #ffffff;
+
+  --border: #dee5db;
+  --input: #dee5db;
+  --ring: #1c6b21;
+
+  /* ทอง — สงวนไว้สำหรับตราประทับผลตรวจสอบและเกียรตินิยมเท่านั้น */
+  --gold: #c69a2e;
+  --gold-foreground: #2c2003;
+  --gold-soft: #fdf6e4;
+  --brand-mark: #38ae36;
+
+  /* สีสถานะคำขอ (fg = จุด/ไอคอน, bg = พื้น badge, tx = ตัวอักษร badge) */
+  --status-approved: #1c6b21;
+  --status-approved-bg: #e7f5e5;
+  --status-approved-tx: #145018;
+  --status-pending: #b8760b;
+  --status-pending-bg: #fdf3da;
+  --status-pending-tx: #8a5a06;
+  --status-rejected: #c4322b;
+  --status-rejected-bg: #fce9e7;
+  --status-rejected-tx: #8f211c;
+  --status-notfound: #4a5b7a;
+  --status-notfound-bg: #eceff5;
+  --status-notfound-tx: #35425c;
+  --status-expired: #7c8b76;
+  --status-expired-bg: #eff1ed;
+  --status-expired-tx: #4c5a46;
+  --status-info: #0f6e8c;
+  --status-info-bg: #e2f2f6;
+  --status-info-tx: #0a4f66;
+
+  --chart-1: #1c6b21;
+  --chart-2: #c69a2e;
+  --chart-3: #0f6e8c;
+  --chart-4: #b8760b;
+  --chart-5: #4a5b7a;
+
+  --sidebar: #0e3a13;
+  --sidebar-foreground: #e9efe6;
+  --sidebar-primary: #38ae36;
+  --sidebar-primary-foreground: #0e140c;
+  --sidebar-accent: #16431a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #16431a;
+  --sidebar-ring: #38ae36;
+}
+
+.dark {
+  --background: #0e140c;
+  --foreground: #e9efe6;
+  --card: #171f14;
+  --card-foreground: #e9efe6;
+  --popover: #171f14;
+  --popover-foreground: #e9efe6;
+
+  --primary: #46c23f;
+  --primary-foreground: #0e140c;
+  --primary-hover: #5fd058;
+  --primary-light: #46c23f;
+  --primary-deep: #0e3a13;
+  --primary-soft: #1a2e18;
+
+  --secondary: #1a2e18;
+  --secondary-foreground: #b9e6b4;
+  --muted: #1f291b;
+  --muted-foreground: #93a38d;
+  --text-2: #b4c2ae;
+  --accent: #1f291b;
+  --accent-foreground: #e9efe6;
+
+  --destructive: #e0574f;
+  --destructive-foreground: #0e140c;
+
+  --border: #2c3628;
+  --input: #2c3628;
+  --ring: #46c23f;
+
+  --gold: #d8ad44;
+  --gold-foreground: #2c2003;
+  --gold-soft: #2a2412;
+
+  --status-approved: #46c23f;
+  --status-approved-bg: #1a2e18;
+  --status-approved-tx: #9fdc99;
+  --status-pending: #e0a53a;
+  --status-pending-bg: #33280f;
+  --status-pending-tx: #f0c878;
+  --status-rejected: #e0574f;
+  --status-rejected-bg: #3a1a17;
+  --status-rejected-tx: #f3a39d;
+  --status-notfound: #8a9cc0;
+  --status-notfound-bg: #1f2533;
+  --status-notfound-tx: #bac6de;
+  --status-expired: #93a38d;
+  --status-expired-bg: #22291f;
+  --status-expired-tx: #c1ccbc;
+  --status-info: #4bb4d4;
+  --status-info-bg: #122a32;
+  --status-info-tx: #9ad3e5;
+
+  --sidebar: #0b1109;
+  --sidebar-foreground: #e9efe6;
+  --sidebar-accent: #171f14;
+  --sidebar-border: #2c3628;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), var(--font-anuphan), ui-sans-serif, system-ui, sans-serif;
+  --font-thai: var(--font-anuphan), var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 3px);
+  --radius-2xl: calc(var(--radius) + 6px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-soft: var(--primary-soft);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-text-2: var(--text-2);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-gold-soft: var(--gold-soft);
+  --color-brand-mark: var(--brand-mark);
+
+  --color-status-approved: var(--status-approved);
+  --color-status-approved-bg: var(--status-approved-bg);
+  --color-status-approved-tx: var(--status-approved-tx);
+  --color-status-pending: var(--status-pending);
+  --color-status-pending-bg: var(--status-pending-bg);
+  --color-status-pending-tx: var(--status-pending-tx);
+  --color-status-rejected: var(--status-rejected);
+  --color-status-rejected-bg: var(--status-rejected-bg);
+  --color-status-rejected-tx: var(--status-rejected-tx);
+  --color-status-notfound: var(--status-notfound);
+  --color-status-notfound-bg: var(--status-notfound-bg);
+  --color-status-notfound-tx: var(--status-notfound-tx);
+  --color-status-expired: var(--status-expired);
+  --color-status-expired-bg: var(--status-expired-bg);
+  --color-status-expired-tx: var(--status-expired-tx);
+  --color-status-info: var(--status-info);
+  --color-status-info-bg: var(--status-info-bg);
+  --color-status-info-tx: var(--status-info-tx);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* พื้นผิวอ่อนของหน้า auth / แผงข้อมูล (#F8FBF7 ใน Design System) */
+:root {
+  --surface: #f8fbf7;
+}
+.dark {
+  --surface: #131a11;
+}
+@theme inline {
+  --color-surface: var(--surface);
+}
+
+@utility bg-auth-aside {
+  background-image: linear-gradient(165deg, #2c8f2b 0%, #1c6b21 45%, #0e3a13 100%);
+}
+
+@utility bg-hero {
+  background-image: linear-gradient(150deg, #2c8f2b 0%, #1c6b21 48%, #0e3a13 100%);
+}
+
+@utility bg-seal {
+  background-image: linear-gradient(135deg, #1c6b21, #0e3a13);
+}
+
+@utility bg-gold-seal {
+  background-image: linear-gradient(120deg, #c69a2e, #8c6b18);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+  :lang(th) body,
+  body:lang(th) {
+    line-height: 1.6;
+  }
+  .tabular-nums,
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+}

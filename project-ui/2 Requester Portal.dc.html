@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="kru-icons.js"></script>
+  <style>
+    body { margin:0; background:#E7ECE4; }
+    a { color:#1C6B21; text-decoration:none; }
+    a:hover { color:#145018; text-decoration:underline; }
+  </style>
+</helmet>
+
+<div style="font-family:'Inter','Anuphan',sans-serif;color:#16210F;padding:26px 30px 60px;width:1770px">
+
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#16210F;border-radius:14px;padding:12px 16px;margin-bottom:24px;position:sticky;top:12px;z-index:50;box-shadow:0 10px 30px rgba(14,58,19,0.22)">
+    <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:18px;display:block">
+    <span style="color:rgba(255,255,255,0.45);font-size:12px">|</span>
+    <span style="color:#fff;font-size:13px;font-weight:700">กลุ่มที่ 2 · Portal ผู้ขอ (EXTERNAL / ALUMNI)</span>
+    <div style="display:flex;gap:6px;margin-left:6px">
+      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
+        <button onClick="{{ tb.go }}" style="border:1px solid {{ tb.bd }};background:{{ tb.bg }};color:{{ tb.tx }};font-family:'Inter','Anuphan',sans-serif;font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;cursor:pointer">{{ tb.label }}</button>
+      </sc-for>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <sc-if value="{{ hasVariant }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span style="color:rgba(255,255,255,0.55);font-size:11px">ทางเลือก</span>
+          <div style="display:flex;background:rgba(255,255,255,0.12);border-radius:8px;padding:2px">
+            <button onClick="{{ setA }}" style="border:none;background:{{ vA.bg }};color:{{ vA.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">A</button>
+            <button onClick="{{ setB }}" style="border:none;background:{{ vB.bg }};color:{{ vB.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">B</button>
+          </div>
+          <span style="color:rgba(255,255,255,0.7);font-size:11px">{{ variantNote }}</span>
+        </div>
+      </sc-if>
+      <div style="display:flex;background:rgba(255,255,255,0.12);border-radius:8px;padding:2px">
+        <button onClick="{{ setTh }}" style="border:none;background:{{ lTh.bg }};color:{{ lTh.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">ไทย</button>
+        <button onClick="{{ setEn }}" style="border:none;background:{{ lEn.bg }};color:{{ lEn.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:26px;align-items:flex-start">
+    <div style="width:1280px;flex:none">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;background:#16210F;color:#fff;padding:3px 8px;border-radius:5px">DESKTOP 1280</span>
+        <span style="font-size:12.5px;color:#4B5A47;font-weight:600">{{ screenTitle }}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5E6D58">{{ screenRoute }}</span>
+      </div>
+      <div style="border-radius:14px;overflow:hidden;box-shadow:0 18px 44px rgba(14,58,19,0.14);background:#fff;display:flex;min-height:790px">
+
+        <div style="width:236px;flex:none;background:linear-gradient(180deg,#16431A,#0E3A13);padding:18px 12px;display:flex;flex-direction:column;gap:3px">
+          <div style="padding:4px 8px 16px">
+            <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:20px;display:block;margin-bottom:8px">
+            <div style="color:#fff;font-size:13px;font-weight:700;line-height:1.2">Krirk Verify</div>
+            <div style="color:rgba(255,255,255,0.55);font-size:10px;margin-top:2px">{{ t.portalLabel }}</div>
+          </div>
+          <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6">
+            <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:11px;padding:10px 10px;border-radius:9px;background:{{ n.bg }};border:none;cursor:pointer;width:100%;text-align:left;font-family:'Inter','Anuphan',sans-serif">
+              <div>{{ n.el }}</div>
+              <span style="font-size:12.5px;font-weight:{{ n.weight }};color:{{ n.color }};flex:1">{{ n.label }}</span>
+              <span style="font-size:9.5px;font-weight:700;color:{{ n.badgeTx }};background:{{ n.badgeBg }};border-radius:10px;padding:1px 6px;font-family:'JetBrains Mono',monospace">{{ n.count }}</span>
+            </button>
+          </sc-for>
+          <div style="margin-top:auto;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:13px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+              <span style="color:rgba(255,255,255,0.7);font-size:10.5px;font-weight:600">{{ t.quota }}</span>
+              <span style="color:#fff;font-size:10.5px;font-family:'JetBrains Mono',monospace">14 / 20</span>
+            </div>
+            <div style="height:5px;background:rgba(255,255,255,0.16);border-radius:4px;overflow:hidden"><div style="width:70%;height:100%;background:#38AE36;border-radius:4px"></div></div>
+            <div style="color:rgba(255,255,255,0.55);font-size:10px;margin-top:7px;line-height:1.45">{{ t.quotaNote }}</div>
+          </div>
+        </div>
+
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;background:#F8FBF7">
+          <div style="height:58px;background:#fff;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;padding:0 22px;gap:14px;flex-shrink:0">
+            <div style="flex:1;display:flex;align-items:center;gap:7px;font-size:12px;color:#5E6D58">
+              <span>{{ t.portalLabel }}</span>{{ dec14.chevronR }}<span style="color:#16210F;font-weight:600">{{ screenTitle }}</span>
+            </div>
+            <div style="width:260px;background:#F8FBF7;border:1px solid #DEE5DB;border-radius:9px;height:34px;display:flex;align-items:center;padding:0 11px;gap:8px">
+              {{ dec16.search }}<span style="font-size:12.5px;color:#ADB5A7">{{ t.searchPh }}</span>
+            </div>
+            <div style="display:flex;background:#EEF2EC;border-radius:8px;padding:2px">
+              <span style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;background:{{ hdTh.bg }};color:{{ hdTh.tx }}">TH</span>
+              <span style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;background:{{ hdEn.bg }};color:{{ hdEn.tx }}">EN</span>
+            </div>
+            <div style="position:relative;width:34px;height:34px;border-radius:9px;border:1px solid #E6EBE2;display:flex;align-items:center;justify-content:center">
+              {{ tx18.bell }}<span style="position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:#C4322B;border:1.5px solid #fff"></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="width:32px;height:32px;border-radius:50%;background:#E7F5E5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#145018">{{ t.avatar }}</div>
+              <div style="line-height:1.25">
+                <div style="font-size:12px;font-weight:600">{{ t.userName }}</div>
+                <div style="font-size:9.5px;color:#5E6D58;font-family:'JetBrains Mono',monospace">EXTERNAL</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:22px;flex:1;min-width:0">
+
+            <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px">
+                  <div>
+                    <h1 style="font-size:23px;font-weight:700;margin:0 0 4px;letter-spacing:-0.01em">{{ t.dashHello }}</h1>
+                    <p style="font-size:13px;color:#5E6D58;margin:0">{{ t.dashSub }}</p>
+                  </div>
+                  <div style="display:flex;gap:10px">
+                    <button onClick="{{ goBatch }}" style="height:40px;padding:0 16px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx18.upload }}{{ t.batchCta }}</button>
+                    <button onClick="{{ goNew }}" style="height:40px;padding:0 18px;border-radius:10px;border:none;background:#1C6B21;color:#fff;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.plus }}{{ t.newCta }}</button>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">
+                  <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                        <div style="width:38px;height:38px;border-radius:11px;background:{{ s.iconBg }};display:flex;align-items:center;justify-content:center">{{ s.el }}</div>
+                        <span style="font-size:10.5px;font-weight:700;color:{{ s.tagTx }};background:{{ s.tagBg }};border-radius:20px;padding:3px 9px">{{ s.tag }}</span>
+                      </div>
+                      <div style="font-size:26px;font-weight:700;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">{{ s.v }}</div>
+                      <div style="font-size:12px;color:#5E6D58;margin-top:2px">{{ s.k }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;gap:16px;align-items:flex-start">
+                  <div style="flex:1;min-width:0;background:#fff;border:1px solid #DEE5DB;border-radius:15px;overflow:hidden">
+                    <div style="padding:16px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E6EBE2">
+                      <span style="font-size:14.5px;font-weight:700">{{ t.recent }}</span>
+                      <button onClick="{{ goList }}" style="border:none;background:none;color:#1C6B21;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Inter','Anuphan',sans-serif">{{ t.seeAll }}{{ p14.chevronR }}</button>
+                    </div>
+                    <sc-for list="{{ recentRows }}" as="r" hint-placeholder-count="4">
+                      <button onClick="{{ goDetail }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:13px 18px;border:none;border-bottom:1px solid #F1F4EE;background:#fff;cursor:pointer;text-align:left;font-family:'Inter','Anuphan',sans-serif">
+                        <div style="width:36px;height:36px;border-radius:11px;background:{{ r.iconBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ r.el }}</div>
+                        <div style="flex:1;min-width:0">
+                          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#1C6B21">{{ r.ref }}</div>
+                          <div style="font-size:12.5px;color:#4B5A47;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.desc }}</div>
+                        </div>
+                        <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.bg }};color:{{ r.tx }};font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px;flex-shrink:0"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.dot }};display:block"></span>{{ r.status }}</span>
+                        <span style="font-size:11.5px;color:#5E6D58;width:96px;text-align:right;flex-shrink:0">{{ r.date }}</span>
+                        {{ dec16.chevronR }}
+                      </button>
+                    </sc-for>
+                  </div>
+                  <div style="width:300px;flex:none;display:flex;flex-direction:column;gap:14px">
+                    <div style="background:#FDF3DA;border:1px solid #F0DCAF;border-radius:15px;padding:16px">
+                      <div style="display:flex;gap:10px;align-items:flex-start">
+                        <div style="margin-top:1px">{{ amb18.clock }}</div>
+                        <div>
+                          <div style="font-size:13px;font-weight:700;color:#8A5A06;margin-bottom:3px">{{ t.pendingTitle }}</div>
+                          <div style="font-size:11.5px;color:#8A5A06;line-height:1.55;opacity:0.9">{{ t.pendingBody }}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:16px">
+                      <div style="font-size:13px;font-weight:700;margin-bottom:12px">{{ t.shortcuts }}</div>
+                      <div style="display:flex;flex-direction:column;gap:8px">
+                        <sc-for list="{{ shortcuts }}" as="s" hint-placeholder-count="3">
+                          <button onClick="{{ s.go }}" style="display:flex;align-items:center;gap:10px;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:10px;padding:10px 11px;cursor:pointer;text-align:left;font-family:'Inter','Anuphan',sans-serif">
+                            <div>{{ s.el }}</div><span style="font-size:12.5px;font-weight:600;flex:1">{{ s.label }}</span>{{ dec14.chevronR }}
+                          </button>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:16px">
+                      <div style="font-size:13px;font-weight:700;margin-bottom:10px">{{ t.orgStatus }}</div>
+                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px">
+                        <div style="width:36px;height:36px;border-radius:10px;background:#E7F5E5;display:flex;align-items:center;justify-content:center">{{ p18.building }}</div>
+                        <div style="min-width:0">
+                          <div style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.orgName }}</div>
+                          <span style="display:inline-flex;align-items:center;gap:5px;background:#E7F5E5;color:#145018;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:3px">{{ t.orgApproved }}</span>
+                        </div>
+                      </div>
+                      <div style="font-size:11px;color:#5E6D58;line-height:1.5">{{ t.orgNote }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <h1 style="font-size:23px;font-weight:700;margin:0 0 4px;letter-spacing:-0.01em">{{ t.newTitle }}</h1>
+                <p style="font-size:13px;color:#5E6D58;margin:0 0 18px">{{ t.newSub }}</p>
+
+                <sc-if value="{{ isB }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:10px;margin-bottom:20px">
+                    <sc-for list="{{ wizardSteps }}" as="w" hint-placeholder-count="3">
+                      <div style="flex:1;background:{{ w.bg }};border:1px solid {{ w.bd }};border-radius:12px;padding:13px 15px;display:flex;align-items:center;gap:11px">
+                        <span style="width:26px;height:26px;border-radius:50%;background:{{ w.dotBg }};color:{{ w.dotTx }};font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">{{ w.n }}</span>
+                        <div style="min-width:0">
+                          <div style="font-size:12.5px;font-weight:700;color:{{ w.tx }}">{{ w.title }}</div>
+                          <div style="font-size:10.5px;color:{{ w.subTx }};margin-top:1px">{{ w.sub }}</div>
+                        </div>
+                        <div style="margin-left:auto">{{ w.mark }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <div style="display:flex;gap:16px;align-items:flex-start">
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:14px">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:22px">
+                      <div style="font-size:12px;font-weight:700;color:#5E6D58;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:15px">{{ t.keySection }}</div>
+                      <div style="display:flex;gap:12px;margin-bottom:18px">
+                        <sc-for list="{{ keyTypes }}" as="k" hint-placeholder-count="2">
+                          <div style="flex:1;border:1.5px solid {{ k.bd }};background:{{ k.bg }};border-radius:12px;padding:14px;display:flex;gap:11px;align-items:flex-start;cursor:pointer">
+                            <span style="width:19px;height:19px;border-radius:50%;border:1.5px solid {{ k.radio }};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><span style="width:9px;height:9px;border-radius:50%;background:{{ k.dot }};display:block"></span></span>
+                            <div>
+                              <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">{{ k.el }}<span style="font-size:13.5px;font-weight:700;color:{{ k.tx }}">{{ k.label }}</span></div>
+                              <div style="font-size:11.5px;color:#5E6D58;line-height:1.5">{{ k.sub }}</div>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.citizenId }}<span style="color:#C4322B"> *</span></div>
+                      <div style="border:1.5px solid #1C6B21;box-shadow:0 0 0 3px rgba(28,107,33,0.12);border-radius:10px;height:46px;display:flex;align-items:center;padding:0 13px;gap:10px">
+                        {{ p20.idCard }}<span style="font-family:'JetBrains Mono',monospace;font-size:16px;letter-spacing:0.04em;flex:1">1-2345-67890-12-3</span>{{ p20.checkCircle }}
+                      </div>
+                      <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#145018;margin-top:6px">{{ p14.checkCircle }}{{ t.checksumOk }}</div>
+                      <div style="display:flex;gap:9px;align-items:flex-start;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:10px;padding:11px;margin-top:14px">
+                        <div style="margin-top:1px">{{ dec16.info }}</div>
+                        <span style="font-size:11.5px;color:#4B5A47;line-height:1.55">{{ t.keyNote }}</span>
+                      </div>
+                    </div>
+
+                    <sc-if value="{{ showRest }}" hint-placeholder-val="{{ true }}">
+                      <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:22px">
+                        <div style="font-size:12px;font-weight:700;color:#5E6D58;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:15px">{{ t.purposeSection }}</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                          <div>
+                            <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.purpose }}<span style="color:#C4322B"> *</span></div>
+                            <div style="border:1px solid #DEE5DB;border-radius:10px;height:44px;display:flex;align-items:center;padding:0 13px;justify-content:space-between">
+                              <span style="font-size:13.5px">{{ t.purposeVal }}</span>{{ dec18.chevronDown }}
+                            </div>
+                          </div>
+                          <div>
+                            <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.refYourSide }}</div>
+                            <div style="border:1px solid #DEE5DB;border-radius:10px;height:44px;display:flex;align-items:center;padding:0 13px;gap:9px">
+                              {{ dec18.doc }}<span style="font-size:13.5px;color:#ADB5A7">{{ t.refYourSidePh }}</span>
+                            </div>
+                          </div>
+                          <div style="grid-column:span 2">
+                            <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.note }}</div>
+                            <div style="border:1px solid #DEE5DB;border-radius:10px;min-height:72px;padding:11px 13px;font-size:13px;color:#ADB5A7;line-height:1.5">{{ t.notePh }}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style="background:#FDF6E4;border:1px solid #EAD9A8;border-radius:15px;padding:18px">
+                        <div style="display:flex;gap:11px;align-items:flex-start;margin-bottom:12px">
+                          <div style="margin-top:1px">{{ gold18.lock }}</div>
+                          <div style="font-size:12.5px;color:#6B4E0A;line-height:1.6">{{ t.pdpaBody }}</div>
+                        </div>
+                        <div style="display:flex;align-items:flex-start;gap:11px;background:#fff;border:1px solid #EAD9A8;border-radius:11px;padding:12px">
+                          <span style="width:20px;height:20px;border-radius:6px;background:#C69A2E;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">{{ w14.check }}</span>
+                          <span style="font-size:12.5px;color:#16210F;line-height:1.55">{{ t.consent }} <a href="#" style="font-weight:700">{{ t.privacyPolicy }}</a> <span style="color:#C4322B">*</span></span>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <div style="display:flex;gap:12px;align-items:center">
+                      <button style="height:46px;padding:0 24px;border-radius:11px;border:none;background:#1C6B21;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;gap:9px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.shieldCheck }}{{ submitLabel }}</button>
+                      <button style="height:46px;padding:0 20px;border-radius:11px;border:1px solid #DEE5DB;background:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ t.saveDraft }}</button>
+                      <span style="font-size:11.5px;color:#5E6D58;margin-left:4px">{{ t.quotaLeft }}</span>
+                    </div>
+                  </div>
+
+                  <div style="width:300px;flex:none;display:flex;flex-direction:column;gap:14px">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:13.5px;font-weight:700;margin-bottom:12px">{{ t.whatHappens }}</div>
+                      <div style="display:flex;flex-direction:column;gap:12px">
+                        <sc-for list="{{ flowPoints }}" as="p" hint-placeholder-count="3">
+                          <div style="display:flex;gap:11px;align-items:flex-start">
+                            <div style="margin-top:1px">{{ p.el }}</div>
+                            <div>
+                              <div style="font-size:12.5px;font-weight:700;color:{{ p.tx }}">{{ p.title }}</div>
+                              <div style="font-size:11.5px;color:#5E6D58;line-height:1.5;margin-top:2px">{{ p.sub }}</div>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="background:#E7F5E5;border:1px solid #C6E6C2;border-radius:15px;padding:16px">
+                      <div style="display:flex;gap:9px;align-items:flex-start">
+                        <div style="margin-top:1px">{{ p16.bulb }}</div>
+                        <div style="font-size:12px;color:#145018;line-height:1.6">{{ t.newTip }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px">
+                  <div>
+                    <h1 style="font-size:23px;font-weight:700;margin:0 0 4px;letter-spacing:-0.01em">{{ t.listTitle }}</h1>
+                    <p style="font-size:13px;color:#5E6D58;margin:0">{{ t.listSub }}</p>
+                  </div>
+                  <div style="display:flex;gap:10px">
+                    <button style="height:38px;padding:0 15px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx16.excel }}{{ t.exportExcel }}</button>
+                    <button onClick="{{ goNew }}" style="height:38px;padding:0 16px;border-radius:10px;border:none;background:#1C6B21;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w16.plus }}{{ t.newCta }}</button>
+                  </div>
+                </div>
+                <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;overflow:hidden">
+                  <div style="padding:14px 18px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                    <div style="flex:1;min-width:220px;background:#F8FBF7;border:1px solid #DEE5DB;border-radius:9px;height:36px;display:flex;align-items:center;padding:0 11px;gap:8px">
+                      {{ dec16.search }}<span style="font-size:12.5px;color:#ADB5A7">{{ t.listSearchPh }}</span>
+                    </div>
+                    <div style="display:flex;gap:7px">
+                      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
+                        <span style="background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.bd }};border-radius:20px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer">{{ c.label }}</span>
+                      </sc-for>
+                    </div>
+                    <button style="height:36px;padding:0 13px;border-radius:9px;border:1px solid #DEE5DB;background:#fff;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx16.calendar }}{{ t.dateRange }}</button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:158px 1fr 132px 128px 118px 44px;gap:12px;padding:11px 18px;background:#F8FBF7;border-bottom:1px solid #E6EBE2;font-size:11.5px;font-weight:700;color:#4B5A47">
+                    <span>{{ t.thRef }}</span><span>{{ t.thSubject }}</span><span>{{ t.thPurpose }}</span><span>{{ t.thStatus }}</span><span>{{ t.thDate }}</span><span></span>
+                  </div>
+                  <sc-for list="{{ listRows }}" as="r" hint-placeholder-count="7">
+                    <button onClick="{{ goDetail }}" style="width:100%;display:grid;grid-template-columns:158px 1fr 132px 128px 118px 44px;gap:12px;padding:13px 18px;border:none;border-bottom:1px solid #F1F4EE;background:#fff;align-items:center;cursor:pointer;text-align:left;font-family:'Inter','Anuphan',sans-serif">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#1C6B21">{{ r.ref }}</span>
+                      <div style="min-width:0">
+                        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.subject }}</div>
+                        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58;margin-top:2px">{{ r.key }}</div>
+                      </div>
+                      <span style="font-size:12px;color:#4B5A47">{{ r.purpose }}</span>
+                      <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.bg }};color:{{ r.tx }};font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;justify-self:start"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.dot }};display:block"></span>{{ r.status }}</span>
+                      <span style="font-size:11.5px;color:#4B5A47">{{ r.date }}</span>
+                      <span style="justify-self:end">{{ dec16.chevronR }}</span>
+                    </button>
+                  </sc-for>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:#F8FBF7">
+                    <span style="font-size:12px;color:#5E6D58">{{ t.pageInfo }}</span>
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center">{{ dec16.chevronL }}</span>
+                      <span style="width:30px;height:30px;border-radius:8px;background:#1C6B21;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700">1</span>
+                      <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:#4B5A47">2</span>
+                      <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center">{{ dec16.chevronR }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <button onClick="{{ goList }}" style="display:flex;align-items:center;gap:7px;border:none;background:none;color:#4B5A47;font-size:12.5px;font-weight:600;cursor:pointer;padding:0;margin-bottom:14px;font-family:'Inter','Anuphan',sans-serif">{{ tx16.chevronL }}{{ t.backToList }}</button>
+                <div style="display:flex;gap:16px;align-items:flex-start">
+                  <div style="flex:1;min-width:0;background:#fff;border:1px solid #DEE5DB;border-radius:16px;overflow:hidden">
+                    <div style="background:linear-gradient(135deg,#1C6B21,#0E3A13);padding:22px 24px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden">
+                      <div style="position:absolute;right:-40px;top:-50px;width:180px;height:180px;border-radius:50%;background:rgba(198,154,46,0.18)"></div>
+                      <div style="width:66px;height:66px;border-radius:50%;border:2.5px solid #C69A2E;background:rgba(198,154,46,0.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1">{{ gold30.shieldCheck }}</div>
+                      <div style="position:relative;z-index:1;flex:1">
+                        <div style="color:#fff;font-size:11px;font-weight:700;letter-spacing:0.16em;margin-bottom:5px">{{ t.verifiedStamp }}</div>
+                        <div style="color:#fff;font-size:20px;font-weight:700">{{ t.resultTitle }}</div>
+                        <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-top:4px;font-family:'JetBrains Mono',monospace">KRU-2569-000122 · AUTO · 10 {{ t.sep }} 2569 15:02</div>
+                      </div>
+                    </div>
+                    <div style="padding:22px 24px">
+                      <div style="display:flex;gap:9px;margin-bottom:16px">
+                        <span style="display:inline-flex;align-items:center;gap:7px;background:#E7F5E5;color:#145018;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px">{{ p14.checkCircle }}{{ t.graduated }}</span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;background:#FDF6E4;color:#6B4E0A;border:1px solid #EAD9A8;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px">{{ gold14.star }}{{ t.honors }}</span>
+                      </div>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#E6EBE2;border:1px solid #DEE5DB;border-radius:13px;overflow:hidden">
+                        <sc-for list="{{ resultFields }}" as="f" hint-placeholder-count="10">
+                          <div style="background:#fff;padding:13px 15px;grid-column:{{ f.span }}">
+                            <div style="font-size:11px;color:#5E6D58;margin-bottom:3px">{{ f.k }}</div>
+                            <div style="font-size:14.5px;font-weight:600;line-height:1.4;font-family:{{ f.font }}">{{ f.v }}</div>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <div style="display:flex;gap:10px;margin-top:18px;align-items:center">
+                        <button style="height:42px;padding:0 17px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx18.print }}{{ t.print }}</button>
+                        <button style="height:42px;padding:0 17px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx18.copy }}{{ t.copyLink }}</button>
+                        <button style="height:42px;padding:0 17px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx18.external }}{{ t.openPermalink }}</button>
+                      </div>
+                      <div style="background:#F8FBF7;border:1px solid #E6EBE2;border-radius:11px;padding:13px;margin-top:14px;display:flex;gap:10px;align-items:flex-start">
+                        <div style="margin-top:1px">{{ info17.info }}</div>
+                        <span style="font-size:11.5px;color:#4B5A47;line-height:1.6">{{ t.snapshotNote }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="width:312px;flex:none;display:flex;flex-direction:column;gap:14px">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:13.5px;font-weight:700;margin-bottom:14px">{{ t.timeline }}</div>
+                      <div style="display:flex;flex-direction:column">
+                        <sc-for list="{{ timeline }}" as="e" hint-placeholder-count="4">
+                          <div style="display:flex;gap:12px">
+                            <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+                              <span style="width:26px;height:26px;border-radius:50%;background:{{ e.dotBg }};display:flex;align-items:center;justify-content:center">{{ e.el }}</span>
+                              <span style="width:1.5px;flex:1;background:#E6EBE2;min-height:{{ e.lineH }}px"></span>
+                            </div>
+                            <div style="padding-bottom:14px">
+                              <div style="font-size:12.5px;font-weight:700">{{ e.title }}</div>
+                              <div style="font-size:11.5px;color:#5E6D58;line-height:1.5;margin-top:2px">{{ e.sub }}</div>
+                              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#7C8B76;margin-top:3px">{{ e.time }}</div>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:13.5px;font-weight:700;margin-bottom:12px">{{ t.reqInfo }}</div>
+                      <div style="display:flex;flex-direction:column;gap:9px">
+                        <sc-for list="{{ reqInfoRows }}" as="r" hint-placeholder-count="4">
+                          <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px">
+                            <span style="color:#5E6D58;flex-shrink:0">{{ r.k }}</span>
+                            <span style="font-weight:600;text-align:right;font-family:{{ r.font }}">{{ r.v }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isBatch }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px">
+                  <div>
+                    <h1 style="font-size:23px;font-weight:700;margin:0 0 4px;letter-spacing:-0.01em">{{ t.batchTitle }}</h1>
+                    <p style="font-size:13px;color:#5E6D58;margin:0">{{ t.batchSub }}</p>
+                  </div>
+                  <button style="height:38px;padding:0 15px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx16.download }}{{ t.template }}</button>
+                </div>
+                <div style="display:flex;gap:16px;align-items:flex-start">
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:14px">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:22px">
+                      <div style="border:1.5px dashed #BFCFB9;border-radius:13px;background:#F8FBF7;padding:26px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+                        <div style="width:54px;height:54px;border-radius:15px;background:#E7F5E5;display:flex;align-items:center;justify-content:center">{{ p26.upload }}</div>
+                        <div style="font-size:15px;font-weight:700">{{ t.dropTitle }}</div>
+                        <div style="font-size:12px;color:#5E6D58;line-height:1.55;max-width:380px">{{ t.dropSub }}</div>
+                        <button style="height:38px;padding:0 17px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13px;font-weight:600;cursor:pointer;margin-top:2px;font-family:'Inter','Anuphan',sans-serif">{{ t.chooseFile }}</button>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:13px;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:12px;padding:13px;margin-top:14px">
+                        {{ p22.excel }}
+                        <div style="flex:1;min-width:0">
+                          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                            <span style="font-size:13px;font-weight:600">graduates-check-2569.xlsx</span>
+                            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47">128 / 200</span>
+                          </div>
+                          <div style="height:6px;background:#E6EBE2;border-radius:4px;margin-top:7px;overflow:hidden"><div style="width:64%;height:100%;background:#1C6B21;border-radius:4px"></div></div>
+                          <div style="font-size:11px;color:#5E6D58;margin-top:6px">{{ t.processing }}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;overflow:hidden">
+                      <div style="padding:15px 18px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;justify-content:space-between">
+                        <span style="font-size:14px;font-weight:700">{{ t.batchRows }}</span>
+                        <button style="height:32px;padding:0 13px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx14.excel }}{{ t.exportExcel }}</button>
+                      </div>
+                      <div style="display:grid;grid-template-columns:52px 1fr 168px 130px 44px;gap:12px;padding:10px 18px;background:#F8FBF7;border-bottom:1px solid #E6EBE2;font-size:11.5px;font-weight:700;color:#4B5A47">
+                        <span>{{ t.thRow }}</span><span>{{ t.thKeyValue }}</span><span>{{ t.thRef }}</span><span>{{ t.thStatus }}</span><span></span>
+                      </div>
+                      <sc-for list="{{ batchRows }}" as="r" hint-placeholder-count="5">
+                        <div style="display:grid;grid-template-columns:52px 1fr 168px 130px 44px;gap:12px;padding:12px 18px;border-bottom:1px solid #F1F4EE;align-items:center">
+                          <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#5E6D58">{{ r.n }}</span>
+                          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px">{{ r.key }}</span>
+                          <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:{{ r.refTx }}">{{ r.ref }}</span>
+                          <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.bg }};color:{{ r.tx }};font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;justify-self:start"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.dot }};display:block"></span>{{ r.status }}</span>
+                          <span style="justify-self:end">{{ r.chev }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div style="width:300px;flex:none;display:flex;flex-direction:column;gap:14px">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:13.5px;font-weight:700;margin-bottom:13px">{{ t.batchSummary }}</div>
+                      <div style="display:flex;flex-direction:column;gap:10px">
+                        <sc-for list="{{ batchSummary }}" as="s" hint-placeholder-count="4">
+                          <div style="display:flex;align-items:center;gap:11px;background:{{ s.bg }};border:1px solid {{ s.bd }};border-radius:11px;padding:11px 12px">
+                            <div>{{ s.el }}</div>
+                            <span style="font-size:12.5px;font-weight:600;color:{{ s.tx }};flex:1">{{ s.label }}</span>
+                            <span style="font-size:16px;font-weight:700;color:{{ s.tx }};font-variant-numeric:tabular-nums">{{ s.v }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="background:#FDF3DA;border:1px solid #F0DCAF;border-radius:15px;padding:16px">
+                      <div style="display:flex;gap:10px;align-items:flex-start">
+                        <div style="margin-top:1px">{{ amb18.alert }}</div>
+                        <div style="font-size:12px;color:#8A5A06;line-height:1.6">{{ t.batchQuotaNote }}</div>
+                      </div>
+                    </div>
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:13px;font-weight:700;margin-bottom:11px">{{ t.fileFormat }}</div>
+                      <div style="background:#F8FBF7;border:1px solid #E6EBE2;border-radius:10px;padding:11px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#4B5A47;line-height:1.8">search_type,search_value<br>CITIZEN_ID,1234567890123<br>PASSPORT,AB123456</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:390px;flex:none">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;background:#16210F;color:#fff;padding:3px 8px;border-radius:5px">MOBILE 390</span>
+        <span style="font-size:12.5px;color:#4B5A47;font-weight:600">{{ screenTitle }}</span>
+      </div>
+      <div style="width:390px;border-radius:34px;border:9px solid #16210F;overflow:hidden;background:#F8FBF7;box-shadow:0 18px 44px rgba(14,58,19,0.18);display:flex;flex-direction:column;min-height:760px">
+        <div style="height:30px;background:#16431A;display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;color:rgba(255,255,255,0.8)">09:41</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.8)">5G ▮</span>
+        </div>
+        <div style="height:52px;background:#16431A;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0">
+          <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:16px;display:block">
+          <span style="color:#fff;font-size:13.5px;font-weight:700;flex:1;margin-left:4px">{{ screenTitleShort }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:rgba(255,255,255,0.85)">{{ langShort }}</span>
+          <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-right:-10px">{{ w20.bell }}</div>
+        </div>
+
+        <div style="flex:1;min-width:0;padding:16px">
+          <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="background:linear-gradient(140deg,#2C8F2B,#1C6B21);border-radius:16px;padding:18px;margin-bottom:14px">
+                <div style="color:rgba(255,255,255,0.75);font-size:11.5px;margin-bottom:5px">{{ t.dashHello }}</div>
+                <div style="color:#fff;font-size:15px;font-weight:700;line-height:1.35;margin-bottom:14px">{{ t.orgName }}</div>
+                <button onClick="{{ goNew }}" style="width:100%;height:46px;border-radius:11px;border:none;background:#fff;color:#145018;font-size:14.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ p18.plus }}{{ t.newCta }}</button>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+                <sc-for list="{{ statsMobile }}" as="s" hint-placeholder-count="4">
+                  <div style="background:#fff;border:1px solid #DEE5DB;border-radius:13px;padding:13px">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                      <div style="width:30px;height:30px;border-radius:9px;background:{{ s.iconBg }};display:flex;align-items:center;justify-content:center">{{ s.el }}</div>
+                    </div>
+                    <div style="font-size:21px;font-weight:700;font-variant-numeric:tabular-nums">{{ s.v }}</div>
+                    <div style="font-size:11px;color:#5E6D58;margin-top:1px">{{ s.k }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:14px;font-weight:700;margin-bottom:10px">{{ t.recent }}</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ recentRows }}" as="r" hint-placeholder-count="3">
+                  <button onClick="{{ goDetail }}" style="background:#fff;border:1px solid #DEE5DB;border-radius:13px;padding:13px;text-align:left;cursor:pointer;font-family:'Inter','Anuphan',sans-serif;width:100%">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;color:#1C6B21">{{ r.ref }}</span>
+                      <span style="background:{{ r.bg }};color:{{ r.tx }};font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px">{{ r.status }}</span>
+                    </div>
+                    <div style="font-size:12.5px;color:#4B5A47;line-height:1.45">{{ r.desc }}</div>
+                    <div style="font-size:10.5px;color:#7C8B76;margin-top:5px">{{ r.date }}</div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <sc-if value="{{ isB }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-bottom:14px">
+                  <div style="display:flex;gap:6px;margin-bottom:8px">
+                    <span style="flex:1;height:4px;border-radius:3px;background:#1C6B21;display:block"></span>
+                    <span style="flex:1;height:4px;border-radius:3px;background:#1C6B21;display:block"></span>
+                    <span style="flex:1;height:4px;border-radius:3px;background:#DEE5DB;display:block"></span>
+                  </div>
+                  <div style="font-size:11.5px;color:#5E6D58">{{ t.wizStepMobile }}</div>
+                </div>
+              </sc-if>
+              <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:16px">
+                <div style="font-size:13px;font-weight:600;margin-bottom:8px">{{ t.keyType }}</div>
+                <div style="display:flex;background:#EEF2EC;border-radius:10px;padding:3px;margin-bottom:16px">
+                  <span style="flex:1;text-align:center;font-size:12.5px;font-weight:700;padding:9px 0;border-radius:8px;background:#fff;color:#1C6B21">{{ t.citizenIdShort }}</span>
+                  <span style="flex:1;text-align:center;font-size:12.5px;font-weight:600;padding:9px 0;border-radius:8px;color:#5E6D58">{{ t.passport }}</span>
+                </div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.citizenId }}</div>
+                <div style="border:1.5px solid #1C6B21;border-radius:10px;height:48px;display:flex;align-items:center;padding:0 13px;gap:10px">
+                  {{ p20.idCard }}<span style="font-family:'JetBrains Mono',monospace;font-size:15px;flex:1">1-2345-67890-12-3</span>{{ p18.checkCircle }}
+                </div>
+                <div style="font-size:13px;font-weight:600;margin:16px 0 6px">{{ t.purpose }}</div>
+                <div style="border:1px solid #DEE5DB;border-radius:10px;height:48px;display:flex;align-items:center;padding:0 13px;justify-content:space-between">
+                  <span style="font-size:13.5px">{{ t.purposeVal }}</span>{{ dec18.chevronDown }}
+                </div>
+              </div>
+              <div style="background:#FDF6E4;border:1px solid #EAD9A8;border-radius:15px;padding:14px;margin-top:12px;display:flex;gap:11px;align-items:flex-start">
+                <span style="width:20px;height:20px;border-radius:6px;background:#C69A2E;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">{{ w14.check }}</span>
+                <span style="font-size:12px;color:#6B4E0A;line-height:1.55">{{ t.consentShort }}</span>
+              </div>
+              <button style="width:100%;height:50px;border-radius:12px;border:none;background:#1C6B21;color:#fff;font-size:15px;font-weight:700;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.shieldCheck }}{{ submitLabel }}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-bottom:12px">
+                <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4">
+                  <span style="background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.bd }};border-radius:20px;padding:7px 13px;font-size:12px;font-weight:600;white-space:nowrap;flex-shrink:0">{{ c.label }}</span>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ listRowsMobile }}" as="r" hint-placeholder-count="5">
+                  <button onClick="{{ goDetail }}" style="background:#fff;border:1px solid #DEE5DB;border-radius:13px;padding:13px;text-align:left;cursor:pointer;font-family:'Inter','Anuphan',sans-serif;width:100%">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;color:#1C6B21">{{ r.ref }}</span>
+                      <span style="background:{{ r.bg }};color:{{ r.tx }};font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px">{{ r.status }}</span>
+                    </div>
+                    <div style="font-size:13px;font-weight:600">{{ r.subject }}</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58;margin-top:3px">{{ r.key }}</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+                      <span style="font-size:11px;color:#7C8B76">{{ r.purpose }}</span>
+                      <span style="font-size:11px;color:#7C8B76">{{ r.date }}</span>
+                    </div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="background:linear-gradient(135deg,#1C6B21,#0E3A13);border-radius:16px;padding:20px;text-align:center;margin-bottom:14px">
+                <div style="width:58px;height:58px;border-radius:50%;border:2.5px solid #C69A2E;background:rgba(198,154,46,0.16);display:flex;align-items:center;justify-content:center;margin:0 auto 11px">{{ gold26.shieldCheck }}</div>
+                <div style="color:#fff;font-size:10px;font-weight:700;letter-spacing:0.16em;margin-bottom:5px">{{ t.verifiedStamp }}</div>
+                <div style="color:#fff;font-size:16px;font-weight:700">{{ t.resultTitle }}</div>
+                <div style="color:rgba(255,255,255,0.72);font-size:10.5px;margin-top:5px;font-family:'JetBrains Mono',monospace">KRU-2569-000122 · AUTO</div>
+              </div>
+              <div style="border:1px solid #DEE5DB;border-radius:13px;overflow:hidden;background:#E6EBE2;display:flex;flex-direction:column;gap:1px">
+                <sc-for list="{{ resultFields }}" as="f" hint-placeholder-count="8">
+                  <div style="background:#fff;padding:12px 14px">
+                    <div style="font-size:10.5px;color:#5E6D58;margin-bottom:3px">{{ f.k }}</div>
+                    <div style="font-size:13.5px;font-weight:600;line-height:1.4;font-family:{{ f.font }}">{{ f.v }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <button style="width:100%;height:48px;border-radius:11px;border:1px solid #DEE5DB;background:#fff;font-size:14px;font-weight:600;margin-top:13px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx18.print }}{{ t.print }}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isBatch }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:16px;margin-bottom:12px">
+                <div style="border:1.5px dashed #BFCFB9;border-radius:12px;background:#F8FBF7;padding:20px;display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center">
+                  <div style="width:46px;height:46px;border-radius:13px;background:#E7F5E5;display:flex;align-items:center;justify-content:center">{{ p22.upload }}</div>
+                  <div style="font-size:13.5px;font-weight:700">{{ t.dropTitleMobile }}</div>
+                  <div style="font-size:11.5px;color:#5E6D58;line-height:1.5">{{ t.dropSubMobile }}</div>
+                  <button style="height:44px;padding:0 18px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ t.chooseFile }}</button>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ batchSummary }}" as="s" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:11px;background:{{ s.bg }};border:1px solid {{ s.bd }};border-radius:11px;padding:12px">
+                    <div>{{ s.el }}</div>
+                    <span style="font-size:12.5px;font-weight:600;color:{{ s.tx }};flex:1">{{ s.label }}</span>
+                    <span style="font-size:16px;font-weight:700;color:{{ s.tx }};font-variant-numeric:tabular-nums">{{ s.v }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="height:64px;background:#fff;border-top:1px solid #E6EBE2;display:flex;align-items:center;justify-content:space-around;padding:0 6px;flex-shrink:0">
+          <sc-for list="{{ bottomNav }}" as="b" hint-placeholder-count="4">
+            <button onClick="{{ b.go }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:56px;min-height:48px;justify-content:center;border:none;background:none;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">
+              <div>{{ b.el }}</div>
+              <span style="font-size:9.5px;font-weight:600;color:{{ b.color }}">{{ b.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1770},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dash&quot;,&quot;newReq&quot;,&quot;list&quot;,&quot;detail&quot;,&quot;batch&quot;],&quot;default&quot;:&quot;dash&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;มุมมอง&quot;},&quot;showQuotaWidget&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;มุมมอง&quot;}}">
+class Component extends DCLogic {
+  state = { screen:'dash', lang:'th', variant:'a' };
+  C = { pri:'#1C6B21', priSoft:'#E7F5E5', priTx:'#145018', priBd:'#C6E6C2', gold:'#C69A2E',
+        tx:'#16210F', tx2:'#4B5A47', tx3:'#5E6D58', dec:'#7C8B76', bd:'#DEE5DB',
+        amb:'#B8760B', ambBg:'#FDF3DA', ambTx:'#8A5A06', ambBd:'#F0DCAF',
+        red:'#C4322B', redBg:'#FCE9E7', redTx:'#8F211C', redBd:'#F3CFCB',
+        slate:'#4A5B7A', slateBg:'#ECEFF5', slateTx:'#35425C', slateBd:'#D7DEEA',
+        info:'#0F6E8C', infoBg:'#E2F2F6', infoTx:'#0A4F66', infoBd:'#C5E3EB',
+        gray:'#7C8B76', grayBg:'#EFF1ED', grayTx:'#4C5A46', grayBd:'#DFE4DA' };
+
+  ic(name,size,color,sw){
+    const h=React.createElement, P=(window.KRU_ICON_PATHS||{})[name]||[];
+    return h('svg',{viewBox:'0 0 24 24',width:size||20,height:size||20,fill:'none',stroke:color||'currentColor',strokeWidth:sw||1.5,strokeLinecap:'round',strokeLinejoin:'round',style:{display:'block',flexShrink:0}},
+      ...P.map((p,i)=>h(p[0],{key:i,...p[1]})));
+  }
+  set(size,color){ const o={}; Object.keys(window.KRU_ICON_PATHS||{}).forEach(n=>{o[n]=this.ic(n,size,color);}); return o; }
+  go(s){ return ()=>this.setState({screen:s}); }
+
+  TH={ portalLabel:'พอร์ทัลผู้ขอตรวจสอบ', quota:'โควตาชั่วโมงนี้', quotaNote:'รีเซ็ตทุกชั่วโมง · คำขอแบบชุดนับแยก',
+    searchPh:'ค้นหาเลขอ้างอิงหรือชื่อ…', avatar:'ณพ', userName:'ณัฐพร สุขใจ',
+    dashHello:'สวัสดี ณัฐพร', dashSub:'สรุปคำขอตรวจสอบวุฒิของหน่วยงานคุณ', newCta:'ยื่นคำขอใหม่', batchCta:'ตรวจสอบแบบชุด',
+    recent:'คำขอล่าสุด', seeAll:'ดูทั้งหมด', pendingTitle:'มี 2 คำขอรอเจ้าหน้าที่พิจารณา',
+    pendingBody:'ข้อมูลที่ระบบจับคู่ไม่ชัดเจนจะเข้าคิวให้เจ้าหน้าที่ทะเบียนตรวจสอบ โดยทั่วไปใช้เวลาไม่เกิน 1 วันทำการ',
+    shortcuts:'ทางลัด', orgStatus:'หน่วยงานของคุณ', orgName:'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด', orgApproved:'อนุมัติแล้ว',
+    orgNote:'อนุมัติเมื่อ 4 ก.ค. 2569 · ผู้ใช้ในหน่วยงาน 3 บัญชี',
+    newTitle:'ยื่นคำขอตรวจสอบวุฒิ', newSub:'กรอกคีย์ค้นหาและวัตถุประสงค์ ระบบจะจับคู่กับฐานทะเบียนทันที',
+    keySection:'คีย์ที่ใช้ค้นหา', citizenId:'เลขบัตรประจำตัวประชาชน', citizenIdShort:'เลขบัตรประชาชน', passport:'พาสปอร์ต', keyType:'ประเภทคีย์ค้นหา',
+    checksumOk:'เลขบัตรถูกต้องตาม checksum 13 หลัก',
+    keyNote:'ใช้เลขจากสำเนาบัตรที่ผู้สมัครให้ไว้ ระบบจะคืนรหัสนักศึกษาและวุฒิที่ตรงกัน — ไม่ต้องทราบรหัสนักศึกษาล่วงหน้า',
+    purposeSection:'วัตถุประสงค์และหมายเหตุ', purpose:'วัตถุประสงค์การตรวจสอบ', purposeVal:'สมัครงาน',
+    refYourSide:'เลขอ้างอิงฝ่ายคุณ (ถ้ามี)', refYourSidePh:'เช่น REQ-HR-2569-014',
+    note:'หมายเหตุถึงเจ้าหน้าที่', notePh:'ระบุข้อมูลเพิ่มเติมที่ช่วยให้เจ้าหน้าที่ยืนยันตัวบุคคลได้เร็วขึ้น…',
+    pdpaBody:'การตรวจสอบนี้เข้าถึงข้อมูลส่วนบุคคลอ่อนไหว ระบบจะบันทึกผู้ยื่น เวลา IP และเบราว์เซอร์ไว้ในบันทึกการเข้าถึง (Audit Log)',
+    consent:'ข้าพเจ้ามีเหตุอันควรในการขอตรวจสอบ และยอมรับ', privacyPolicy:'นโยบายความเป็นส่วนตัว',
+    saveDraft:'บันทึกฉบับร่าง', quotaLeft:'เหลือโควตา 6 คำขอในชั่วโมงนี้',
+    whatHappens:'เกิดอะไรขึ้นหลังส่ง', newTip:'ตรวจเลขบัตรให้ตรงกับสำเนาก่อนส่ง — เลขที่พิมพ์ผิดจะทำให้คำขอเข้าคิวเจ้าหน้าที่และใช้เวลานานขึ้น',
+    submit:'ส่งคำขอตรวจสอบ', nextStep:'ถัดไป: วัตถุประสงค์', wizStepMobile:'ขั้นที่ 2 จาก 3 · คีย์ค้นหา',
+    consentShort:'ข้าพเจ้ายอมรับนโยบายความเป็นส่วนตัวและมีเหตุอันควรในการขอตรวจสอบ',
+    listTitle:'คำขอของฉัน', listSub:'คำขอตรวจสอบวุฒิทั้งหมดของหน่วยงานคุณ', listSearchPh:'ค้นหาเลขอ้างอิง ชื่อ หรือเลขบัตร…',
+    exportExcel:'Export Excel', dateRange:'ช่วงวันที่',
+    thRef:'เลขอ้างอิง', thSubject:'ผู้ถูกตรวจสอบ', thPurpose:'วัตถุประสงค์', thStatus:'สถานะ', thDate:'วันที่ยื่น', thRow:'แถว', thKeyValue:'คีย์ค้นหา',
+    pageInfo:'แสดง 1–7 จาก 42 รายการ', backToList:'กลับไปรายการคำขอ',
+    verifiedStamp:'VERIFIED · ตรวจสอบแล้ว', resultTitle:'ผลการตรวจสอบวุฒิการศึกษา', graduated:'สำเร็จการศึกษา', honors:'เกียรตินิยมอันดับหนึ่ง',
+    print:'พิมพ์ผล', copyLink:'คัดลอกลิงก์', openPermalink:'เปิด permalink', sep:'ก.ย.',
+    snapshotNote:'ผลนี้เป็นสำเนาถาวร (snapshot) ณ เวลาที่ระบบอนุมัติ หากข้อมูลต้นทางเปลี่ยนภายหลัง ผลฉบับนี้จะไม่เปลี่ยนตาม',
+    timeline:'ไทม์ไลน์คำขอ', reqInfo:'ข้อมูลคำขอ',
+    batchTitle:'ตรวจสอบแบบชุด', batchSub:'อัปโหลดไฟล์ CSV หรือ Excel เพื่อยื่นคำขอหลายรายการพร้อมกัน', template:'ดาวน์โหลดเทมเพลต',
+    dropTitle:'ลากไฟล์มาวางที่นี่', dropSub:'รองรับ .csv และ .xlsx · สูงสุด 500 แถวต่อไฟล์ · ต้องมีคอลัมน์ search_type และ search_value',
+    dropTitleMobile:'อัปโหลดไฟล์', dropSubMobile:'.csv หรือ .xlsx สูงสุด 500 แถว', chooseFile:'เลือกไฟล์จากเครื่อง',
+    processing:'กำลังประมวลผลแถวที่ 128 จาก 200…', batchRows:'ผลลัพธ์รายแถว', batchSummary:'สรุปผลแบบชุด',
+    batchQuotaNote:'โควตาแบบชุด 480 จาก 500 แถวต่อวัน · ระบบเตือนที่ 90% และหยุดรับไฟล์เมื่อครบโควตา',
+    fileFormat:'รูปแบบไฟล์' };
+  EN={ portalLabel:'Requester portal', quota:'This hour quota', quotaNote:'Resets hourly · batch counts separately',
+    searchPh:'Search reference or name…', avatar:'NS', userName:'Nattaporn S.',
+    dashHello:'Hello Nattaporn', dashSub:'Verification activity for your organisation', newCta:'New request', batchCta:'Batch check',
+    recent:'Recent requests', seeAll:'See all', pendingTitle:'2 requests awaiting staff review',
+    pendingBody:'Requests the system could not match clearly go to the registrar queue. This usually takes less than one business day.',
+    shortcuts:'Shortcuts', orgStatus:'Your organisation', orgName:'Thai HR Solutions Co., Ltd.', orgApproved:'Approved',
+    orgNote:'Approved 4 Jul 2026 · 3 user accounts',
+    newTitle:'New verification request', newSub:'Enter the search key and purpose; the system matches the registry immediately.',
+    keySection:'Search key', citizenId:'Citizen ID number', citizenIdShort:'Citizen ID', passport:'Passport', keyType:'Search key type',
+    checksumOk:'Valid 13-digit checksum',
+    keyNote:'Use the number from the ID copy the applicant gave you. The system returns the matching student code and degree — you do not need the student code in advance.',
+    purposeSection:'Purpose and notes', purpose:'Purpose of verification', purposeVal:'Employment application',
+    refYourSide:'Your own reference (optional)', refYourSidePh:'e.g. REQ-HR-2026-014',
+    note:'Note to registrar staff', notePh:'Anything that helps staff confirm the identity faster…',
+    pdpaBody:'This verification accesses sensitive personal data. The submitter, timestamp, IP address and browser are written to the audit log.',
+    consent:'I have legitimate grounds for this request and accept the', privacyPolicy:'privacy policy',
+    saveDraft:'Save draft', quotaLeft:'6 requests left this hour',
+    whatHappens:'What happens after you submit', newTip:'Check the ID against the copy before submitting — a mistyped digit sends the request to the staff queue and takes longer.',
+    submit:'Submit request', nextStep:'Next: purpose', wizStepMobile:'Step 2 of 3 · Search key',
+    consentShort:'I accept the privacy policy and have legitimate grounds for this request.',
+    listTitle:'My requests', listSub:'All verification requests from your organisation', listSearchPh:'Search reference, name or ID…',
+    exportExcel:'Export Excel', dateRange:'Date range',
+    thRef:'Reference', thSubject:'Subject', thPurpose:'Purpose', thStatus:'Status', thDate:'Submitted', thRow:'Row', thKeyValue:'Search value',
+    pageInfo:'Showing 1–7 of 42', backToList:'Back to requests',
+    verifiedStamp:'VERIFIED', resultTitle:'Credential verification result', graduated:'Graduated', honors:'First class honours',
+    print:'Print', copyLink:'Copy link', openPermalink:'Open permalink', sep:'Sep',
+    snapshotNote:'This result is a permanent snapshot taken when the system approved it. Later changes to the source record do not alter this copy.',
+    timeline:'Request timeline', reqInfo:'Request details',
+    batchTitle:'Batch verification', batchSub:'Upload a CSV or Excel file to submit many requests at once', template:'Download template',
+    dropTitle:'Drag a file here', dropSub:'.csv and .xlsx · up to 500 rows per file · must include search_type and search_value columns',
+    dropTitleMobile:'Upload a file', dropSubMobile:'.csv or .xlsx, up to 500 rows', chooseFile:'Choose a file',
+    processing:'Processing row 128 of 200…', batchRows:'Row results', batchSummary:'Batch summary',
+    batchQuotaNote:'Batch quota 480 of 500 rows per day · warning at 90%, uploads stop at the limit.',
+    fileFormat:'File format' };
+
+  renderVals(){
+    const C=this.C, S=this.state, en=S.lang==='en', t=en?this.EN:this.TH;
+    const p14=this.set(14,C.pri), p16=this.set(16,C.pri), p18=this.set(18,C.pri), p20=this.set(20,C.pri), p22=this.set(22,C.pri), p26=this.set(26,C.pri);
+    const w14=this.set(14,'#fff'), w16=this.set(16,'#fff'), w18=this.set(18,'#fff'), w20=this.set(20,'#fff');
+    const dec14=this.set(14,C.dec), dec16=this.set(16,C.dec), dec18=this.set(18,C.dec);
+    const tx14=this.set(14,C.tx2), tx16=this.set(16,C.tx2), tx18=this.set(18,C.tx2);
+    const amb18=this.set(18,C.amb), info17=this.set(17,C.info);
+    const gold14=this.set(14,C.gold), gold18=this.set(18,C.gold), gold26=this.set(26,C.gold), gold30=this.set(30,C.gold);
+    const mono="'JetBrains Mono',monospace", sans="'Inter','Anuphan',sans-serif";
+    const on=(b)=>b?{bg:'#fff',tx:C.pri}:{bg:'transparent',tx:'rgba(255,255,255,0.6)'};
+    const seg=(b)=>b?{bg:'#fff',tx:C.pri}:{bg:'transparent',tx:C.tx3};
+    const st={ appr:{bg:C.priSoft,tx:C.priTx,dot:C.pri,label:en?'Approved':'อนุมัติแล้ว'},
+      pend:{bg:C.ambBg,tx:C.ambTx,dot:C.amb,label:en?'In review':'รอพิจารณา'},
+      rej:{bg:C.redBg,tx:C.redTx,dot:C.red,label:en?'Rejected':'ปฏิเสธ'},
+      nf:{bg:C.slateBg,tx:C.slateTx,dot:C.slate,label:en?'Not found':'ไม่พบข้อมูล'},
+      draft:{bg:C.grayBg,tx:C.grayTx,dot:C.gray,label:en?'Draft':'ฉบับร่าง'} };
+
+    const screens={ dash:{title:en?'Requester dashboard':'แดชบอร์ดผู้ขอ',short:en?'Dashboard':'แดชบอร์ด',route:'/(portal)/dashboard'},
+      newReq:{title:en?'New request':'ยื่นคำขอใหม่',short:en?'New request':'ยื่นคำขอ',route:'/(portal)/requests/new'},
+      list:{title:en?'My requests':'คำขอของฉัน',short:en?'My requests':'คำขอของฉัน',route:'/(portal)/requests'},
+      detail:{title:en?'Request detail & result':'รายละเอียดคำขอและผล',short:en?'Result':'ผลตรวจสอบ',route:'/(portal)/requests/[refNo]'},
+      batch:{title:en?'Batch verification':'ตรวจสอบแบบชุด',short:en?'Batch':'แบบชุด',route:'/(portal)/batch'} };
+    const cur=screens[S.screen]||screens.dash;
+    const navDef=[['dash','dashboard',en?'Dashboard':'แดชบอร์ด',''],['newReq','plus',en?'New request':'ยื่นคำขอใหม่',''],['list','fileSearch',en?'My requests':'คำขอของฉัน','42'],['batch','upload',en?'Batch':'ตรวจสอบแบบชุด',''],['detail','doc',en?'Latest result':'ผลล่าสุด',''],['profile','user',en?'Profile':'โปรไฟล์','']];
+
+    return {
+      t, screenTitle:cur.title, screenTitleShort:cur.short, screenRoute:cur.route,
+      isDash:S.screen==='dash', isNew:S.screen==='newReq', isList:S.screen==='list', isDetail:S.screen==='detail', isBatch:S.screen==='batch',
+      isA:S.variant==='a', isB:S.variant==='b', hasVariant:S.screen==='newReq', showRest:S.variant==='a'||S.screen!=='newReq',
+      submitLabel:(S.screen==='newReq'&&S.variant==='b')?t.nextStep:t.submit,
+      variantNote:S.screen==='newReq'?(S.variant==='a'?(en?'single page form':'ฟอร์มขั้นตอนเดียว'):(en?'3-step wizard':'ฟอร์มหลายสเต็ป')):'',
+      vA:on(S.variant==='a'), vB:on(S.variant==='b'), lTh:on(!en), lEn:on(en), hdTh:seg(!en), hdEn:seg(en), langShort:en?'EN':'TH',
+      setA:()=>this.setState({variant:'a'}), setB:()=>this.setState({variant:'b'}),
+      setTh:()=>this.setState({lang:'th'}), setEn:()=>this.setState({lang:'en'}),
+      goNew:this.go('newReq'), goList:this.go('list'), goDetail:this.go('detail'), goBatch:this.go('batch'), goDash:this.go('dash'),
+      tabs:[['dash',en?'Dashboard':'แดชบอร์ด'],['newReq',en?'New request':'ยื่นคำขอ'],['list',en?'My requests':'คำขอของฉัน'],['detail',en?'Result':'ผลตรวจสอบ'],['batch',en?'Batch':'แบบชุด']]
+        .map(([k,label])=>({label,go:this.go(k),bg:S.screen===k?'#fff':'rgba(255,255,255,0.08)',tx:S.screen===k?C.tx:'rgba(255,255,255,0.78)',bd:S.screen===k?'#fff':'rgba(255,255,255,0.18)'})),
+      p14,p16,p18,p20,p22,p26,w14,w16,w18,w20,dec14,dec16,dec18,tx14,tx16,tx18,amb18,info17,gold14,gold18,gold26,gold30,
+
+      nav:navDef.map(([k,icon,label,count])=>({label,count,go:this.go(k),el:this.ic(icon,17,S.screen===k?'#fff':'rgba(255,255,255,0.62)'),
+        bg:S.screen===k?'rgba(255,255,255,0.13)':'transparent', color:S.screen===k?'#fff':'rgba(255,255,255,0.72)', weight:S.screen===k?'700':'500',
+        badgeBg:count?'rgba(255,255,255,0.16)':'transparent', badgeTx:count?'#fff':'transparent'})),
+      bottomNav:[['dash','home',en?'Home':'หน้าแรก'],['list','fileSearch',en?'Requests':'คำขอ'],['batch','upload',en?'Batch':'แบบชุด'],['detail','user',en?'Profile':'โปรไฟล์']]
+        .map(([k,icon,label])=>({label,go:this.go(k),el:this.ic(icon,21,S.screen===k?C.pri:C.dec),color:S.screen===k?C.pri:C.dec})),
+
+      stats:[
+        {v:'42',k:en?'total requests':'คำขอทั้งหมด',tag:en?'this year':'ปีนี้',tagTx:C.tx2,tagBg:C.grayBg,iconBg:C.priSoft,el:this.ic('fileSearch',19,C.pri)},
+        {v:'2',k:en?'awaiting review':'รอพิจารณา',tag:'SLA 24h',tagTx:C.ambTx,tagBg:C.ambBg,iconBg:C.ambBg,el:this.ic('clock',19,C.amb)},
+        {v:'37',k:en?'approved':'อนุมัติแล้ว',tag:'88%',tagTx:C.priTx,tagBg:C.priSoft,iconBg:C.priSoft,el:this.ic('fileCheck',19,C.pri)},
+        {v:'3',k:en?'not found / rejected':'ไม่พบ / ปฏิเสธ',tag:'7%',tagTx:C.slateTx,tagBg:C.slateBg,iconBg:C.slateBg,el:this.ic('xCircle',19,C.slate)},
+      ],
+      statsMobile:[
+        {v:'42',k:en?'total':'คำขอทั้งหมด',iconBg:C.priSoft,el:this.ic('fileSearch',17,C.pri)},
+        {v:'2',k:en?'in review':'รอพิจารณา',iconBg:C.ambBg,el:this.ic('clock',17,C.amb)},
+        {v:'37',k:en?'approved':'อนุมัติแล้ว',iconBg:C.priSoft,el:this.ic('fileCheck',17,C.pri)},
+        {v:'3',k:en?'not found':'ไม่พบข้อมูล',iconBg:C.slateBg,el:this.ic('xCircle',17,C.slate)},
+      ],
+      recentRows:[
+        {ref:'KRU-2569-000123',desc:en?'Citizen ID 1-2345-xxxxx-xx-3 · employment':'เลขบัตร 1-2345-xxxxx-xx-3 · สมัครงาน',date:en?'12 Sep 09:14':'12 ก.ย. 09:14',iconBg:C.ambBg,el:this.ic('clock',18,C.amb),...st.pend,status:st.pend.label},
+        {ref:'KRU-2569-000122',desc:en?'Ms. Siriporn Jaidee · BBA (Marketing)':'นางสาวศิริพร ใจดี · บริหารธุรกิจ (การตลาด)',date:en?'10 Sep 15:02':'10 ก.ย. 15:02',iconBg:C.priSoft,el:this.ic('fileCheck',18,C.pri),...st.appr,status:st.appr.label},
+        {ref:'KRU-2569-000121',desc:en?'Passport AB123456 · further study':'พาสปอร์ต AB123456 · ศึกษาต่อ',date:en?'9 Sep 11:20':'9 ก.ย. 11:20',iconBg:C.ambBg,el:this.ic('clock',18,C.amb),...st.pend,status:st.pend.label},
+        {ref:'KRU-2569-000102',desc:en?'Citizen ID 3-4567-xxxxx-xx-1 · employment':'เลขบัตร 3-4567-xxxxx-xx-1 · สมัครงาน',date:en?'8 Sep 11:47':'8 ก.ย. 11:47',iconBg:C.slateBg,el:this.ic('xCircle',18,C.slate),...st.nf,status:st.nf.label},
+      ],
+      shortcuts:[
+        {label:en?'Submit a single request':'ยื่นคำขอเดี่ยว',go:this.go('newReq'),el:this.ic('plus',17,C.pri)},
+        {label:en?'Upload a batch file':'อัปโหลดไฟล์แบบชุด',go:this.go('batch'),el:this.ic('upload',17,C.pri)},
+        {label:en?'Download the CSV template':'ดาวน์โหลดเทมเพลต CSV',go:this.go('batch'),el:this.ic('download',17,C.pri)},
+      ],
+      keyTypes:[
+        {label:en?'Citizen ID':'เลขบัตรประชาชน',sub:en?'13 digits, checksum validated':'13 หลัก ตรวจ checksum อัตโนมัติ',el:this.ic('idCard',18,C.pri),bd:C.pri,bg:C.priSoft,radio:C.pri,dot:C.pri,tx:C.priTx},
+        {label:en?'Passport no.':'เลขที่หนังสือเดินทาง',sub:en?'For international graduates':'สำหรับผู้สำเร็จการศึกษาชาวต่างชาติ',el:this.ic('passport',18,C.tx2),bd:C.bd,bg:'#fff',radio:'#C7CFC2',dot:'transparent',tx:C.tx},
+      ],
+      wizardSteps:[
+        {n:'1',title:en?'Key type':'เลือกประเภทคีย์',sub:en?'ID or passport':'บัตรประชาชน / พาสปอร์ต',bg:C.priSoft,bd:C.priBd,tx:C.priTx,subTx:C.priTx,dotBg:C.pri,dotTx:'#fff',mark:this.ic('checkCircle',17,C.pri)},
+        {n:'2',title:en?'Search value':'กรอกคีย์ค้นหา',sub:en?'Validated live':'ตรวจความถูกต้องทันที',bg:'#fff',bd:C.pri,tx:C.tx,subTx:C.tx3,dotBg:C.pri,dotTx:'#fff',mark:null},
+        {n:'3',title:en?'Purpose & consent':'วัตถุประสงค์และยินยอม',sub:en?'PDPA required':'ต้องยินยอมตาม PDPA',bg:'#fff',bd:C.bd,tx:C.tx3,subTx:C.dec,dotBg:C.grayBg,dotTx:C.tx3,mark:null},
+      ],
+      flowPoints:[
+        {title:en?'Clear match → instant result':'ตรงชัดเจน → ได้ผลทันที',sub:en?'One exact match with a graduated record is approved automatically.':'พบ 1 รายการที่ตรงและสำเร็จการศึกษา ระบบอนุมัติอัตโนมัติ',tx:C.priTx,el:this.ic('checkCircle',18,C.pri)},
+        {title:en?'Ambiguous → staff queue':'กำกวม → เข้าคิวเจ้าหน้าที่',sub:en?'Duplicate names, revoked degrees or pre-digital records need review.':'ชื่อซ้ำ วุฒิถูกเพิกถอน หรือข้อมูลเก่า ต้องให้เจ้าหน้าที่ตรวจ',tx:C.ambTx,el:this.ic('clock',18,C.amb)},
+        {title:en?'Email at every step':'แจ้งอีเมลทุกขั้น',sub:en?'You are notified when the request is received and when it is decided.':'ได้รับอีเมลเมื่อระบบรับคำขอ และเมื่อมีผลการพิจารณา',tx:C.infoTx,el:this.ic('mail',18,C.info)},
+      ],
+      chips:[
+        {label:en?'All':'ทั้งหมด',bg:C.pri,tx:'#fff',bd:C.pri},
+        {label:en?'In review 2':'รอพิจารณา 2',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:en?'Approved':'อนุมัติแล้ว',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:en?'Not found':'ไม่พบข้อมูล',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:en?'Drafts':'ฉบับร่าง',bg:'#fff',tx:C.tx2,bd:C.bd},
+      ],
+      listRows:[
+        {ref:'KRU-2569-000123',subject:en?'Pending identification':'รอยืนยันตัวบุคคล',key:'1-2345-xxxxx-xx-3',purpose:en?'Employment':'สมัครงาน',date:en?'12 Sep 2026':'12 ก.ย. 2569',...st.pend,status:st.pend.label},
+        {ref:'KRU-2569-000122',subject:en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี',key:'1-1011-xxxxx-xx-7',purpose:en?'Employment':'สมัครงาน',date:en?'10 Sep 2026':'10 ก.ย. 2569',...st.appr,status:st.appr.label},
+        {ref:'KRU-2569-000121',subject:en?'Mr. Chen Wei':'นายเฉิน เหว่ย',key:'AB123456',purpose:en?'Further study':'ศึกษาต่อ',date:en?'9 Sep 2026':'9 ก.ย. 2569',...st.pend,status:st.pend.label},
+        {ref:'KRU-2569-000119',subject:en?'Mr. Anan Thongdee':'นายอนันต์ ทองดี',key:'3-1002-xxxxx-xx-4',purpose:en?'Employment':'สมัครงาน',date:en?'9 Sep 2026':'9 ก.ย. 2569',...st.appr,status:st.appr.label},
+        {ref:'KRU-2569-000110',subject:en?'Ms. Kanya Pimsai':'นางสาวกัญญา พิมพ์ใส',key:'1-3099-xxxxx-xx-2',purpose:en?'Government service':'บรรจุราชการ',date:en?'8 Sep 2026':'8 ก.ย. 2569',...st.appr,status:st.appr.label},
+        {ref:'KRU-2569-000102',subject:en?'No matching record':'ไม่พบข้อมูลที่ตรงกัน',key:'3-4567-xxxxx-xx-1',purpose:en?'Employment':'สมัครงาน',date:en?'8 Sep 2026':'8 ก.ย. 2569',...st.nf,status:st.nf.label},
+        {ref:'KRU-2569-000098',subject:en?'Draft, not submitted':'ฉบับร่าง ยังไม่ส่ง',key:'—',purpose:en?'Employment':'สมัครงาน',date:en?'7 Sep 2026':'7 ก.ย. 2569',...st.draft,status:st.draft.label},
+      ],
+      listRowsMobile:[
+        {ref:'KRU-2569-000123',subject:en?'Pending identification':'รอยืนยันตัวบุคคล',key:'1-2345-xxxxx-xx-3',purpose:en?'Employment':'สมัครงาน',date:en?'12 Sep':'12 ก.ย.',...st.pend,status:st.pend.label},
+        {ref:'KRU-2569-000122',subject:en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี',key:'1-1011-xxxxx-xx-7',purpose:en?'Employment':'สมัครงาน',date:en?'10 Sep':'10 ก.ย.',...st.appr,status:st.appr.label},
+        {ref:'KRU-2569-000121',subject:en?'Mr. Chen Wei':'นายเฉิน เหว่ย',key:'AB123456',purpose:en?'Further study':'ศึกษาต่อ',date:en?'9 Sep':'9 ก.ย.',...st.pend,status:st.pend.label},
+        {ref:'KRU-2569-000102',subject:en?'No matching record':'ไม่พบข้อมูลที่ตรงกัน',key:'3-4567-xxxxx-xx-1',purpose:en?'Employment':'สมัครงาน',date:en?'8 Sep':'8 ก.ย.',...st.nf,status:st.nf.label},
+      ],
+      resultFields:[
+        {k:en?'Full name (TH)':'ชื่อ-นามสกุล',v:en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี',span:'auto',font:sans},
+        {k:en?'Full name (EN)':'ชื่อ-นามสกุล (อังกฤษ)',v:'Ms. Siriporn Jaidee',span:'auto',font:sans},
+        {k:en?'Student code':'รหัสนักศึกษา',v:'6012345678',span:'auto',font:mono},
+        {k:en?'Education level':'ระดับการศึกษา',v:en?"Bachelor's degree":'ปริญญาตรี',span:'auto',font:sans},
+        {k:en?'Degree / programme':'วุฒิ / หลักสูตร',v:en?'Bachelor of Business Administration (Marketing)':'บริหารธุรกิจบัณฑิต (การตลาด)',span:'span 2',font:sans},
+        {k:en?'Faculty':'คณะ',v:en?'Faculty of Business Administration':'คณะบริหารธุรกิจ',span:'auto',font:sans},
+        {k:en?'Graduation date':'วันสำเร็จการศึกษา',v:en?'31 May 2022':'31 พฤษภาคม 2565',span:'auto',font:sans},
+        {k:'GPA',v:'3.87',span:'auto',font:mono},
+        {k:en?'Honours':'เกียรตินิยม',v:en?'First class honours':'เกียรตินิยมอันดับหนึ่ง',span:'auto',font:sans},
+      ],
+      timeline:[
+        {title:en?'Request submitted':'ส่งคำขอ',sub:en?'Consent recorded with IP 203.150.xx.xx':'บันทึกความยินยอมพร้อม IP 203.150.xx.xx',time:'10 Sep 2026 15:01',dotBg:C.priSoft,el:this.ic('plus',15,C.pri),lineH:14},
+        {title:en?'Registry matched':'ระบบจับคู่ข้อมูล',sub:en?'One exact match, status GRADUATED':'พบ 1 รายการตรงกัน สถานภาพ GRADUATED',time:'10 Sep 2026 15:01',dotBg:C.priSoft,el:this.ic('database',15,C.pri),lineH:14},
+        {title:en?'Auto-approved':'อนุมัติอัตโนมัติ',sub:en?'Snapshot created, decision type AUTO':'สร้าง snapshot ผล · decisionType = AUTO',time:'10 Sep 2026 15:02',dotBg:C.priSoft,el:this.ic('checkCircle',15,C.pri),lineH:14},
+        {title:en?'Result email sent':'ส่งอีเมลแจ้งผล',sub:'hr@thaihr.co.th',time:'10 Sep 2026 15:02',dotBg:C.infoBg,el:this.ic('mail',15,C.info),lineH:0},
+      ],
+      reqInfoRows:[
+        {k:en?'Reference':'เลขอ้างอิง',v:'KRU-2569-000122',font:mono},
+        {k:en?'Search key':'คีย์ค้นหา',v:'1-1011-xxxxx-xx-7',font:mono},
+        {k:en?'Purpose':'วัตถุประสงค์',v:en?'Employment':'สมัครงาน',font:sans},
+        {k:en?'Decision':'การตัดสิน',v:en?'AUTO (system)':'AUTO (ระบบ)',font:sans},
+        {k:en?'Access expires':'รหัสเข้าถึงหมดอายุ',v:en?'10 Oct 2026':'10 ต.ค. 2569',font:sans},
+      ],
+      batchRows:[
+        {n:'1',key:'1101234567890',ref:'KRU-2569-000124',refTx:C.pri,...st.appr,status:st.appr.label,chev:this.ic('chevronR',15,C.dec)},
+        {n:'2',key:'3456789012345',ref:'KRU-2569-000125',refTx:C.pri,...st.pend,status:st.pend.label,chev:this.ic('chevronR',15,C.dec)},
+        {n:'3',key:'AB123456',ref:'KRU-2569-000126',refTx:C.pri,...st.appr,status:st.appr.label,chev:this.ic('chevronR',15,C.dec)},
+        {n:'4',key:'1209876543210',ref:'KRU-2569-000127',refTx:C.pri,...st.nf,status:st.nf.label,chev:this.ic('chevronR',15,C.dec)},
+        {n:'5',key:'12345',ref:en?'invalid row':'แถวไม่ถูกต้อง',refTx:C.red,bg:C.redBg,tx:C.redTx,dot:C.red,status:en?'Invalid ID':'เลขบัตรไม่ถูกต้อง',chev:this.ic('alert',15,C.red)},
+      ],
+      batchSummary:[
+        {label:en?'Approved':'อนุมัติแล้ว',v:'86',bg:C.priSoft,bd:C.priBd,tx:C.priTx,el:this.ic('checkCircle',18,C.pri)},
+        {label:en?'In review':'รอพิจารณา',v:'31',bg:C.ambBg,bd:C.ambBd,tx:C.ambTx,el:this.ic('clock',18,C.amb)},
+        {label:en?'Not found':'ไม่พบข้อมูล',v:'9',bg:C.slateBg,bd:C.slateBd,tx:C.slateTx,el:this.ic('xCircle',18,C.slate)},
+        {label:en?'Invalid rows':'แถวไม่ถูกต้อง',v:'2',bg:C.redBg,bd:C.redBd,tx:C.redTx,el:this.ic('alert',18,C.red)},
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

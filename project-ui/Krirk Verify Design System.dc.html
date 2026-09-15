@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.45 } }
+    body { margin:0; background:#F2F6F1; }
+    a { color:#1C6B21; text-decoration:none; }
+    a:hover { color:#08472B; text-decoration:underline; }
+    pre { margin:0; }
+  </style>
+</helmet>
+
+<div style="width:1280px;margin:0 auto;background:#F2F6F1;font-family:'Inter','Anuphan',sans-serif;color:#16210F;padding-bottom:80px">
+
+  <div style="background:linear-gradient(150deg,#2C8F2B 0%,#1C6B21 48%,#0E3A13 100%);padding:56px 64px 48px;position:relative;overflow:hidden">
+    <div style="position:absolute;right:-70px;top:-70px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+    <div style="position:absolute;right:150px;bottom:-100px;width:220px;height:220px;border-radius:50%;background:rgba(198,154,46,0.16)"></div>
+    <div style="position:relative;z-index:1;display:flex;align-items:center;gap:18px;margin-bottom:28px">
+      <div style="background:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 8px 28px rgba(14,58,19,0.22)">
+        <img src="kru-logo.png" alt="มหาวิทยาลัยเกริก" style="height:34px;display:block">
+      </div>
+      <div>
+        <div style="color:rgba(255,255,255,0.62);font-size:13px;letter-spacing:0.18em;font-weight:600">DESIGN SYSTEM</div>
+        <div style="color:#fff;font-size:15px;letter-spacing:0.04em;margin-top:3px">มหาวิทยาลัยเกริก · KRIRK UNIVERSITY</div>
+      </div>
+    </div>
+    <h1 style="color:#fff;font-size:46px;font-weight:700;letter-spacing:-0.02em;margin:0 0 12px;line-height:1.1">Krirk Verify</h1>
+    <p style="color:rgba(255,255,255,0.78);font-size:17px;margin:0 0 28px;max-width:660px;line-height:1.55">คู่มือระบบดีไซน์ของระบบตรวจสอบวุฒิการศึกษาออนไลน์ — สี ตัวอักษร ไอคอน ส่วนประกอบ และโทเคน สำหรับ Next.js 16 + Tailwind CSS v4 + shadcn/ui</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">{{ coverChips }}</div>
+  </div>
+
+  <div style="padding:0 64px">
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">01</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">สีในระบบ — Color Palette</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">สีเขียวประจำมหาวิทยาลัยเกริกเป็นสีหลัก · สีทองจากตราสัญลักษณ์เป็นสีรอง · โทนกลางอมเขียวอ่อน และสีสถานะที่แยกจากสีแบรนด์ได้ชัด</p>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Brand · สีแบรนด์</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+            <sc-for list="{{ brandSwatches }}" as="s" hint-placeholder-count="8">
+              <div style="border-radius:13px;overflow:hidden;border:1px solid #DEE5DB;background:#fff">
+                <div style="height:82px;background:{{ s.hex }}"></div>
+                <div style="padding:10px 12px">
+                  <div style="font-size:12.5px;font-weight:700;color:#16210F;margin-bottom:2px">{{ s.name }}</div>
+                  <div style="font-size:10.5px;color:#5E6D58;margin-bottom:6px;line-height:1.35">{{ s.role }}</div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47">{{ s.hex }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px;align-items:flex-start;background:#E7F5E5;border-radius:12px;padding:12px 14px">
+            <div style="margin-top:1px">{{ p18.bulb }}</div>
+            <div style="font-size:12.5px;color:#145018;line-height:1.55">เขียวโลโก้ <strong>#38AE36</strong> สว่างเกินไปสำหรับตัวอักษรบนพื้นขาว (2.6:1) จึงใช้เฉพาะโลโก้และไฮไลต์บนพื้นเข้ม — สีปุ่ม/ลิงก์ทั้งระบบใช้ <strong>#1C6B21</strong> ซึ่งเป็นเฉดเข้มของสีเดียวกันและผ่าน AA · สีเขียวแบรนด์ถูกใช้เป็นสีของสถานะ <strong>“อนุมัติแล้ว”</strong> ด้วย — เพื่อไม่ให้มีเขียวสองเฉดชนกันในหน้าเดียว ส่วนสีทองสงวนไว้สำหรับตราประทับผลตรวจสอบและเกียรตินิยมเท่านั้น ห้ามใช้เป็นสีปุ่มหลัก</div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Surface &amp; Neutral · พื้นผิวและโทนกลาง</div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px">
+            <sc-for list="{{ neutralSwatches }}" as="s" hint-placeholder-count="7">
+              <div style="border-radius:13px;overflow:hidden;border:1px solid #DEE5DB;background:#fff">
+                <div style="height:74px;background:{{ s.hex }};border-bottom:1px solid #DEE5DB"></div>
+                <div style="padding:10px 11px">
+                  <div style="font-size:12px;font-weight:700;color:#16210F;margin-bottom:2px">{{ s.name }}</div>
+                  <div style="font-size:10.5px;color:#5E6D58;margin-bottom:6px;line-height:1.35">{{ s.role }}</div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#4B5A47">{{ s.hex }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Semantic &amp; Status · สีตามความหมาย</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+            <sc-for list="{{ statusCards }}" as="s" hint-placeholder-count="6">
+              <div style="border-radius:13px;border:1px solid #DEE5DB;overflow:hidden;background:#fff">
+                <div style="background:{{ s.bg }};padding:16px 14px 14px;display:flex;align-items:center;gap:10px">
+                  <span style="display:inline-flex;align-items:center;gap:7px;background:{{ s.badgeBg }};color:{{ s.badgeTx }};font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px">
+                    <span style="width:7px;height:7px;border-radius:50%;background:{{ s.dot }};display:block"></span>{{ s.label }}
+                  </span>
+                </div>
+                <div style="padding:11px 14px 13px">
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:#16210F;margin-bottom:5px">{{ s.enum }}</div>
+                  <div style="font-size:11.5px;color:#5E6D58;margin-bottom:9px;line-height:1.45">{{ s.use }}</div>
+                  <div style="display:flex;gap:5px;flex-wrap:wrap">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4B5A47;background:#F2F6F1;border-radius:5px;padding:2px 6px">{{ s.fg }}</span>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4B5A47;background:#F2F6F1;border-radius:5px;padding:2px 6px">{{ s.bg }}</span>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4B5A47;background:#F2F6F1;border-radius:5px;padding:2px 6px">{{ s.badgeTx }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Gradients · ไล่เฉด</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <sc-for list="{{ gradients }}" as="g" hint-placeholder-count="4">
+                <div style="border-radius:13px;overflow:hidden;border:1px solid #DEE5DB">
+                  <div style="height:72px;background:{{ g.css }}"></div>
+                  <div style="padding:10px 12px;background:#fff">
+                    <div style="font-size:12px;font-weight:700;color:#16210F;margin-bottom:4px">{{ g.label }}</div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4B5A47;line-height:1.4;word-break:break-all">{{ g.code }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Dark Mode · ชุดสีโหมดมืด</div>
+            <div style="background:#0E140C;border-radius:13px;padding:18px">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+                <sc-for list="{{ darkSwatches }}" as="s" hint-placeholder-count="6">
+                  <div>
+                    <div style="height:54px;background:{{ s.hex }};border-radius:9px;border:1px solid rgba(255,255,255,0.09)"></div>
+                    <div style="font-size:11.5px;font-weight:600;color:#E9EFE6;margin-top:7px">{{ s.name }}</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#93A38D;margin-top:1px">{{ s.hex }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">02</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">ตัวอักษร — Typography</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">Anuphan สำหรับภาษาไทย · Inter สำหรับภาษาอังกฤษและตัวเลข · JetBrains Mono สำหรับเลขอ้างอิงและรหัส — self-host ผ่าน <code style="font-family:'JetBrains Mono',monospace;font-size:12.5px">next/font/google</code></p>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+              <span style="font-size:60px;font-weight:700;font-family:'Anuphan',sans-serif;color:#1C6B21;line-height:1">กว</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47;background:#F2F6F1;border-radius:6px;padding:3px 8px">Anuphan</span>
+            </div>
+            <div style="font-size:15px;font-weight:700;margin-bottom:4px">Anuphan</div>
+            <div style="font-size:12.5px;color:#5E6D58;margin-bottom:12px;line-height:1.5">ข้อความภาษาไทยทั้งหมด · หัวชื่อ-นามสกุล วุฒิ คณะ · x-height สูง อ่านง่ายในตาราง</div>
+            <div style="font-family:'Anuphan',sans-serif;font-size:18px;color:#4B5A47">ตรวจสอบวุฒิการศึกษา</div>
+            <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+              <span style="font-family:'Anuphan';font-weight:300;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">300</span>
+              <span style="font-family:'Anuphan';font-weight:400;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">400</span>
+              <span style="font-family:'Anuphan';font-weight:500;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">500</span>
+              <span style="font-family:'Anuphan';font-weight:600;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">600</span>
+              <span style="font-family:'Anuphan';font-weight:700;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">700</span>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+              <span style="font-size:60px;font-weight:700;font-family:'Inter',sans-serif;color:#1C6B21;line-height:1">Aa</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47;background:#F2F6F1;border-radius:6px;padding:3px 8px">Inter</span>
+            </div>
+            <div style="font-size:15px;font-weight:700;margin-bottom:4px">Inter</div>
+            <div style="font-size:12.5px;color:#5E6D58;margin-bottom:12px;line-height:1.5">ภาษาอังกฤษ ตัวเลข GPA วันที่ และ UI ทั่วไป · ตั้ง <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px">tabular-nums</code> ในตาราง</div>
+            <div style="font-family:'Inter',sans-serif;font-size:18px;color:#4B5A47;font-variant-numeric:tabular-nums">GPA 3.87 · 2569</div>
+            <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+              <span style="font-family:'Inter';font-weight:400;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">400</span>
+              <span style="font-family:'Inter';font-weight:500;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">500</span>
+              <span style="font-family:'Inter';font-weight:600;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">600</span>
+              <span style="font-family:'Inter';font-weight:700;font-size:13px;background:#F2F6F1;border-radius:6px;padding:4px 10px">700</span>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+              <span style="font-size:60px;font-weight:500;font-family:'JetBrains Mono',monospace;color:#1C6B21;line-height:1">01</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47;background:#F2F6F1;border-radius:6px;padding:3px 8px">JetBrains Mono</span>
+            </div>
+            <div style="font-size:15px;font-weight:700;margin-bottom:4px">JetBrains Mono</div>
+            <div style="font-size:12.5px;color:#5E6D58;margin-bottom:12px;line-height:1.5">เลขอ้างอิงคำขอ รหัสนักศึกษา เลขบัตรที่ mask แล้ว และ token — ทุกค่าที่ผู้ใช้ต้องคัดลอกหรืออ่านทีละตัว</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#4B5A47">KRU-2569-000123</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#4B5A47;margin-top:4px">1-2345-xxxxx-xx-3</div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:8px;letter-spacing:0.04em;text-transform:uppercase">Type Scale · ลำดับขนาด (web · rem base 16)</div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="9">
+              <div style="display:flex;align-items:center;gap:20px;padding:13px 0;border-bottom:1px solid #EDF1EA">
+                <div style="width:112px;flex-shrink:0">
+                  <div style="font-size:12.5px;font-weight:700;color:#16210F">{{ t.name }}</div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58">{{ t.spec }}</span>
+                </div>
+                <div style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">{{ t.sample }}</div>
+                <div style="width:230px;flex-shrink:0;font-size:11.5px;color:#5E6D58;text-align:right">{{ t.use }}</div>
+                <div style="width:128px;flex-shrink:0;text-align:right"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#4B5A47;background:#F2F6F1;border-radius:5px;padding:2px 7px">{{ t.tw }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">03</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">ไอคอน — Icon Library</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">Hugeicons Stroke Rounded (แพ็กเกจฟรี) · viewBox 24×24 · stroke 1.5 · ปรับสี/ขนาด/น้ำหนักเส้นได้ · ใช้ผ่าน <code style="font-family:'JetBrains Mono',monospace;font-size:12.5px">@hugeicons/react</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:12.5px">@hugeicons/core-free-icons</code></p>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="width:9px;height:9px;border-radius:50%;background:#C69A2E;display:block"></span>
+              <span style="font-size:13px;font-weight:700">@hugeicons/core-free-icons</span>
+              <span style="font-size:12px;color:#5E6D58">· Stroke Rounded · {{ iconCount }} ไอคอนที่ระบบใช้</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47;background:#F2F6F1;border-radius:7px;padding:4px 10px">24×24 · stroke {{ strokeLabel }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:10px">
+            <sc-for list="{{ iconItems }}" as="i" hint-placeholder-count="48">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 4px 10px;border-radius:11px;background:#F8FBF7;border:1px solid #E6EBE2">
+                <div>{{ i.el }}</div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;color:#16210F;text-align:center;word-break:break-word;line-height:1.25">{{ i.constant }}</span>
+                <span style="font-size:9px;color:#5E6D58;text-align:center;line-height:1.2">{{ i.use }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px;align-items:flex-start;background:#FDF6E4;border-radius:12px;padding:12px 14px">
+            <div style="margin-top:1px">{{ g18.info }}</div>
+            <div style="font-size:12.5px;color:#6B4E0A;line-height:1.55">ตัวอย่างในหน้านี้วาดด้วย path สไตล์ stroke-rounded เพื่อกำหนด “ความหมายและขนาด” ของแต่ละไอคอน — เมื่อพัฒนาจริงให้ import ชื่อค่าคงที่ที่ระบุใต้ไอคอนจากแพ็กเกจ เพื่อให้ได้ path ต้นฉบับ</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">React Usage · วิธีเรียกใช้</div>
+            <div style="background:#0C1409;border-radius:12px;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;color:#E9EFE6;overflow-x:auto">
+<pre style="font-family:'JetBrains Mono',monospace">pnpm add @hugeicons/react @hugeicons/core-free-icons
+
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Search01Icon } from "@hugeicons/core-free-icons";
+
+&lt;HugeiconsIcon icon={Search01Icon}
+  size={20} strokeWidth={1.5}
+  className="text-primary" /&gt;</pre>
+            </div>
+            <div style="font-size:12.5px;color:#5E6D58;margin-top:12px;line-height:1.55">ห่อเป็น <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#1C6B21">&lt;Icon name="search" /&gt;</code> ใน <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#1C6B21">components/ui/icon.tsx</code> เพื่อคุมขนาดและ stroke ให้ตรงทั้งระบบ ไม่เรียก HugeiconsIcon กระจายในทุกไฟล์</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+              <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Sizes · ขนาดที่ใช้</div>
+              <div style="display:flex;align-items:flex-end;gap:26px">
+                <sc-for list="{{ iconSizes }}" as="s" hint-placeholder-count="5">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                    <div>{{ s.el }}</div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500">{{ s.px }}</span>
+                    <span style="font-size:10px;color:#5E6D58">{{ s.use }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+              <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Color Use · การใช้สีกับไอคอน</div>
+              <div style="display:flex;gap:14px;flex-wrap:wrap">
+                <sc-for list="{{ iconColors }}" as="c" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <div style="width:44px;height:44px;border-radius:12px;background:{{ c.bg }};display:flex;align-items:center;justify-content:center">{{ c.el }}</div>
+                    <span style="font-size:12px;color:#4B5A47;font-weight:600">{{ c.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">04</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">ปุ่ม — Buttons</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">ตรง variant ของ shadcn/ui — default · secondary · outline · ghost · destructive · link · พร้อมขนาด sm/default/lg และสถานะ loading/disabled</p>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:18px;letter-spacing:0.04em;text-transform:uppercase">Variants · ชนิดปุ่ม</div>
+          <div style="display:flex;gap:32px;flex-wrap:wrap;row-gap:26px">
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <span style="font-size:12px;font-weight:700;color:#4B5A47">default · ปุ่มหลัก</span>
+              <button style="background:#1C6B21;color:#fff;border:none;border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 1px 2px rgba(14,58,19,0.2)" style-hover="background:#145018">{{ w18.search }}ยื่นคำขอตรวจสอบ</button>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E6D58">bg-primary · h-10 · rounded-[10px]</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <span style="font-size:12px;font-weight:700;color:#4B5A47">secondary · ปุ่มรอง</span>
+              <button style="background:#E7F5E5;color:#145018;border:none;border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:#D6EBE0">{{ p18.download }}ดาวน์โหลดเทมเพลต</button>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E6D58">bg-secondary</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <span style="font-size:12px;font-weight:700;color:#4B5A47">outline · ขอบ</span>
+              <button style="background:#fff;color:#16210F;border:1px solid #DEE5DB;border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:#F8FBF7">{{ m18.refresh }}ดึงข้อมูลใหม่</button>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E6D58">border-input</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <span style="font-size:12px;font-weight:700;color:#4B5A47">ghost · โปร่ง</span>
+              <button style="background:transparent;color:#4B5A47;border:none;border-radius:10px;padding:0 14px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:#EEF2EC">{{ m18.filter }}ตัวกรอง</button>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E6D58">hover:bg-accent</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <span style="font-size:12px;font-weight:700;color:#4B5A47">destructive · ปฏิเสธ/ลบ</span>
+              <button style="background:#C4322B;color:#fff;border:none;border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:#A82A24">{{ w18.xCircle }}ปฏิเสธคำขอ</button>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E6D58">bg-destructive</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <span style="font-size:12px;font-weight:700;color:#4B5A47">link · ลิงก์</span>
+              <button style="background:none;border:none;color:#1C6B21;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0;height:40px;display:flex;align-items:center;gap:6px">ดูรายละเอียดคำขอ{{ p16.chevronR }}</button>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E6D58">text-primary underline</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:18px;letter-spacing:0.04em;text-transform:uppercase">Sizes &amp; States</div>
+            <div style="display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap;row-gap:20px">
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                <span style="font-size:11px;color:#5E6D58">sm · h-9</span>
+                <button style="background:#1C6B21;color:#fff;border:none;border-radius:9px;padding:0 14px;height:36px;font-size:13px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;cursor:pointer">อนุมัติ</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                <span style="font-size:11px;color:#5E6D58">default · h-10</span>
+                <button style="background:#1C6B21;color:#fff;border:none;border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;cursor:pointer">อนุมัติคำขอ</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                <span style="font-size:11px;color:#5E6D58">lg · h-11</span>
+                <button style="background:#1C6B21;color:#fff;border:none;border-radius:11px;padding:0 24px;height:44px;font-size:15px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;cursor:pointer">อนุมัติคำขอนี้</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                <span style="font-size:11px;color:#5E6D58">icon · size-10</span>
+                <button style="background:#fff;border:1px solid #DEE5DB;border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer">{{ m20.more }}</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                <span style="font-size:11px;color:#5E6D58">loading</span>
+                <button style="background:#1C6B21;opacity:0.6;color:#fff;border:none;border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;display:flex;align-items:center;gap:9px">
+                  <span style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:block"></span>กำลังตรวจสอบ
+                </button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                <span style="font-size:11px;color:#5E6D58">disabled</span>
+                <button style="background:#EEF2EC;color:#ADB5A7;border:none;border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;cursor:not-allowed">ส่งคำขอ</button>
+              </div>
+            </div>
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid #EDF1EA;font-size:12.5px;color:#5E6D58;line-height:1.6">ปุ่มบนมือถือสูงอย่างน้อย <strong style="color:#16210F">44px</strong> (h-11) และกว้างเต็มคอนเทนเนอร์ในฟอร์ม — ตาม F-UX-07</div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:18px;letter-spacing:0.04em;text-transform:uppercase">On Dark / บนพื้นเข้ม</div>
+            <div style="background:linear-gradient(140deg,#2C8F2B,#1C6B21 55%,#0E3A13);border-radius:13px;padding:22px;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+              <button style="background:#fff;color:#145018;border:none;border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:700;font-family:'Inter','Anuphan',sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer">{{ p18.shieldCheck }}ตรวจสอบวุฒิตอนนี้</button>
+              <button style="background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.32);border-radius:10px;padding:0 18px;height:40px;font-size:14px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer">{{ w18.doc }}อ่านวิธีใช้</button>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <span style="background:#C69A2E;color:#2C2003;font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px">GOLD SEAL</span>
+                <span style="color:rgba(255,255,255,0.7);font-size:11.5px">ใช้เฉพาะตราประทับผล</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">05</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">ฟอร์ม — Inputs &amp; Controls</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">ช่องกรอก ช่องเลขบัตรประชาชน select checkbox switch radio segmented และ dropzone อัปโหลดไฟล์ batch</p>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Text Input</div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">อีเมลหน่วยงาน</div>
+                <div style="background:#fff;border:1px solid #DEE5DB;border-radius:10px;height:40px;padding:0 12px;display:flex;align-items:center;gap:8px">
+                  {{ m18.mail }}<span style="font-size:14px;color:#ADB5A7">hr@company.co.th</span>
+                </div>
+                <div style="font-size:11.5px;color:#5E6D58;margin-top:5px">ใช้อีเมลองค์กร ไม่ใช้อีเมลส่วนตัว</div>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">เลขบัตรประจำตัวประชาชน</div>
+                <div style="background:#fff;border:1.5px solid #1C6B21;border-radius:10px;height:40px;padding:0 12px;display:flex;align-items:center;gap:8px;box-shadow:0 0 0 3px rgba(28,107,33,0.12)">
+                  {{ p18.idCard }}<span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#16210F;letter-spacing:0.04em">1-2345-67890-12-3</span>
+                </div>
+                <div style="font-size:11.5px;color:#145018;margin-top:5px;display:flex;align-items:center;gap:5px">{{ p14.checkCircle }}เลขบัตรถูกต้องตาม checksum</div>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">เลขที่หนังสือเดินทาง</div>
+                <div style="background:#fff;border:1.5px solid #C4322B;border-radius:10px;height:40px;padding:0 12px;display:flex;align-items:center;gap:8px">
+                  {{ d18.passport }}<span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#16210F">AB12</span>
+                </div>
+                <div style="font-size:11.5px;color:#C4322B;margin-top:5px;display:flex;align-items:center;gap:5px">{{ d14.alert }}รูปแบบพาสปอร์ตไม่ถูกต้อง (ต้อง 6–9 ตัวอักษร)</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Select · Textarea</div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">วัตถุประสงค์การตรวจสอบ</div>
+                <div style="background:#fff;border:1px solid #DEE5DB;border-radius:10px;height:40px;padding:0 12px;display:flex;align-items:center;justify-content:space-between">
+                  <span style="font-size:14px">สมัครงาน</span>{{ m18.chevronDown }}
+                </div>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">เหตุผลการปฏิเสธ (ผู้ขอเห็น)</div>
+                <div style="background:#fff;border:1px solid #DEE5DB;border-radius:10px;min-height:88px;padding:10px 12px;font-size:13.5px;color:#ADB5A7;line-height:1.5">ระบุเหตุผลที่ชัดเจน เช่น ไม่พบข้อมูลผู้สำเร็จการศึกษาตามเลขบัตรที่ระบุ…</div>
+                <div style="font-size:11px;color:#5E6D58;margin-top:5px;text-align:right;font-family:'JetBrains Mono',monospace">0 / 500</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Switch · Radio · Checkbox</div>
+            <div style="display:flex;flex-direction:column;gap:15px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:13.5px;font-weight:600">เปิด Auto-approve</span>
+                <div style="width:44px;height:26px;border-radius:20px;background:#1C6B21;position:relative;flex-shrink:0"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.25)"></div></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:13.5px;font-weight:600">แจ้งเตือนทางอีเมล</span>
+                <div style="width:44px;height:26px;border-radius:20px;background:#D6DCD2;position:relative;flex-shrink:0"><div style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></div></div>
+              </div>
+              <div style="height:1px;background:#EDF1EA"></div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span style="width:18px;height:18px;border-radius:50%;border:1.5px solid #1C6B21;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="width:9px;height:9px;border-radius:50%;background:#1C6B21;display:block"></span></span>
+                  <span style="font-size:13.5px">เลขบัตรประจำตัวประชาชน</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span style="width:18px;height:18px;border-radius:50%;border:1.5px solid #C7CFC2;display:block;flex-shrink:0"></span>
+                  <span style="font-size:13.5px;color:#4B5A47">เลขที่หนังสือเดินทาง</span>
+                </div>
+              </div>
+              <div style="height:1px;background:#EDF1EA"></div>
+              <div style="display:flex;align-items:flex-start;gap:10px">
+                <span style="width:19px;height:19px;border-radius:6px;background:#1C6B21;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">{{ w14.check }}</span>
+                <span style="font-size:12.5px;color:#4B5A47;line-height:1.5">ข้าพเจ้ายินยอมให้ประมวลผลข้อมูลส่วนบุคคลตาม PDPA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Segmented · Tabs · Chips · Search</div>
+            <div style="display:flex;flex-direction:column;gap:18px">
+              <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+                <div style="display:flex;background:#EEF2EC;border-radius:10px;padding:3px">
+                  <span style="font-size:12px;font-weight:700;padding:6px 16px;border-radius:8px;background:#fff;color:#1C6B21;box-shadow:0 1px 2px rgba(0,0,0,0.06)">ไทย</span>
+                  <span style="font-size:12px;font-weight:600;padding:6px 16px;border-radius:8px;color:#5E6D58">EN</span>
+                </div>
+                <div style="display:flex;background:#EEF2EC;border-radius:10px;padding:3px">
+                  <span style="font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;background:#fff;color:#1C6B21;box-shadow:0 1px 2px rgba(0,0,0,0.06)">คำขอเดี่ยว</span>
+                  <span style="font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;color:#5E6D58">แบบชุด</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ filterChips }}" as="c" hint-placeholder-count="5">
+                  <span style="background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.bd }};border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600">{{ c.label }}</span>
+                </sc-for>
+              </div>
+              <div style="background:#F8FBF7;border:1px solid #DEE5DB;border-radius:10px;height:40px;padding:0 12px;display:flex;align-items:center;gap:8px">
+                {{ m18.search }}<span style="font-size:13.5px;color:#ADB5A7">ค้นหาเลขอ้างอิง ชื่อ หรือหน่วยงาน…</span>
+                <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58;background:#EEF2EC;border-radius:5px;padding:2px 6px">⌘K</span>
+              </div>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">File Dropzone · อัปโหลด Batch</div>
+            <div style="border:1.5px dashed #BFCFB9;border-radius:13px;background:#F8FBF7;padding:26px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+              <div style="width:52px;height:52px;border-radius:14px;background:#E7F5E5;display:flex;align-items:center;justify-content:center">{{ p24.upload }}</div>
+              <div style="font-size:14px;font-weight:600">ลากไฟล์ CSV หรือ Excel มาวางที่นี่</div>
+              <div style="font-size:12px;color:#5E6D58;line-height:1.5">รองรับ .csv .xlsx · สูงสุด 500 แถวต่อไฟล์ · ต้องใช้คอลัมน์ตามเทมเพลต</div>
+              <button style="background:#fff;border:1px solid #DEE5DB;border-radius:9px;height:36px;padding:0 16px;font-size:13px;font-weight:600;font-family:'Inter','Anuphan',sans-serif;cursor:pointer;margin-top:2px">เลือกไฟล์จากเครื่อง</button>
+            </div>
+            <div style="margin-top:14px;display:flex;align-items:center;gap:12px;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:11px;padding:11px 13px">
+              {{ p20.excel }}
+              <div style="flex:1;min-width:0">
+                <div style="font-size:12.5px;font-weight:600">graduates-check-2569.xlsx</div>
+                <div style="height:5px;background:#E6EBE2;border-radius:4px;margin-top:6px;overflow:hidden"><div style="width:64%;height:100%;background:#1C6B21;border-radius:4px"></div></div>
+              </div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47">64%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">06</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">การแสดงข้อมูล — Badges, Table, Cards, States</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">ป้ายสถานะทุก enum ในระบบ · ตารางคิวงาน · การ์ดตัวเลข · alert · empty และ skeleton</p>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Status Badges · ป้ายสถานะตาม Enum</div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <sc-for list="{{ badgeGroups }}" as="g" hint-placeholder-count="4">
+              <div>
+                <div style="font-size:11.5px;color:#5E6D58;margin-bottom:9px;font-family:'JetBrains Mono',monospace">{{ g.title }}</div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <sc-for list="{{ g.items }}" as="b" hint-placeholder-count="4">
+                    <span style="display:inline-flex;align-items:center;gap:7px;background:{{ b.bg }};color:{{ b.tx }};font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px;border:1px solid {{ b.bd }}">
+                      <span style="width:7px;height:7px;border-radius:50%;background:{{ b.dot }};display:block"></span>{{ b.label }}
+                    </span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;letter-spacing:0.04em;text-transform:uppercase">Data Table · ตารางคิวคำขอ (TanStack Table)</div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58">rows h-52 · sticky header · zebra off</span>
+          </div>
+          <div style="border:1px solid #E6EBE2;border-radius:13px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:150px 1fr 130px 120px 118px 92px;gap:14px;padding:11px 16px;background:#F8FBF7;border-bottom:1px solid #E6EBE2;font-size:11.5px;font-weight:700;color:#4B5A47">
+              <span>เลขอ้างอิง</span><span>ผู้ขอ / หน่วยงาน</span><span>ประเภทคีย์</span><span>สถานะ</span><span>เวลารอ</span><span style="text-align:right">จัดการ</span>
+            </div>
+            <sc-for list="{{ tableRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:150px 1fr 130px 120px 118px 92px;gap:14px;padding:13px 16px;border-bottom:1px solid #F1F4EE;align-items:center">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#1C6B21">{{ r.ref }}</span>
+                <div style="min-width:0">
+                  <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.org }}</div>
+                  <div style="font-size:11px;color:#5E6D58">{{ r.email }}</div>
+                </div>
+                <span style="font-size:12px;color:#4B5A47">{{ r.key }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.bg }};color:{{ r.tx }};font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;justify-self:start"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.dot }};display:block"></span>{{ r.status }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:{{ r.slaColor }};font-weight:500">{{ r.sla }}</span>
+                <span style="justify-self:end">{{ r.action }}</span>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#F8FBF7">
+              <span style="font-size:12px;color:#5E6D58">แสดง 1–4 จาก 128 รายการ</span>
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center">{{ m16.chevronL }}</span>
+                <span style="width:30px;height:30px;border-radius:8px;background:#1C6B21;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700">1</span>
+                <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:#4B5A47">2</span>
+                <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:#4B5A47">3</span>
+                <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center">{{ m16.chevronR }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px">
+          <sc-for list="{{ statCards }}" as="s" hint-placeholder-count="4">
+            <div style="background:#fff;border-radius:16px;padding:20px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                <div style="width:40px;height:40px;border-radius:12px;background:{{ s.iconBg }};display:flex;align-items:center;justify-content:center">{{ s.el }}</div>
+                <span style="font-size:11px;font-weight:700;color:{{ s.deltaColor }};background:{{ s.deltaBg }};border-radius:20px;padding:3px 9px">{{ s.delta }}</span>
+              </div>
+              <div style="font-size:28px;font-weight:700;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">{{ s.value }}</div>
+              <div style="font-size:12.5px;color:#5E6D58;margin-top:3px">{{ s.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Alerts · Toast</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+                <div style="display:flex;gap:11px;background:{{ a.bg }};border:1px solid {{ a.bd }};border-radius:12px;padding:13px 14px">
+                  <div style="margin-top:1px">{{ a.el }}</div>
+                  <div style="min-width:0">
+                    <div style="font-size:13px;font-weight:700;color:{{ a.tx }};margin-bottom:2px">{{ a.title }}</div>
+                    <div style="font-size:12px;color:{{ a.tx }};opacity:0.85;line-height:1.5">{{ a.body }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Empty · Loading · Error</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="border:1px dashed #C7CFC2;border-radius:13px;padding:22px;text-align:center">
+                <div style="width:48px;height:48px;border-radius:14px;background:#EEF2EC;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">{{ m24.fileSearch }}</div>
+                <div style="font-size:13.5px;font-weight:700;margin-bottom:4px">ยังไม่มีคำขอในคิว</div>
+                <div style="font-size:12px;color:#5E6D58;line-height:1.5;max-width:280px;margin:0 auto">คำขอที่ระบบจับคู่ไม่ชัดเจนจะปรากฏที่นี่ให้เจ้าหน้าที่พิจารณา</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <div style="height:12px;border-radius:6px;background:#EEF2EC;width:38%;animation:pulse 1.4s ease-in-out infinite"></div>
+                <div style="height:12px;border-radius:6px;background:#EEF2EC;width:88%;animation:pulse 1.4s ease-in-out infinite"></div>
+                <div style="height:12px;border-radius:6px;background:#EEF2EC;width:66%;animation:pulse 1.4s ease-in-out infinite"></div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58;margin-top:2px">Skeleton · bg-muted + animate-pulse</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">07</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">นำทางและเลย์เอาต์ — Navigation &amp; Layout</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">App shell ของเจ้าหน้าที่ · sidebar 248px บนเดสก์ท็อป · bottom nav บนมือถือ · header พร้อมสลับภาษาและกระดิ่งแจ้งเตือน</p>
+
+      <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:18px;align-items:start">
+        <div style="background:#fff;border-radius:16px;padding:20px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="border:1px solid #E6EBE2;border-radius:13px;overflow:hidden;display:flex;height:430px">
+            <div style="width:214px;flex-shrink:0;background:#16431A;padding:14px 10px;display:flex;flex-direction:column;gap:3px">
+              <div style="padding:4px 8px 14px">
+                <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:20px;display:block;margin-bottom:7px">
+                <div style="color:#fff;font-size:12.5px;font-weight:700;line-height:1.2">Krirk Verify</div>
+                <div style="color:rgba(255,255,255,0.55);font-size:9.5px">ฝ่ายทะเบียนและวัดผล</div>
+              </div>
+              <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="9">
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:9px;background:{{ n.bg }}">
+                  <div>{{ n.el }}</div>
+                  <span style="font-size:12px;font-weight:{{ n.weight }};color:{{ n.color }};flex:1">{{ n.label }}</span>
+                  <span style="font-size:9.5px;font-weight:700;color:{{ n.badgeTx }};background:{{ n.badgeBg }};border-radius:10px;padding:1px 6px;font-family:'JetBrains Mono',monospace">{{ n.count }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;background:#F8FBF7">
+              <div style="height:52px;background:#fff;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;padding:0 16px;gap:12px">
+                <div style="flex:1;display:flex;align-items:center;gap:7px;font-size:11.5px;color:#5E6D58">
+                  <span>คิวคำขอ</span>{{ m14.chevronR }}<span style="color:#16210F;font-weight:600;font-family:'JetBrains Mono',monospace;font-size:11px">KRU-2569-000123</span>
+                </div>
+                <div style="display:flex;background:#EEF2EC;border-radius:8px;padding:2px">
+                  <span style="font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:6px;background:#fff;color:#1C6B21">TH</span>
+                  <span style="font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:6px;color:#5E6D58">EN</span>
+                </div>
+                <div style="position:relative;width:32px;height:32px;border-radius:9px;border:1px solid #E6EBE2;display:flex;align-items:center;justify-content:center">
+                  {{ m18.bell }}<span style="position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:#C4322B;border:1.5px solid #fff"></span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:30px;height:30px;border-radius:50%;background:#E7F5E5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#145018">สร</div>
+                  <div style="line-height:1.2">
+                    <div style="font-size:11.5px;font-weight:600">สมร รัตนกุล</div>
+                    <div style="font-size:9.5px;color:#5E6D58;font-family:'JetBrains Mono',monospace">REGISTRAR</div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div>
+                    <div style="font-size:16px;font-weight:700">พิจารณาคำขอ</div>
+                    <div style="font-size:11.5px;color:#5E6D58;margin-top:2px">รอพิจารณามาแล้ว 4 ชม. 12 นาที</div>
+                  </div>
+                  <div style="display:flex;gap:8px">
+                    <span style="height:32px;padding:0 13px;border-radius:9px;background:#fff;border:1px solid #DEE5DB;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">{{ m16.xCircle }}ปฏิเสธ</span>
+                    <span style="height:32px;padding:0 13px;border-radius:9px;background:#1C6B21;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">{{ w16.check }}อนุมัติ</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:12px;flex:1">
+                  <div style="flex:1;background:#fff;border:1px solid #E6EBE2;border-radius:11px;padding:12px">
+                    <div style="font-size:10.5px;font-weight:700;color:#5E6D58;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:9px">ข้อมูลคำขอ</div>
+                    <div style="display:flex;flex-direction:column;gap:7px">
+                      <sc-for list="{{ reqRows }}" as="r" hint-placeholder-count="4">
+                        <div style="display:flex;justify-content:space-between;gap:8px;font-size:11.5px">
+                          <span style="color:#5E6D58">{{ r.k }}</span>
+                          <span style="font-weight:600;text-align:right">{{ r.v }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div style="flex:1;background:#fff;border:1px solid #E6EBE2;border-radius:11px;padding:12px">
+                    <div style="font-size:10.5px;font-weight:700;color:#5E6D58;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:9px">ผลจับคู่ที่พบ (2)</div>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                      <div style="border:1.5px solid #1C6B21;border-radius:9px;padding:9px;background:#F3F9F1">
+                        <div style="font-size:12px;font-weight:700">นางสาวศิริพร ใจดี</div>
+                        <div style="font-size:10.5px;color:#5E6D58;font-family:'JetBrains Mono',monospace;margin-top:2px">6012345678 · GRADUATED</div>
+                      </div>
+                      <div style="border:1px solid #E6EBE2;border-radius:9px;padding:9px">
+                        <div style="font-size:12px;font-weight:700">นางสาวศิริพร ใจดี</div>
+                        <div style="font-size:10.5px;color:#5E6D58;font-family:'JetBrains Mono',monospace;margin-top:2px">5712345678 · WITHDRAWN</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58;margin-top:12px">desktop shell · sidebar 248px (ย่อเป็น 72px ได้) · header 56px · content max-w-[1200px] px-6</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Mobile · 390×844</div>
+            <div style="width:236px;margin:0 auto;border:1px solid #E6EBE2;border-radius:20px;overflow:hidden;background:#F8FBF7">
+              <div style="height:44px;background:#16431A;display:flex;align-items:center;padding:0 12px;gap:10px">
+                {{ w18.menu }}<span style="color:#fff;font-size:12.5px;font-weight:700;flex:1">คำขอของฉัน</span>{{ w18.bell }}
+              </div>
+              <div style="padding:12px;display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ mobileCards }}" as="m" hint-placeholder-count="3">
+                  <div style="background:#fff;border:1px solid #E6EBE2;border-radius:11px;padding:11px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#1C6B21;font-weight:500">{{ m.ref }}</span>
+                      <span style="background:{{ m.bg }};color:{{ m.tx }};font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:20px">{{ m.status }}</span>
+                    </div>
+                    <div style="font-size:12px;font-weight:600">{{ m.name }}</div>
+                    <div style="font-size:10px;color:#5E6D58;margin-top:2px">{{ m.date }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="height:56px;background:#fff;border-top:1px solid #E6EBE2;display:flex;align-items:center;justify-content:space-around;padding:0 6px">
+                <sc-for list="{{ bottomNav }}" as="b" hint-placeholder-count="4">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:44px">
+                    <div>{{ b.el }}</div>
+                    <span style="font-size:9px;font-weight:600;color:{{ b.color }}">{{ b.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58;margin-top:12px;line-height:1.5">ตารางเปลี่ยนเป็น card list · hit target ≥ 44px · ไม่มี horizontal scroll</div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Breakpoints</div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ breakpoints }}" as="b" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:12px;font-size:12px">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;width:76px;color:#1C6B21">{{ b.name }}</span>
+                  <span style="color:#4B5A47;flex:1">{{ b.note }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">08</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">โทเคน — Tokens &amp; Tailwind v4 Setup</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">มุมโค้ง เงา ระยะห่าง และไฟล์ <code style="font-family:'JetBrains Mono',monospace;font-size:12.5px">globals.css</code> แบบ CSS-first ที่แมปกับตัวแปรของ shadcn/ui</p>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Radius · มุมโค้ง</div>
+            <div style="display:flex;gap:18px;flex-wrap:wrap">
+              <sc-for list="{{ radii }}" as="r" hint-placeholder-count="5">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                  <div style="width:58px;height:58px;background:linear-gradient(135deg,#2C8F2B,#1C6B21);border-radius:{{ r.px }}px"></div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500">{{ r.px }}px</span>
+                  <span style="font-size:10px;color:#5E6D58">{{ r.use }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Elevation · เงา</div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <sc-for list="{{ shadows }}" as="s" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:14px">
+                  <div style="width:52px;height:36px;background:#fff;border-radius:10px;box-shadow:{{ s.css }};flex-shrink:0;border:1px solid #F1F4EE"></div>
+                  <div style="min-width:0">
+                    <div style="font-size:12.5px;font-weight:700">{{ s.name }}</div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#5E6D58;word-break:break-all">{{ s.css }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Spacing · ระยะห่าง</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ spacing }}" as="s" hint-placeholder-count="6">
+                <div style="display:flex;align-items:center;gap:13px">
+                  <div style="width:{{ s.w }}px;height:13px;background:#C69A2E;border-radius:3px;flex-shrink:0"></div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;width:64px">{{ s.label }}</span>
+                  <span style="font-size:11px;color:#5E6D58">{{ s.use }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ showCode }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div style="font-size:13px;font-weight:700;color:#4B5A47;letter-spacing:0.04em;text-transform:uppercase">globals.css · Tailwind v4 + shadcn/ui</div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58">src/app/globals.css</span>
+            </div>
+            <div style="background:#0C1409;border-radius:12px;padding:18px 20px;overflow-x:auto">
+<pre style="font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.75;color:#D9E4D5">@import "tailwindcss";
+@import "tw-animate-css";
+@custom-variant dark (&amp;:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-inter), var(--font-anuphan), ui-sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace;
+
+  /* Krirk brand — เขียว #38AE36 และแดง #EC1C24 มาจากโลโก้จริง */
+  --color-kru-mark:         #38AE36;   /* โลโก้เท่านั้น  */
+  --color-kru-flame:        #EC1C24;   /* โลโก้เท่านั้น  */
+  --color-kru-green:        #1C6B21;   /* primary (AA)   */
+  --color-kru-green-light:  #2C8F2B;   /* hover / chart  */
+  --color-kru-green-deep:   #0E3A13;   /* gradient end   */
+  --color-kru-green-soft:   #E7F5E5;   /* tint bg        */
+  --color-kru-gold:         #C69A2E;   /* seal / honors  */
+  --color-kru-gold-soft:    #FDF6E4;
+
+  /* status */
+  --color-status-approved:  #1C6B21;
+  --color-status-pending:   #B8760B;
+  --color-status-rejected:  #C4322B;
+  --color-status-notfound:  #4A5B7A;
+  --color-status-expired:   #7C8B76;
+  --color-status-info:      #0F6E8C;
+}
+
+:root {
+  --radius: 0.625rem;                /* 10px — ปุ่ม/อินพุต */
+  --background: #F2F6F1;
+  --foreground: #16210F;
+  --card: #FFFFFF;
+  --card-foreground: #16210F;
+  --popover: #FFFFFF;
+  --primary: #1C6B21;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E7F5E5;
+  --secondary-foreground: #145018;
+  --muted: #EEF2EC;
+  --muted-foreground: #5E6D58;   /* AA 5.1:1 บนพื้นขาว */
+  --accent: #EEF2EC;
+  --accent-foreground: #16210F;
+  --destructive: #C4322B;
+  --border: #DEE5DB;
+  --input: #DEE5DB;
+  --ring: #1C6B21;
+  --chart-1: #1C6B21; --chart-2: #2C8F2B; --chart-3: #C69A2E;
+  --chart-4: #0F6E8C; --chart-5: #B8760B;
+}
+
+.dark {
+  --background: #0E140C;
+  --foreground: #E9EFE6;
+  --card: #171F14;
+  --primary: #46C23F;
+  --primary-foreground: #08210A;
+  --secondary: #1C2919;
+  --secondary-foreground: #CFE6C9;
+  --muted: #1C2919;
+  --muted-foreground: #93A38D;
+  --border: #2C3628;
+  --input: #2C3628;
+  --ring: #46C23F;
+}</pre>
+            </div>
+            <div style="margin-top:14px;display:flex;gap:10px;align-items:flex-start;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:12px;padding:12px 14px">
+              <div style="margin-top:1px">{{ p18.bulb }}</div>
+              <div style="font-size:12.5px;color:#4B5A47;line-height:1.55">ใช้ชื่อโทเคน semantic (<code style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#1C6B21">bg-primary</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#1C6B21">text-muted-foreground</code>) ในคอมโพเนนต์เสมอ — เรียก <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#1C6B21">kru-green</code> ตรง ๆ เฉพาะกราฟและตราประทับ เพื่อให้ dark mode ทำงานเองทั้งระบบ</div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="padding:52px 0 0">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:6px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#1C6B21;color:#fff;font-size:14px;font-weight:700">09</span>
+        <h2 style="font-size:28px;font-weight:700;margin:0;letter-spacing:-0.01em">แพตเทิร์นเฉพาะระบบ — Krirk Verify Patterns</h2>
+      </div>
+      <p style="color:#5E6D58;font-size:14px;margin:0 0 24px;padding-left:48px">ส่วนประกอบที่มีเฉพาะระบบนี้ — วงจรสถานะคำขอ ตราประทับผลตรวจสอบ การ mask ข้อมูลอ่อนไหว บล็อกยินยอม PDPA และแถว Audit Log</p>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+          <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:18px;letter-spacing:0.04em;text-transform:uppercase">Request Lifecycle · วงจรสถานะคำขอ</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <sc-for list="{{ lifecycle }}" as="l" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="background:{{ l.bg }};border:1px solid {{ l.bd }};border-radius:12px;padding:11px 14px;min-width:132px">
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:{{ l.tx }};margin-bottom:3px">{{ l.enum }}</div>
+                  <div style="font-size:12px;font-weight:600;color:{{ l.tx }}">{{ l.label }}</div>
+                </div>
+                <div>{{ l.arrow }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:16px;font-size:12.5px;color:#4B5A47;line-height:1.6">Auto-approve เกิดขึ้นเมื่อ: exact match + พบ 1 รายการ + <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px">GRADUATED</code> ครบวันสำเร็จ/วันสภาอนุมัติ + ไม่ติด <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px">requiresManualReview</code> — นอกนั้นเข้าคิวทุกกรณี รวมถึง “ไม่พบข้อมูล” (กัน enumeration attack)</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Verified Result Header · ตราประทับผล</div>
+            <div style="border:1px solid #E6EBE2;border-radius:14px;overflow:hidden">
+              <div style="background:linear-gradient(135deg,#1C6B21,#0E3A13);padding:20px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden">
+                <div style="position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(198,154,46,0.18)"></div>
+                <div style="width:62px;height:62px;border-radius:50%;border:2px solid #C69A2E;display:flex;align-items:center;justify-content:center;background:rgba(198,154,46,0.14);flex-shrink:0;position:relative;z-index:1">{{ gold28.shieldCheck }}</div>
+                <div style="position:relative;z-index:1">
+                  <div style="color:#FFFFFF;font-size:11px;font-weight:700;letter-spacing:0.14em;margin-bottom:4px">VERIFIED · ตรวจสอบแล้ว</div>
+                  <div style="color:#fff;font-size:17px;font-weight:700">ผลการตรวจสอบวุฒิการศึกษา</div>
+                  <div style="color:rgba(255,255,255,0.72);font-size:12px;margin-top:3px;font-family:'JetBrains Mono',monospace">KRU-2569-000123 · 12 ก.ย. 2569 14:32</div>
+                </div>
+              </div>
+              <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:13px">
+                <sc-for list="{{ resultFields }}" as="f" hint-placeholder-count="6">
+                  <div>
+                    <div style="font-size:10.5px;color:#5E6D58;margin-bottom:3px">{{ f.k }}</div>
+                    <div style="font-size:13px;font-weight:600;line-height:1.35">{{ f.v }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="padding:0 16px 16px;display:flex;align-items:center;gap:10px">
+                <span style="display:inline-flex;align-items:center;gap:7px;background:#FDF6E4;color:#6B4E0A;border:1px solid #EAD9A8;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px">{{ gold14.star }}เกียรตินิยมอันดับหนึ่ง</span>
+                <span style="display:inline-flex;align-items:center;gap:7px;background:#E7F5E5;color:#145018;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px">{{ p14.checkCircle }}สำเร็จการศึกษา</span>
+              </div>
+              <div style="background:#F8FBF7;border-top:1px solid #E6EBE2;padding:12px 16px;display:flex;align-items:center;gap:10px">
+                {{ m18.link }}
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">verify.krirk.ac.th/verify/result/KRU-2569-000123</span>
+                <span style="height:28px;padding:0 11px;border-radius:8px;background:#fff;border:1px solid #DEE5DB;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:6px">{{ m14.copy }}คัดลอก</span>
+                <span style="height:28px;padding:0 11px;border-radius:8px;background:#fff;border:1px solid #DEE5DB;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:6px">{{ m14.print }}พิมพ์</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+              <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">PDPA Consent Block</div>
+              <div style="border:1px solid #EAD9A8;background:#FDF6E4;border-radius:12px;padding:14px">
+                <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px">
+                  <div style="margin-top:1px">{{ gold18.lock }}</div>
+                  <div style="font-size:12.5px;color:#6B4E0A;line-height:1.55">ข้อมูลที่ท่านกรอกเป็นข้อมูลส่วนบุคคลอ่อนไหว ระบบจะบันทึกการเข้าถึงพร้อม IP และเวลา และเก็บเลขบัตรในรูปแบบเข้ารหัสเท่านั้น</div>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid #EAD9A8;border-radius:10px;padding:11px">
+                  <span style="width:19px;height:19px;border-radius:6px;border:1.5px solid #C69A2E;display:block;flex-shrink:0;margin-top:1px"></span>
+                  <span style="font-size:12px;color:#16210F;line-height:1.5">ข้าพเจ้าได้อ่านและยินยอมตาม <a href="#" style="color:#1C6B21;font-weight:600">นโยบายความเป็นส่วนตัว</a> และรับรองว่ามีเหตุอันควรในการขอตรวจสอบ <span style="color:#C4322B">*</span></span>
+                </div>
+              </div>
+            </div>
+            <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+              <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">Masked Data · การปิดบังข้อมูล</div>
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <sc-for list="{{ maskRows }}" as="m" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:12px;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:10px;padding:10px 12px">
+                    <div>{{ m.el }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:11px;color:#5E6D58">{{ m.k }}</div>
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;margin-top:1px">{{ m.v }}</div>
+                    </div>
+                    <span style="font-size:10.5px;color:#5E6D58;background:#EEF2EC;border-radius:6px;padding:3px 8px">{{ m.who }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">Audit Log Row · แถวบันทึกการเข้าถึง</div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ auditRows }}" as="a" hint-placeholder-count="3">
+                <div style="display:flex;gap:12px;align-items:flex-start;border:1px solid #E6EBE2;border-radius:11px;padding:11px 13px">
+                  <div style="width:34px;height:34px;border-radius:10px;background:{{ a.iconBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ a.el }}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:#16210F">{{ a.action }}</span>
+                      <span style="font-size:11px;color:#5E6D58">{{ a.actor }}</span>
+                    </div>
+                    <div style="font-size:11.5px;color:#4B5A47;margin-top:3px;line-height:1.45">{{ a.detail }}</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E6D58;margin-top:4px">{{ a.meta }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #DEE5DB;box-shadow:0 2px 12px rgba(28,107,33,0.05)">
+            <div style="font-size:13px;font-weight:700;color:#4B5A47;margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase">SLA &amp; Rate Limit · ตัวชี้วัดและโควตา</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ slaRows }}" as="s" hint-placeholder-count="3">
+                <div style="border:1px solid {{ s.bd }};background:{{ s.bg }};border-radius:11px;padding:12px 13px">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+                    <span style="font-size:12.5px;font-weight:700;color:{{ s.tx }}">{{ s.label }}</span>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;color:{{ s.tx }}">{{ s.value }}</span>
+                  </div>
+                  <div style="height:6px;background:rgba(0,0,0,0.07);border-radius:4px;overflow:hidden"><div style="width:{{ s.pct }}%;height:100%;background:{{ s.bar }};border-radius:4px"></div></div>
+                  <div style="font-size:11px;color:{{ s.tx }};opacity:0.8;margin-top:7px;line-height:1.45">{{ s.note }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:60px;padding:28px 0;border-top:1px solid #DEE5DB;display:flex;align-items:center;justify-content:space-between;color:#5E6D58;font-size:13px">
+      <span>Krirk Verify · Design System v1.0 · ตาม SRS 1.0 (12 ก.ย. 2569)</span>
+      <span>มหาวิทยาลัยเกริก · Next.js 16 · Tailwind v4 · shadcn/ui</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showTailwindCode&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;เนื้อหา&quot;},&quot;statusTone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;soft&quot;,&quot;solid&quot;],&quot;default&quot;:&quot;soft&quot;,&quot;tsType&quot;:&quot;\&quot;soft\&quot; | \&quot;solid\&quot;&quot;,&quot;section&quot;:&quot;สไตล์&quot;},&quot;iconStroke&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1.2,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;default&quot;:1.5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;สไตล์&quot;}}">
+class Component extends DCLogic {
+  C = {
+    pri:'#1C6B21', priLt:'#2C8F2B', priDp:'#0E3A13', priSoft:'#E7F5E5', priTx:'#145018',
+    gold:'#C69A2E', goldSoft:'#FDF6E4', goldBd:'#EAD9A8', goldTx:'#6B4E0A',
+    bg:'#F2F6F1', card:'#FFFFFF', muted:'#EEF2EC', bd:'#DEE5DB', bdStrong:'#C7CFC2',
+    tx:'#16210F', tx2:'#4B5A47', tx3:'#5E6D58', tx3Dec:'#7C8B76',
+    amb:'#B8760B', ambBg:'#FDF3DA', ambTx:'#8A5A06', ambBd:'#F0DCAF',
+    red:'#C4322B', redBg:'#FCE9E7', redTx:'#8F211C', redBd:'#F3CFCB',
+    slate:'#4A5B7A', slateBg:'#ECEFF5', slateTx:'#35425C', slateBd:'#D7DEEA',
+    info:'#0F6E8C', infoBg:'#E2F2F6', infoTx:'#0A4F66', infoBd:'#C5E3EB',
+    gray:'#7C8B76', grayBg:'#EFF1ED', grayTx:'#4C5A46', grayBd:'#DFE4DA',
+  };
+  get sw(){ return Number(this.props.iconStroke ?? 1.5); }
+  get solid(){ return (this.props.statusTone ?? 'soft') === 'solid'; }
+
+  ic(name, size, color, sw, key){
+    const h = React.createElement;
+    size = size || 20; color = color || 'currentColor'; sw = sw || this.sw;
+    const P = {
+      home:[["path",{"d":"M3 11.9896V14.5C3 17.7998 3 19.4497 4.02513 20.4749C5.05025 21.5 6.70017 21.5 10 21.5H14C17.2998 21.5 18.9497 21.5 19.9749 20.4749C21 19.4497 21 17.7998 21 14.5V11.9896C21 10.3083 21 9.46773 20.6441 8.74005C20.2882 8.01237 19.6247 7.49628 18.2976 6.46411L16.2976 4.90855C14.2331 3.30285 13.2009 2.5 12 2.5C10.7991 2.5 9.76689 3.30285 7.70242 4.90855L5.70241 6.46411C4.37533 7.49628 3.71179 8.01237 3.3559 8.74005C3 9.46773 3 10.3083 3 11.9896Z"}],["path",{"d":"M15 21.5V16.5C15 15.0858 15 14.3787 14.5607 13.9393C14.1213 13.5 13.4142 13.5 12 13.5C10.5858 13.5 9.87868 13.5 9.43934 13.9393C9 14.3787 9 15.0858 9 16.5V21.5"}]],
+      dashboard:[["rect",{"x":"3","y":"3","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"13","y":"3","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"3","y":"13","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"13","y":"13","width":"8","height":"8","rx":"2.5"}]],
+      shield:[["path",{"d":"M18.7088 3.49534C16.8165 2.55382 14.5009 2 12 2C9.4991 2 7.1835 2.55382 5.29116 3.49534C4.36318 3.95706 3.89919 4.18792 3.4496 4.91378C3 5.63965 3 6.34248 3 7.74814V11.2371C3 16.9205 7.54236 20.0804 10.173 21.4338C10.9067 21.8113 11.2735 22 12 22C12.7265 22 13.0933 21.8113 13.8269 21.4338C16.4576 20.0804 21 16.9205 21 11.2371L21 7.74814C21 6.34249 21 5.63966 20.5504 4.91378C20.1008 4.18791 19.6368 3.95706 18.7088 3.49534Z"}]],
+      shieldCheck:[["path",{"d":"M18.7088 3.49534C16.8165 2.55382 14.5009 2 12 2C9.4991 2 7.1835 2.55382 5.29116 3.49534C4.36318 3.95706 3.89919 4.18792 3.4496 4.91378C3 5.63965 3 6.34248 3 7.74814V11.2371C3 16.9205 7.54236 20.0804 10.173 21.4338C10.9067 21.8113 11.2735 22 12 22C12.7265 22 13.0933 21.8113 13.8269 21.4338C16.4576 20.0804 21 16.9205 21 11.2371L21 7.74814C21 6.34249 21 5.63966 20.5504 4.91378C20.1008 4.18791 19.6368 3.95706 18.7088 3.49534Z"}],["path",{"d":"M9 11.75L11.25 14L15 10"}]],
+      doc:[["path",{"d":"M8 7L16 7"}],["path",{"d":"M8 11L12 11"}],["path",{"d":"M13 21.5V21C13 18.1716 13 16.7574 13.8787 15.8787C14.7574 15 16.1716 15 19 15H19.5M20 13.3431V10C20 6.22876 20 4.34315 18.8284 3.17157C17.6569 2 15.7712 2 12 2C8.22877 2 6.34315 2 5.17157 3.17157C4 4.34314 4 6.22876 4 10L4 14.5442C4 17.7892 4 19.4117 4.88607 20.5107C5.06508 20.7327 5.26731 20.9349 5.48933 21.1139C6.58831 22 8.21082 22 11.4558 22C12.1614 22 12.5141 22 12.8372 21.886C12.9044 21.8623 12.9702 21.835 13.0345 21.8043C13.3436 21.6564 13.593 21.407 14.0919 20.9081L18.8284 16.1716C19.4065 15.5935 19.6955 15.3045 19.8478 14.9369C20 14.5694 20 14.1606 20 13.3431Z"}]],
+      fileSearch:[["path",{"d":"M20 12V9.5C20 6.2 20 4.6 19 3.6C18 2.5 16.2 2.5 12.5 2.5H11C7.3 2.5 5.4 2.5 4.4 3.6C3.5 4.6 3.5 6.2 3.5 9.5V14.5C3.5 17.8 3.5 19.4 4.4 20.4C5.4 21.5 7.3 21.5 11 21.5H12"}],["path",{"d":"M8 7.5H15M8 11.5H12"}],["path",{"d":"M19.5 18C19.5 16.3431 18.1569 15 16.5 15C14.8431 15 13.5 16.3431 13.5 18C13.5 19.6569 14.8431 21 16.5 21C18.1569 21 19.5 19.6569 19.5 18Z"}],["path",{"d":"M21 22.2L19.4 20.6"}]],
+      fileCheck:[["path",{"d":"M20 11V9.5C20 6.2 20 4.6 19 3.6C18 2.5 16.2 2.5 12.5 2.5H11C7.3 2.5 5.4 2.5 4.4 3.6C3.5 4.6 3.5 6.2 3.5 9.5V14.5C3.5 17.8 3.5 19.4 4.4 20.4C5.4 21.5 7.3 21.5 11 21.5H11.5"}],["path",{"d":"M8 8H15M8 12H12"}],["path",{"d":"M13.5 18L15.5 20L20 15.5"}]],
+      excel:[["path",{"d":"M20 12V9.5C20 6.2 20 4.6 19 3.6C18 2.5 16.2 2.5 12.5 2.5H11C7.3 2.5 5.4 2.5 4.4 3.6C3.5 4.6 3.5 6.2 3.5 9.5V14.5C3.5 17.8 3.5 19.4 4.4 20.4C5.4 21.5 7.3 21.5 11 21.5H12.5"}],["path",{"d":"M8 8H15M8 12H12"}],["path",{"d":"M15 18H22"}],["path",{"d":"M19 15L22 18L19 21"}]],
+      idCard:[["path",{"d":"M2.5 12C2.5 8.46252 2.5 6.69377 3.5528 5.5129C3.72119 5.32403 3.90678 5.14935 4.10746 4.99087C5.36213 4 7.24142 4 11 4H13C16.7586 4 18.6379 4 19.8925 4.99087C20.0932 5.14935 20.2788 5.32403 20.4472 5.5129C21.5 6.69377 21.5 8.46252 21.5 12C21.5 15.5375 21.5 17.3062 20.4472 18.4871C20.2788 18.676 20.0932 18.8506 19.8925 19.0091C18.6379 20 16.7586 20 13 20H11C7.24142 20 5.36213 20 4.10746 19.0091C3.90678 18.8506 3.72119 18.676 3.5528 18.4871C2.5 17.3062 2.5 15.5375 2.5 12Z"}],["path",{"d":"M10.5 10.5C10.5 11.6046 9.60457 12.5 8.5 12.5C7.39543 12.5 6.5 11.6046 6.5 10.5C6.5 9.39543 7.39543 8.5 8.5 8.5C9.60457 8.5 10.5 9.39543 10.5 10.5Z"}],["path",{"d":"M5.5 16.5C5.5 14.8431 6.84315 14 8.5 14C10.1569 14 11.5 14.8431 11.5 16.5"}],["path",{"d":"M14.5 10H18.5M14.5 13.5H17"}]],
+      passport:[["path",{"d":"M4 5C4 3.34315 5.34315 2 7 2H17C18.6569 2 20 3.34315 20 5V19C20 20.6569 18.6569 22 17 22H7C5.34315 22 4 20.6569 4 19V5Z"}],["path",{"d":"M15 9C15 10.6569 13.6569 12 12 12C10.3431 12 9 10.6569 9 9C9 7.34315 10.3431 6 12 6C13.6569 6 15 7.34315 15 9Z"}],["path",{"d":"M9 17H15"}]],
+      graduation:[["path",{"d":"M2.5 8.5L12 4.5L21.5 8.5L12 12.5L2.5 8.5Z"}],["path",{"d":"M6 10.6V15.5C6 16.6 8.7 18.5 12 18.5C15.3 18.5 18 16.6 18 15.5V10.6"}],["path",{"d":"M21.5 8.8V14"}]],
+      user:[["path",{"d":"M17 8.5C17 5.73858 14.7614 3.5 12 3.5C9.23858 3.5 7 5.73858 7 8.5C7 11.2614 9.23858 13.5 12 13.5C14.7614 13.5 17 11.2614 17 8.5Z"}],["path",{"d":"M19 20.5C19 16.634 15.866 13.5 12 13.5C8.13401 13.5 5 16.634 5 20.5"}]],
+      users:[["path",{"d":"M14.5 8.5C14.5 10.433 12.933 12 11 12C9.067 12 7.5 10.433 7.5 8.5C7.5 6.567 9.067 5 11 5C12.933 5 14.5 6.567 14.5 8.5Z"}],["path",{"d":"M17.5 20C17.5 16.4101 14.5899 13.5 11 13.5C7.41015 13.5 4.5 16.4101 4.5 20"}],["path",{"d":"M17 6.5C18.3807 6.5 19.5 7.61929 19.5 9C19.5 10.3807 18.3807 11.5 17 11.5"}],["path",{"d":"M19 19C19 16.9 18.2 15.2 17 14.3"}]],
+      building:[["path",{"d":"M4 21V6.5C4 4.84315 5.34315 3.5 7 3.5H14C15.6569 3.5 17 4.84315 17 6.5V21"}],["path",{"d":"M17 10H19C20.1046 10 21 10.8954 21 12V21"}],["path",{"d":"M2.5 21H21.5"}],["path",{"d":"M8 7.5H13M8 11.5H13"}],["path",{"d":"M9.5 21V18C9.5 17.4477 9.94772 17 10.5 17H12.5C13.0523 17 13.5 17.4477 13.5 18V21"}]],
+      search:[["path",{"d":"M17 17L21 21"}],["path",{"d":"M19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19C15.4183 19 19 15.4183 19 11Z"}]],
+      filter:[["path",{"d":"M3 5.5H21"}],["path",{"d":"M6 12H18"}],["path",{"d":"M9.5 18.5H14.5"}]],
+      sort:[["path",{"d":"M7 4.5V19.5"}],["path",{"d":"M4 16.5L7 19.5L10 16.5"}],["path",{"d":"M17 19.5V4.5"}],["path",{"d":"M14 7.5L17 4.5L20 7.5"}]],
+      table:[["path",{"d":"M21 12C21 16.2426 21 18.364 19.6819 19.6819C18.364 21 16.2426 21 12 21C7.75736 21 5.63604 21 4.31802 19.6819C3 18.364 3 16.2426 3 12C3 7.75736 3 5.63604 4.31802 4.31802C5.63604 3 7.75736 3 12 3C16.2426 3 18.364 3 19.6819 4.31802C21 5.63604 21 7.75736 21 12Z"}],["path",{"d":"M3 8.5H21"}],["path",{"d":"M3 15.5H21"}],["path",{"d":"M9.5 8.5V21"}]],
+      chart:[["path",{"d":"M3 21H21"}],["path",{"d":"M6.5 21V13"}],["path",{"d":"M12 21V8"}],["path",{"d":"M17.5 21V4.5"}]],
+      pie:[["path",{"d":"M21.5 12C21.5 6.75329 17.2467 2.5 12 2.5C6.75329 2.5 2.5 6.75329 2.5 12C2.5 17.2467 6.75329 21.5 12 21.5C17.2467 21.5 21.5 17.2467 21.5 12Z"}],["path",{"d":"M12 2.5V12H21.5"}]],
+      upload:[["path",{"d":"M12 15.5V3.5"}],["path",{"d":"M8.5 7L12 3.5L15.5 7"}],["path",{"d":"M4 15.5V17.5C4 19.7091 5.79086 21.5 8 21.5H16C18.2091 21.5 20 19.7091 20 17.5V15.5"}]],
+      download:[["path",{"d":"M12 3.5V15.5"}],["path",{"d":"M8.5 12L12 15.5L15.5 12"}],["path",{"d":"M4 15.5V17.5C4 19.7091 5.79086 21.5 8 21.5H16C18.2091 21.5 20 19.7091 20 17.5V15.5"}]],
+      refresh:[["path",{"d":"M20 11C20 6.58172 16.4183 3 12 3C9.42 3 7.12 4.22 5.66 6.11"}],["path",{"d":"M5 3V6.5H8.5"}],["path",{"d":"M4 13C4 17.4183 7.58172 21 12 21C14.58 21 16.88 19.78 18.34 17.89"}],["path",{"d":"M19 21V17.5H15.5"}]],
+      database:[["path",{"d":"M20 6C20 7.65685 16.4183 9 12 9C7.58172 9 4 7.65685 4 6C4 4.34315 7.58172 3 12 3C16.4183 3 20 4.34315 20 6Z"}],["path",{"d":"M20 6V18C20 19.6569 16.4183 21 12 21C7.58172 21 4 19.6569 4 18V6"}],["path",{"d":"M20 12C20 13.6569 16.4183 15 12 15C7.58172 15 4 13.6569 4 12"}]],
+      settings:[["path",{"d":"M3 7H12"}],["path",{"d":"M18 7H21"}],["path",{"d":"M3 17H8"}],["path",{"d":"M14 17H21"}],["circle",{"cx":"15","cy":"7","r":"2.5"}],["circle",{"cx":"11","cy":"17","r":"2.5"}]],
+      bell:[["path",{"d":"M20 18.5011L18.349 7.93407C17.8603 4.80601 15.166 2.5 12 2.5C8.83398 2.5 6.13971 4.80601 5.65098 7.93407L4 18.5011"}],["path",{"d":"M20 18.5C20 16.8431 16.4183 15.5 12 15.5C7.58172 15.5 4 16.8431 4 18.5C4 20.1569 7.58172 21.5 12 21.5C16.4183 21.5 20 20.1569 20 18.5Z"}],["path",{"d":"M13 18.5H11"}]],
+      mail:[["path",{"d":"M2 6L8.91302 9.91697C11.4616 11.361 12.5384 11.361 15.087 9.91697L22 6"}],["path",{"d":"M2.01577 13.4756C2.08114 16.5412 2.11383 18.0739 3.24496 19.2094C4.37608 20.3448 5.95033 20.3843 9.09883 20.4634C11.0393 20.5122 12.9607 20.5122 14.9012 20.4634C18.0497 20.3843 19.6239 20.3448 20.7551 19.2094C21.8862 18.0739 21.9189 16.5412 21.9842 13.4756C22.0053 12.4899 22.0053 11.5101 21.9842 10.5244C21.9189 7.45886 21.8862 5.92609 20.7551 4.79066C19.6239 3.65523 18.0497 3.61568 14.9012 3.53657C12.9607 3.48781 11.0393 3.48781 9.09882 3.53656C5.95033 3.61566 4.37608 3.65521 3.24495 4.79065C2.11382 5.92608 2.08114 7.45885 2.01576 10.5244C1.99474 11.5101 1.99475 12.4899 2.01577 13.4756Z"}]],
+      lock:[["path",{"d":"M12 16.5V14.5"}],["path",{"d":"M4.2678 18.8447C4.49268 20.515 5.87612 21.8235 7.55965 21.9009C8.97627 21.966 10.4153 22 12 22C13.5847 22 15.0237 21.966 16.4403 21.9009C18.1239 21.8235 19.5073 20.515 19.7322 18.8447C19.8789 17.7547 20 16.6376 20 15.5C20 14.3624 19.8789 13.2453 19.7322 12.1553C19.5073 10.485 18.1239 9.17649 16.4403 9.09909C15.0237 9.03397 13.5847 9 12 9C10.4153 9 8.97627 9.03397 7.55965 9.09909C5.87612 9.17649 4.49268 10.485 4.2678 12.1553C4.12104 13.2453 3.99999 14.3624 3.99999 15.5C3.99999 16.6376 4.12104 17.7547 4.2678 18.8447Z"}],["path",{"d":"M7.5 9V6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5V9"}]],
+      key:[["path",{"d":"M20.5 7.5C20.5 9.98528 18.4853 12 16 12C13.5147 12 11.5 9.98528 11.5 7.5C11.5 5.01472 13.5147 3 16 3C18.4853 3 20.5 5.01472 20.5 7.5Z"}],["path",{"d":"M12.8 10.7L3.5 20V21.5H6.5V19H9V16.5H10.7V14.8"}]],
+      eye:[["path",{"d":"M21.544 11.045C21.848 11.4713 22 11.6845 22 12C22 12.3155 21.848 12.5287 21.544 12.955C20.1779 14.8706 16.6892 19 12 19C7.31078 19 3.8221 14.8706 2.45604 12.955C2.15201 12.5287 2 12.3155 2 12C2 11.6845 2.15201 11.4713 2.45604 11.045C3.8221 9.12944 7.31078 5 12 5C16.6892 5 20.1779 9.12944 21.544 11.045Z"}],["path",{"d":"M15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12Z"}]],
+      eyeOff:[["path",{"d":"M22 8C22 8 18 14 12 14C6 14 2 8 2 8"}],["path",{"d":"M15 13.5L16.5 16"}],["path",{"d":"M20 11L22 13"}],["path",{"d":"M2 13L4 11"}],["path",{"d":"M9 13.5L7.5 16"}]],
+      calendar:[["path",{"d":"M16 2V6M8 2V6"}],["path",{"d":"M13 4H11C7.22876 4 5.34315 4 4.17157 5.17157C3 6.34315 3 8.22876 3 12V14C3 17.7712 3 19.6569 4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284C21 19.6569 21 17.7712 21 14V12C21 8.22876 21 6.34315 19.8284 5.17157C18.6569 4 16.7712 4 13 4Z"}],["path",{"d":"M3 10H21"}]],
+      clock:[["circle",{"cx":"12","cy":"12","r":"9.5"}],["path",{"d":"M12 7.5V12L14.5 14.5"}]],
+      history:[["circle",{"cx":"12","cy":"12","r":"9.5"}],["path",{"d":"M9.5 9.5L13 13M16 8L11 13"}]],
+      check:[["path",{"d":"M5 13L9.5 17.5L19 7"}]],
+      checkCircle:[["path",{"d":"M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"}],["path",{"d":"M8 12.5L10.5 15L16 9"}]],
+      xCircle:[["path",{"d":"M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"}],["path",{"d":"M14.9994 15L9 9M9.00064 15L15 9"}]],
+      alert:[["path",{"d":"M10.2 4.2L3.2 16.4C2.4 17.8 3.4 19.5 5 19.5H19C20.6 19.5 21.6 17.8 20.8 16.4L13.8 4.2C13 2.8 11 2.8 10.2 4.2Z"}],["path",{"d":"M12 9V13"}],["path",{"d":"M12 16.4H12.01"}]],
+      info:[["path",{"d":"M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"}],["path",{"d":"M12 16.5V11.5"}],["path",{"d":"M12 8.2H12.01"}]],
+      help:[["circle",{"cx":"12","cy":"12","r":"10"}],["path",{"d":"M9.5 9.5C9.5 8.11929 10.6193 7 12 7C13.3807 7 14.5 8.11929 14.5 9.5C14.5 10.3569 14.0689 11.1131 13.4117 11.5636C12.7283 12.0319 12 12.6716 12 13.5"}],["path",{"d":"M12 16.75H12.01"}]],
+      bulb:[["path",{"d":"M6.08938 14.9992C5.71097 14.1486 5.5 13.2023 5.5 12.2051C5.5 8.50154 8.41015 5.49921 12 5.49921C15.5899 5.49921 18.5 8.50154 18.5 12.2051C18.5 13.2023 18.289 14.1486 17.9106 14.9992"}],["path",{"d":"M12 1.99921V2.99921"}],["path",{"d":"M22 11.9992H21"}],["path",{"d":"M3 11.9992H2"}],["path",{"d":"M19.0704 4.92792L18.3633 5.63503"}],["path",{"d":"M5.6368 5.636L4.92969 4.92889"}],["path",{"d":"M14.517 19.3056C15.5274 18.9788 15.9326 18.054 16.0466 17.1238C16.0806 16.8459 15.852 16.6154 15.572 16.6154L8.47685 16.6156C8.18725 16.6156 7.95467 16.8614 7.98925 17.1489C8.1009 18.0773 8.3827 18.7555 9.45345 19.3056M14.517 19.3056C14.517 19.3056 9.62971 19.3056 9.45345 19.3056M14.517 19.3056C14.3955 21.2506 13.8338 22.0209 12.0068 21.9993C10.0526 22.0354 9.60303 21.0833 9.45345 19.3056"}]],
+      star:[["path",{"d":"M12 3.5L14.5 9L20.5 9.8L16 13.9L17.2 20L12 17L6.8 20L8 13.9L3.5 9.8L9.5 9L12 3.5Z"}]],
+      plus:[["path",{"d":"M12.001 5.00003V19.002"}],["path",{"d":"M19.002 12.002L4.99998 12.002"}]],
+      edit:[["path",{"d":"M14.0737 3.88545C14.8189 3.07808 15.1915 2.6744 15.5874 2.43893C16.5427 1.87076 17.7191 1.85309 18.6904 2.39232C19.0929 2.6158 19.4769 3.00812 20.245 3.79276C21.0131 4.5774 21.3972 4.96972 21.6159 5.38093C22.1438 6.37312 22.1265 7.57479 21.5703 8.5507C21.3398 8.95516 20.9446 9.33578 20.1543 10.097L10.7506 19.1543C9.25288 20.5969 8.504 21.3182 7.56806 21.6837C6.63212 22.0493 5.6032 22.0224 3.54536 21.9686L3.26538 21.9613C2.63891 21.9449 2.32567 21.9367 2.14359 21.73C1.9615 21.5234 1.98636 21.2043 2.03608 20.5662L2.06308 20.2197C2.20301 18.4235 2.27297 17.5255 2.62371 16.7182C2.97444 15.9109 3.57944 15.2555 4.78943 13.9445L14.0737 3.88545Z"}],["path",{"d":"M13 4L20 11"}]],
+      trash:[["path",{"d":"M4 7H20"}],["path",{"d":"M9.5 4.5H14.5"}],["path",{"d":"M18 7L17.3 17.2C17.15 19.4 15.32 21 13.11 21H10.89C8.68 21 6.85 19.4 6.7 17.2L6 7"}],["path",{"d":"M10 11V17M14 11V17"}]],
+      copy:[["rect",{"x":"9","y":"9","width":"12.5","height":"12.5","rx":"3.5"}],["path",{"d":"M15 9V8C15 5.2 15 3.8 14.1 2.9C13.2 2 11.8 2 9 2H8C5.2 2 3.8 2 2.9 2.9C2 3.8 2 5.2 2 8V9C2 11.8 2 13.2 2.9 14.1C3.8 15 5.2 15 8 15H9"}]],
+      link:[["path",{"d":"M9.5 14.5L14.5 9.5"}],["path",{"d":"M13.5 6.5L15 5C16.66 3.34 19.34 3.34 21 5C22.5 6.66 22.5 9.34 21 11L19.5 12.5"}],["path",{"d":"M10.5 17.5L9 19C7.34 20.66 4.66 20.66 3 19C1.5 17.34 1.5 14.66 3 13L4.5 11.5"}]],
+      external:[["path",{"d":"M14.5 3.5H20.5V9.5"}],["path",{"d":"M20.5 3.5L12.5 11.5"}],["path",{"d":"M19 14V17C19 19.2091 17.2091 21 15 21H7C4.79086 21 3 19.2091 3 17V9C3 6.79086 4.79086 5 7 5H10"}]],
+      print:[["path",{"d":"M7 7.5V4.5C7 3.67157 7.67157 3 8.5 3H15.5C16.3284 3 17 3.67157 17 4.5V7.5"}],["path",{"d":"M7 17.5H6C4.34315 17.5 3 16.1569 3 14.5V11C3 9.34315 4.34315 8 6 8H18C19.6569 8 21 9.34315 21 11V14.5C21 16.1569 19.6569 17.5 18 17.5H17"}],["path",{"d":"M7 15.5C7 14.3954 7.89543 13.5 9 13.5H15C16.1046 13.5 17 14.3954 17 15.5V19.5C17 20.6046 16.1046 21.5 15 21.5H9C7.89543 21.5 7 20.6046 7 19.5V15.5Z"}]],
+      globe:[["path",{"d":"M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"}],["path",{"d":"M2.5 9H21.5M2.5 15H21.5"}],["path",{"d":"M12 2C9.5 5 8.5 8.5 8.5 12C8.5 15.5 9.5 19 12 22C14.5 19 15.5 15.5 15.5 12C15.5 8.5 14.5 5 12 2Z"}]],
+      login:[["path",{"d":"M6 18C6 18.4644 6 18.6965 6.022 18.8918C6.20482 20.5145 7.48545 21.7952 9.10814 21.978C9.30345 22 9.53562 22 9.99998 22H13C16.2998 22 17.9497 22 18.9749 20.9749C20 19.9498 20 18.2998 20 15L20 8.99998C20 5.70016 20 4.05024 18.9748 3.02512C17.9497 2 16.2998 2 13 2H9.99998C9.53563 2 9.30345 2 9.10814 2.02201C7.48545 2.20483 6.20482 3.48547 6.022 5.10816C6 5.30347 6 5.53565 6 6"}],["path",{"d":"M4.5 10.5H10.5M13 8L15.5 12L13 16"}]],
+      logout:[["path",{"d":"M18 18C18 18.4644 18 18.6965 17.978 18.8918C17.7952 20.5145 16.5145 21.7952 14.8919 21.978C14.6965 22 14.4644 22 14 22H11C7.70017 22 6.05025 22 5.02513 20.9749C4 19.9498 4 18.2998 4 15L4.00001 8.99998C4.00001 5.70016 4.00003 4.05024 5.02514 3.02512C6.05027 2 7.70018 2 11 2H14C14.4644 2 14.6965 2 14.8919 2.02201C16.5145 2.20483 17.7952 3.48547 17.978 5.10816C18 5.30347 18 5.53565 18 6"}],["path",{"d":"M8.5 12H20.5M18 8.5L21 12L18 15.5"}]],
+      menu:[["path",{"d":"M4 6H20"}],["path",{"d":"M4 12H20"}],["path",{"d":"M4 18H14"}]],
+      more:[["circle",{"cx":"5","cy":"12","r":"1.3"}],["circle",{"cx":"12","cy":"12","r":"1.3"}],["circle",{"cx":"19","cy":"12","r":"1.3"}]],
+      chevronL:[["path",{"d":"M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"}]],
+      chevronR:[["path",{"d":"M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18"}]],
+      chevronDown:[["path",{"d":"M6 9C6 9 10.4189 15 12 15C13.5812 15 18 9 18 9"}]],
+      sun:[["path",{"d":"M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z"}],["path",{"d":"M12 2V3.5M12 20.5V22M19.0708 19.0713L18.0101 18.0106M5.98926 5.98926L4.9286 4.9286M22 12H20.5M3.5 12H2M19.0713 4.92871L18.0106 5.98937M5.98975 18.0107L4.92909 19.0714"}]],
+      moon:[["path",{"d":"M21.5 14.0784C20.3003 14.7189 18.9301 15.0821 17.4751 15.0821C12.7491 15.0821 8.91792 11.2509 8.91792 6.52485C8.91792 5.06986 9.28105 3.69968 9.92163 2.5C5.66765 3.49698 2.5 7.31513 2.5 11.8731C2.5 17.1899 6.8101 21.5 12.1269 21.5C16.6849 21.5 20.503 18.3324 21.5 14.0784Z"}]],
+    };
+    return h('svg',{key:key,viewBox:'0 0 24 24',width:size,height:size,fill:'none',stroke:color,strokeWidth:sw,strokeLinecap:'round',strokeLinejoin:'round',style:{display:'block',flexShrink:0}},
+      ...(P[name]||[]).map((p,i)=>h(p[0],{key:i,...p[1]})));
+  }
+
+  NAMES = ['dashboard','shieldCheck','fileSearch','fileCheck','idCard','passport','graduation','search','filter','sort','table','chart','pie','database','refresh','upload','download','excel','print','copy','link','external','user','users','building','doc','calendar','clock','history','bell','mail','lock','key','eye','eyeOff','check','checkCircle','xCircle','alert','info','help','bulb','star','plus','edit','trash','settings','menu','more','login','logout','globe','sun','moon','home','shield','chevronL','chevronR','chevronDown'];
+  HUGE = {dashboard:'DashboardSquare02',shieldCheck:'ShieldTick',fileSearch:'FileSearch',fileCheck:'FileValidation',idCard:'IdentityCard',passport:'Passport',graduation:'Mortarboard02',search:'Search01',filter:'FilterHorizontal',sort:'SortByDown01',table:'Table01',chart:'ChartColumn',pie:'PieChart',database:'Database01',refresh:'RefreshCircle',upload:'Upload04',download:'Download04',excel:'FileExport',print:'Printer',copy:'Copy01',link:'Link02',external:'LinkSquare02',user:'User',users:'UserGroup',building:'Building03',doc:'File01',calendar:'Calendar03',clock:'Clock01',history:'Time04',bell:'Notification03',mail:'Mail01',lock:'SquareLock02',key:'Key01',eye:'View',eyeOff:'ViewOff',check:'Tick02',checkCircle:'CheckmarkCircle02',xCircle:'CancelCircle',alert:'Alert02',info:'InformationCircle',help:'HelpCircle',bulb:'Idea01',star:'Star',plus:'Add01',edit:'Edit02',trash:'Delete02',settings:'PreferenceHorizontal',menu:'Menu02',more:'MoreHorizontal',login:'Login03',logout:'Logout03',globe:'Global',sun:'Sun03',moon:'Moon02',home:'Home03',shield:'Shield01',chevronL:'ArrowLeft01',chevronR:'ArrowRight01',chevronDown:'ArrowDown01'};
+  USE = {dashboard:'แดชบอร์ด',shieldCheck:'ผลตรวจสอบ',fileSearch:'คำขอ/ค้นหา',fileCheck:'อนุมัติแล้ว',idCard:'เลขบัตร',passport:'พาสปอร์ต',graduation:'วุฒิ/หลักสูตร',search:'ค้นหา',filter:'ตัวกรอง',sort:'เรียงลำดับ',table:'ตาราง',chart:'กราฟแท่ง',pie:'สัดส่วน',database:'ข้อมูลทะเบียน',refresh:'sync/รีเฟรช',upload:'อัปโหลด batch',download:'เทมเพลต',excel:'export Excel',print:'พิมพ์ผล',copy:'คัดลอกลิงก์',link:'permalink',external:'เปิดหน้าต่างใหม่',user:'โปรไฟล์',users:'ผู้ใช้ระบบ',building:'หน่วยงาน',doc:'เอกสาร',calendar:'ช่วงวันที่',clock:'เวลารอ/SLA',history:'ประวัติ',bell:'แจ้งเตือน',mail:'อีเมล',lock:'รหัสผ่าน/PDPA',key:'token/สิทธิ์',eye:'ดูข้อมูล',eyeOff:'ซ่อนข้อมูล',check:'ติ๊กถูก',checkCircle:'สำเร็จ',xCircle:'ปฏิเสธ',alert:'คำเตือน',info:'ข้อมูล',help:'ช่วยเหลือ',bulb:'คำแนะนำ',star:'เกียรตินิยม',plus:'เพิ่ม',edit:'แก้ไข',trash:'ลบ',settings:'ตั้งค่า',menu:'เมนูมือถือ',more:'เมนูเพิ่ม',login:'เข้าสู่ระบบ',logout:'ออกจากระบบ',globe:'สลับภาษา',sun:'โหมดสว่าง',moon:'โหมดมืด',home:'หน้าแรก',shield:'ความปลอดภัย',chevronL:'ย้อนกลับ',chevronR:'ถัดไป',chevronDown:'ขยาย'};
+
+  set(size, color){ const o={}; this.NAMES.forEach(n=>{ o[n]=this.ic(n,size,color); }); return o; }
+
+  badge(label, kind){
+    const C=this.C;
+    const M={approved:[C.pri,C.priSoft,C.priTx,'#C6E6C2'],pending:[C.amb,C.ambBg,C.ambTx,C.ambBd],rejected:[C.red,C.redBg,C.redTx,C.redBd],notfound:[C.slate,C.slateBg,C.slateTx,C.slateBd],neutral:[C.gray,C.grayBg,C.grayTx,C.grayBd],info:[C.info,C.infoBg,C.infoTx,C.infoBd]};
+    const m=M[kind]||M.neutral;
+    return this.solid
+      ? {label,bg:m[0],tx:'#FFFFFF',dot:'rgba(255,255,255,0.85)',bd:m[0]}
+      : {label,bg:m[1],tx:m[2],dot:m[0],bd:m[3]};
+  }
+
+  renderVals(){
+    const C=this.C, h=React.createElement;
+    const p14=this.set(14,C.pri), p16=this.set(16,C.pri), p18=this.set(18,C.pri), p20=this.set(20,C.pri), p24=this.set(24,C.pri);
+    const m14=this.set(14,C.tx3), m16=this.set(16,C.tx3), m18=this.set(18,C.tx3), m20=this.set(20,C.tx3), m24=this.set(24,C.tx3);
+    const w14=this.set(14,'#fff'), w16=this.set(16,'#fff'), w18=this.set(18,'#fff'), w20=this.set(20,'#fff');
+    const d14=this.set(14,C.red), d18=this.set(18,C.red);
+    const g18=this.set(18,C.gold), gold14=this.set(14,C.gold), gold18=this.set(18,C.gold), gold28=this.set(28,C.gold);
+    const arrow=this.ic('chevronR',16,C.bdStrong,2);
+    const dot=(tone)=>this.badge('',tone);
+
+    const iconBtn=h('span',{style:{width:28,height:28,borderRadius:8,border:'1px solid '+C.bd,display:'inline-flex',alignItems:'center',justifyContent:'center',background:'#fff'}},this.ic('more',15,C.tx3));
+
+    return {
+      coverChips: [['9','หมวดหมู่'],['16','สีในระบบ'],[String(this.NAMES.length),'ไอคอน'],['3','ฟอนต์'],['28','ส่วนประกอบ']].map((it,i)=>
+        h('div',{key:i,style:{display:'flex',alignItems:'baseline',gap:7,background:'rgba(255,255,255,0.12)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:20,padding:'8px 16px'}},
+          h('span',{style:{color:'#fff',fontSize:17,fontWeight:700}},it[0]),
+          h('span',{style:{color:'rgba(255,255,255,0.78)',fontSize:13}},it[1]))),
+
+      p14,p16,p18,p20,p24,m14,m16,m18,m20,m24,w14,w16,w18,w20,d14,d18,g18,gold14,gold18,gold28,
+      showCode: this.props.showTailwindCode ?? true,
+      iconCount: this.NAMES.length,
+      strokeLabel: String(this.sw),
+
+      brandSwatches:[
+        {hex:'#38AE36',name:'Mark Green',role:'สีโลโก้จริง · ไฮไลต์บนพื้นเข้ม'},
+        {hex:'#EC1C24',name:'Flame Red',role:'เปลวไฟในโลโก้เท่านั้น'},
+        {hex:'#1C6B21',name:'Primary (UI)',role:'ปุ่ม ลิงก์ สถานะอนุมัติ · AA'},
+        {hex:'#2C8F2B',name:'Primary Light',role:'hover · เส้นกราฟ'},
+        {hex:'#0E3A13',name:'Primary Deep',role:'sidebar · ปลายไล่เฉด'},
+        {hex:'#E7F5E5',name:'Primary Soft',role:'พื้นหลังอ่อน · secondary'},
+        {hex:'#C69A2E',name:'Seal Gold',role:'ตราประทับผล · เกียรตินิยม'},
+        {hex:'#FDF6E4',name:'Gold Soft',role:'พื้นบล็อก PDPA / seal'},
+      ],
+      neutralSwatches:[
+        {hex:'#F2F6F1',name:'Background',role:'พื้นหลังหน้าจอ'},
+        {hex:'#FFFFFF',name:'Card',role:'การ์ด พื้นผิว'},
+        {hex:'#EEF2EC',name:'Muted',role:'พื้น hover · skeleton'},
+        {hex:'#DEE5DB',name:'Border',role:'เส้นขอบ input'},
+        {hex:'#16210F',name:'Foreground',role:'ข้อความหลัก'},
+        {hex:'#4B5A47',name:'Text 2',role:'ข้อความรอง'},
+        {hex:'#5E6D58',name:'Muted FG',role:'caption · AA 5.1:1'},
+      ],
+      statusCards:[
+        {label:'อนุมัติแล้ว',enum:'APPROVED',use:'ผลตรวจสอบออกแล้ว · ใช้สีแบรนด์',fg:'#1C6B21',bg:'#E7F5E5',badgeBg:'#E7F5E5',badgeTx:'#145018',dot:'#1C6B21'},
+        {label:'รอพิจารณา',enum:'PENDING_REVIEW',use:'อยู่ในคิวเจ้าหน้าที่ทะเบียน',fg:'#B8760B',bg:'#FDF3DA',badgeBg:'#FDF3DA',badgeTx:'#8A5A06',dot:'#B8760B'},
+        {label:'ปฏิเสธ',enum:'REJECTED',use:'เจ้าหน้าที่ปฏิเสธพร้อมเหตุผล',fg:'#C4322B',bg:'#FCE9E7',badgeBg:'#FCE9E7',badgeTx:'#8F211C',dot:'#C4322B'},
+        {label:'ไม่พบข้อมูล',enum:'NOT_FOUND',use:'ยืนยันโดยเจ้าหน้าที่แล้วว่าไม่พบ',fg:'#4A5B7A',bg:'#ECEFF5',badgeBg:'#ECEFF5',badgeTx:'#35425C',dot:'#4A5B7A'},
+        {label:'หมดอายุ',enum:'EXPIRED',use:'permalink เกินกำหนดเข้าถึง',fg:'#7C8B76',bg:'#EFF1ED',badgeBg:'#EFF1ED',badgeTx:'#4C5A46',dot:'#7C8B76'},
+        {label:'ข้อมูลระบบ',enum:'INFO',use:'สถานะ sync · ประกาศ · in-app',fg:'#0F6E8C',bg:'#E2F2F6',badgeBg:'#E2F2F6',badgeTx:'#0A4F66',dot:'#0F6E8C'},
+      ],
+      gradients:[
+        {label:'Hero / Cover',css:'linear-gradient(150deg,#2C8F2B,#1C6B21 48%,#0E3A13)',code:'150deg · #2C8F2B → #1C6B21 → #0E3A13'},
+        {label:'Result Seal',css:'linear-gradient(135deg,#1C6B21,#0E3A13)',code:'135deg · #1C6B21 → #0E3A13'},
+        {label:'Gold Accent',css:'linear-gradient(120deg,#C69A2E,#8C6B18)',code:'เฉพาะตราประทับ · ห้ามใช้กับปุ่ม'},
+        {label:'Sidebar',css:'linear-gradient(180deg,#16431A,#0E3A13)',code:'180deg · #16431A → #0E3A13'},
+      ],
+      darkSwatches:[
+        {hex:'#46C23F',name:'Primary'},{hex:'#0E140C',name:'Background'},{hex:'#171F14',name:'Card'},
+        {hex:'#2C3628',name:'Border'},{hex:'#E9EFE6',name:'Foreground'},{hex:'#93A38D',name:'Muted FG'},
+      ],
+      typeScale:[
+        {name:'Display',spec:'36px · 700',tw:'text-4xl font-bold',use:'ตัวเลขเด่นบนแดชบอร์ด',sample:h('span',{style:{fontSize:36,fontWeight:700,letterSpacing:'-0.02em'}},'1,284')},
+        {name:'H1 / Page',spec:'28px · 700',tw:'text-3xl font-bold',use:'หัวข้อหน้า',sample:h('span',{style:{fontSize:28,fontWeight:700}},'ผลการตรวจสอบวุฒิการศึกษา')},
+        {name:'H2 / Section',spec:'20px · 700',tw:'text-xl font-bold',use:'หัวข้อกลุ่มในหน้า',sample:h('span',{style:{fontSize:20,fontWeight:700}},'ข้อมูลผู้สำเร็จการศึกษา')},
+        {name:'H3 / Card',spec:'16px · 600',tw:'text-base font-semibold',use:'ชื่อการ์ด ชื่อในตาราง',sample:h('span',{style:{fontSize:16,fontWeight:600}},'นางสาวศิริพร ใจดี')},
+        {name:'Body',spec:'14px · 400',tw:'text-sm',use:'เนื้อหาทั่วไป ฟอร์ม',sample:h('span',{style:{fontSize:14}},'กรอกเลขบัตรประจำตัวประชาชนของผู้สำเร็จการศึกษา')},
+        {name:'Body S',spec:'13px · 400',tw:'text-[13px]',use:'ข้อความในตาราง',sample:h('span',{style:{fontSize:13}},'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด')},
+        {name:'Label',spec:'13px · 600',tw:'text-[13px] font-semibold',use:'ป้ายกำกับ field',sample:h('span',{style:{fontSize:13,fontWeight:600}},'วัตถุประสงค์การตรวจสอบ')},
+        {name:'Caption',spec:'11.5px · 400',tw:'text-xs',use:'คำอธิบาย meta',sample:h('span',{style:{fontSize:11.5,color:'#5E6D58'}},'ยื่นเมื่อ 12 ก.ย. 2569 09:14')},
+        {name:'Mono / Code',spec:'12px · 500',tw:'font-mono text-xs',use:'เลขอ้างอิง รหัส token',sample:h('span',{style:{fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:500}},'KRU-2569-000123')},
+      ],
+      iconItems: this.NAMES.map(n=>({key:n,el:this.ic(n,24,C.pri),constant:this.HUGE[n]||n,use:this.USE[n]||n})),
+      iconSizes:[
+        {px:'14',use:'inline',el:this.ic('shieldCheck',14,C.pri)},
+        {px:'16',use:'badge',el:this.ic('shieldCheck',16,C.pri)},
+        {px:'18',use:'ปุ่ม',el:this.ic('shieldCheck',18,C.pri)},
+        {px:'20',use:'nav/field',el:this.ic('shieldCheck',20,C.pri)},
+        {px:'24',use:'หัวการ์ด',el:this.ic('shieldCheck',24,C.pri)},
+        {px:'32',use:'empty state',el:this.ic('shieldCheck',32,C.pri)},
+      ],
+      iconColors:[
+        {label:'Primary',bg:C.priSoft,el:this.ic('fileCheck',22,C.pri)},
+        {label:'Muted',bg:C.muted,el:this.ic('fileCheck',22,C.tx3)},
+        {label:'Warning',bg:C.ambBg,el:this.ic('clock',22,C.amb)},
+        {label:'Destructive',bg:C.redBg,el:this.ic('xCircle',22,C.red)},
+        {label:'Gold seal',bg:'#1C6B21',el:this.ic('shieldCheck',22,C.gold)},
+      ],
+      filterChips:[
+        {label:'ทั้งหมด',bg:C.pri,tx:'#fff',bd:C.pri},
+        {label:'รอพิจารณา 12',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:'อนุมัติแล้ว',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:'ปฏิเสธ',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:'7 วันล่าสุด',bg:'#fff',tx:C.tx2,bd:C.bd},
+      ],
+      badgeGroups:[
+        {title:'RequestStatus · สถานะคำขอ',items:[this.badge('ฉบับร่าง','neutral'),this.badge('รอพิจารณา','pending'),this.badge('อนุมัติแล้ว','approved'),this.badge('ปฏิเสธ','rejected'),this.badge('ไม่พบข้อมูล','notfound'),this.badge('หมดอายุ','neutral')]},
+        {title:'StudentStatus · สถานภาพนักศึกษา',items:[this.badge('สำเร็จการศึกษา','approved'),this.badge('กำลังศึกษา','info'),this.badge('พ้นสภาพ','neutral'),this.badge('เพิกถอนวุฒิ','rejected')]},
+        {title:'OrgStatus · สถานะหน่วยงาน',items:[this.badge('รออนุมัติ','pending'),this.badge('อนุมัติแล้ว','approved'),this.badge('ระงับการใช้งาน','rejected')]},
+        {title:'DecisionType / SyncJob',items:[this.badge('AUTO','info'),this.badge('MANUAL','neutral'),this.badge('Sync สำเร็จ','approved'),this.badge('Sync ล้มเหลว','rejected'),this.badge('กำลัง sync','pending')]},
+      ],
+      tableRows:[
+        {ref:'KRU-2569-000123',org:'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด',email:'hr@thaihr.co.th',key:'เลขบัตรประชาชน',status:'รอพิจารณา',bg:C.ambBg,tx:C.ambTx,dot:C.amb,sla:'4 ชม. 12 น.',slaColor:C.amb,action:iconBtn},
+        {ref:'KRU-2569-000122',org:'สำนักงาน ก.พ.',email:'verify@ocsc.go.th',key:'เลขบัตรประชาชน',status:'อนุมัติแล้ว',bg:C.priSoft,tx:C.priTx,dot:C.pri,sla:'อัตโนมัติ',slaColor:C.tx3,action:iconBtn},
+        {ref:'KRU-2569-000121',org:'Global Talent Co., Ltd.',email:'recruit@globaltalent.com',key:'พาสปอร์ต',status:'รอพิจารณา',bg:C.ambBg,tx:C.ambTx,dot:C.amb,sla:'26 ชม. 40 น.',slaColor:C.red,action:iconBtn},
+        {ref:'KRU-2569-000120',org:'มหาวิทยาลัยแห่งหนึ่ง',email:'reg@example.ac.th',key:'เลขบัตรประชาชน',status:'ไม่พบข้อมูล',bg:C.slateBg,tx:C.slateTx,dot:C.slate,sla:'1 วัน 2 ชม.',slaColor:C.tx3,action:iconBtn},
+      ],
+      statCards:[
+        {value:'48',label:'คำขอวันนี้',delta:'+12%',deltaColor:C.priTx,deltaBg:C.priSoft,iconBg:C.priSoft,el:this.ic('fileSearch',20,C.pri)},
+        {value:'12',label:'รอพิจารณา',delta:'SLA 24 ชม.',deltaColor:C.ambTx,deltaBg:C.ambBg,iconBg:C.ambBg,el:this.ic('clock',20,C.amb)},
+        {value:'1,284',label:'อนุมัติแล้วเดือนนี้',delta:'+8%',deltaColor:C.priTx,deltaBg:C.priSoft,iconBg:C.priSoft,el:this.ic('fileCheck',20,C.pri)},
+        {value:'3.2 ชม.',label:'เวลาพิจารณาเฉลี่ย',delta:'-18%',deltaColor:C.infoTx,deltaBg:C.infoBg,iconBg:C.infoBg,el:this.ic('history',20,C.info)},
+      ],
+      alerts:[
+        {title:'ส่งคำขอเรียบร้อย',body:'เลขอ้างอิง KRU-2569-000123 · ระบบส่งอีเมลยืนยันไปที่ hr@thaihr.co.th แล้ว',bg:C.priSoft,bd:'#C6E6C2',tx:C.priTx,el:this.ic('checkCircle',19,C.pri)},
+        {title:'คำขอนี้ต้องให้เจ้าหน้าที่พิจารณา',body:'พบผู้สำเร็จการศึกษาชื่อซ้ำกัน 2 รายการจากเลขบัตรเดียวกัน',bg:C.ambBg,bd:C.ambBd,tx:C.ambTx,el:this.ic('alert',19,C.amb)},
+        {title:'เกินโควตาการค้นหา',body:'บัญชีของท่านยื่นคำขอครบ 20 รายการในชั่วโมงนี้ กรุณาลองใหม่ใน 38 นาที',bg:C.redBg,bd:C.redBd,tx:C.redTx,el:this.ic('lock',19,C.red)},
+        {title:'ข้อมูลทะเบียนซิงก์ล่าสุด 02:00 น.',body:'หาก API ต้นทางล่ม ระบบยังค้นจากข้อมูลที่ซิงก์ไว้ได้ · กดรีเฟรชรายคนได้จากหน้าพิจารณา',bg:C.infoBg,bd:C.infoBd,tx:C.infoTx,el:this.ic('database',19,C.info)},
+      ],
+      navItems:[
+        {label:'แดชบอร์ด',el:this.ic('dashboard',17,'rgba(255,255,255,0.62)'),bg:'transparent',color:'rgba(255,255,255,0.72)',weight:'500',count:'',badgeBg:'transparent',badgeTx:'transparent'},
+        {label:'คิวคำขอ',el:this.ic('fileSearch',17,'#fff'),bg:'rgba(255,255,255,0.13)',color:'#fff',weight:'700',count:'12',badgeBg:'#C69A2E',badgeTx:'#2C2003'},
+        {label:'ผู้สำเร็จการศึกษา',el:this.ic('graduation',17,'rgba(255,255,255,0.62)'),bg:'transparent',color:'rgba(255,255,255,0.72)',weight:'500',count:'',badgeBg:'transparent',badgeTx:'transparent'},
+        {label:'หน่วยงาน',el:this.ic('building',17,'rgba(255,255,255,0.62)'),bg:'transparent',color:'rgba(255,255,255,0.72)',weight:'500',count:'3',badgeBg:'rgba(255,255,255,0.16)',badgeTx:'#fff'},
+        {label:'รายงาน',el:this.ic('chart',17,'rgba(255,255,255,0.62)'),bg:'transparent',color:'rgba(255,255,255,0.72)',weight:'500',count:'',badgeBg:'transparent',badgeTx:'transparent'},
+        {label:'การซิงก์ข้อมูล',el:this.ic('database',17,'rgba(255,255,255,0.62)'),bg:'transparent',color:'rgba(255,255,255,0.72)',weight:'500',count:'',badgeBg:'transparent',badgeTx:'transparent'},
+        {label:'Audit Log',el:this.ic('history',17,'rgba(255,255,255,0.62)'),bg:'transparent',color:'rgba(255,255,255,0.72)',weight:'500',count:'',badgeBg:'transparent',badgeTx:'transparent'},
+        {label:'ผู้ใช้ระบบ',el:this.ic('users',17,'rgba(255,255,255,0.62)'),bg:'transparent',color:'rgba(255,255,255,0.72)',weight:'500',count:'',badgeBg:'transparent',badgeTx:'transparent'},
+        {label:'ตั้งค่าระบบ',el:this.ic('settings',17,'rgba(255,255,255,0.62)'),bg:'transparent',color:'rgba(255,255,255,0.72)',weight:'500',count:'',badgeBg:'transparent',badgeTx:'transparent'},
+      ],
+      reqRows:[
+        {k:'ผู้ขอ',v:'ไทยเอชอาร์ โซลูชันส์'},
+        {k:'คีย์ค้นหา',v:'1-2345-xxxxx-xx-3'},
+        {k:'วัตถุประสงค์',v:'สมัครงาน'},
+        {k:'ยินยอม PDPA',v:'12 ก.ย. 69 09:14'},
+        {k:'เหตุที่เข้าคิว',v:'พบ 2 รายการ'},
+      ],
+      mobileCards:[
+        {ref:'KRU-2569-000123',status:'รอพิจารณา',bg:C.ambBg,tx:C.ambTx,name:'ตรวจสอบด้วยเลขบัตร 1-2345-xxxxx-xx-3',date:'12 ก.ย. 2569 09:14'},
+        {ref:'KRU-2569-000118',status:'อนุมัติแล้ว',bg:C.priSoft,tx:C.priTx,name:'นางสาวศิริพร ใจดี · บริหารธุรกิจ',date:'10 ก.ย. 2569 15:02'},
+        {ref:'KRU-2569-000102',status:'ปฏิเสธ',bg:C.redBg,tx:C.redTx,name:'ตรวจสอบด้วยพาสปอร์ต AB123456',date:'8 ก.ย. 2569 11:47'},
+      ],
+      bottomNav:[
+        {label:'หน้าแรก',el:this.ic('home',20,C.pri),color:C.pri},
+        {label:'คำขอ',el:this.ic('fileSearch',20,C.tx3),color:C.tx3},
+        {label:'แบบชุด',el:this.ic('upload',20,C.tx3),color:C.tx3},
+        {label:'โปรไฟล์',el:this.ic('user',20,C.tx3),color:C.tx3},
+      ],
+      breakpoints:[
+        {name:'< 640px',note:'card list · bottom nav · ปุ่มเต็มความกว้าง'},
+        {name:'sm 640px',note:'ฟอร์ม 2 คอลัมน์ · chip filter เลื่อนแนวนอน'},
+        {name:'lg 1024px',note:'sidebar ถาวร · ตารางเต็มรูปแบบ'},
+        {name:'xl 1280px',note:'แดชบอร์ด 4 การ์ด + กราฟคู่'},
+        {name:'print',note:'ซ่อน nav · ผลตรวจสอบเต็มหน้า A4'},
+      ],
+      radii:[{px:'8',use:'chip · badge เล็ก'},{px:'10',use:'ปุ่ม · input'},{px:'12',use:'alert · inner'},{px:'16',use:'card'},{px:'20',use:'dialog · sheet'},{px:'999',use:'pill · avatar'}],
+      shadows:[
+        {name:'Card',css:'0 2px 12px rgba(28,107,33,0.05)'},
+        {name:'Raised',css:'0 6px 20px rgba(28,107,33,0.10)'},
+        {name:'Dialog',css:'0 24px 60px rgba(14,58,19,0.22)'},
+        {name:'Focus ring',css:'0 0 0 3px rgba(28,107,33,0.12)'},
+      ],
+      spacing:[{label:'4 · gap-1',w:8,use:'ไอคอนกับข้อความ'},{label:'8 · gap-2',w:16,use:'ภายในปุ่ม'},{label:'12 · gap-3',w:24,use:'ระหว่าง field'},{label:'16 · p-4',w:32,use:'padding การ์ดมือถือ'},{label:'24 · p-6',w:48,use:'padding การ์ดเดสก์ท็อป'},{label:'32 · gap-8',w:64,use:'ระหว่างบล็อก'}],
+      lifecycle:[
+        {enum:'DRAFT',label:'ฉบับร่าง',bg:C.grayBg,bd:C.grayBd,tx:C.grayTx,arrow},
+        {enum:'PENDING_REVIEW',label:'รอพิจารณา',bg:C.ambBg,bd:C.ambBd,tx:C.ambTx,arrow},
+        {enum:'APPROVED',label:'อนุมัติแล้ว',bg:C.priSoft,bd:'#C6E6C2',tx:C.priTx,arrow:null},
+        {enum:'REJECTED',label:'ปฏิเสธ',bg:C.redBg,bd:C.redBd,tx:C.redTx,arrow:null},
+        {enum:'NOT_FOUND',label:'ไม่พบข้อมูล',bg:C.slateBg,bd:C.slateBd,tx:C.slateTx,arrow:null},
+        {enum:'EXPIRED',label:'หมดอายุ',bg:C.grayBg,bd:C.grayBd,tx:C.grayTx,arrow:null},
+      ],
+      resultFields:[
+        {k:'ชื่อ-นามสกุล',v:'นางสาวศิริพร ใจดี'},
+        {k:'Name (EN)',v:'Ms. Siriporn Jaidee'},
+        {k:'รหัสนักศึกษา',v:'6012345678'},
+        {k:'ระดับการศึกษา',v:'ปริญญาตรี'},
+        {k:'วุฒิ / หลักสูตร',v:'บริหารธุรกิจบัณฑิต (การตลาด)'},
+        {k:'คณะ',v:'คณะบริหารธุรกิจ'},
+        {k:'วันสำเร็จการศึกษา',v:'31 พฤษภาคม 2565'},
+        {k:'GPA',v:'3.87'},
+      ],
+      maskRows:[
+        {k:'เลขบัตรประชาชน (ผู้ขอเห็น)',v:'1-2345-xxxxx-xx-3',who:'ทุกบทบาท',el:this.ic('idCard',20,C.tx3)},
+        {k:'เลขบัตรประชาชน (เจ้าหน้าที่กดดู)',v:'1-2345-67890-12-3',who:'REGISTRAR + audit',el:this.ic('eye',20,C.pri)},
+        {k:'Access token ของ permalink',v:'tok_7f3a…c91d',who:'ไม่แสดงเต็ม',el:this.ic('key',20,C.tx3)},
+      ],
+      auditRows:[
+        {action:'RESULT_VIEWED',actor:'hr@thaihr.co.th',detail:'เปิดดูผลตรวจสอบ KRU-2569-000122 ผ่าน permalink',meta:'203.150.xx.xx · Chrome 141 · 12 ก.ย. 69 14:32',iconBg:C.priSoft,el:this.ic('eye',18,C.pri)},
+        {action:'REQUEST_APPROVED',actor:'somsri@krirk.ac.th',detail:'อนุมัติคำขอและสร้าง snapshot ผลตรวจสอบ',meta:'10.10.xx.xx · REGISTRAR · 12 ก.ย. 69 14:28',iconBg:C.priSoft,el:this.ic('fileCheck',18,C.pri)},
+        {action:'CITIZEN_ID_REVEALED',actor:'somsri@krirk.ac.th',detail:'เปิดดูเลขบัตรประชาชนแบบเต็มในหน้าพิจารณา',meta:'10.10.xx.xx · เหตุผล: ตรวจสอบตัวตน · 14:27',iconBg:C.ambBg,el:this.ic('lock',18,C.amb)},
+      ],
+      slaRows:[
+        {label:'คำขอในคิวเกิน SLA 24 ชม.',value:'2 / 12',pct:17,bg:C.ambBg,bd:C.ambBd,tx:C.ambTx,bar:C.amb,note:'ไฮไลต์แถวเป็นสีส้มในตารางคิว และนับรวมในอีเมลสรุปรายวัน'},
+        {label:'โควตาคำขอเดี่ยว (ต่อชั่วโมง)',value:'14 / 20',pct:70,bg:C.priSoft,bd:'#C6E6C2',tx:C.priTx,bar:C.pri,note:'นับต่อผู้ใช้และต่อ IP · เกินแล้วขึ้น alert destructive'},
+        {label:'โควตา Batch (ต่อวัน)',value:'480 / 500 แถว',pct:96,bg:C.redBg,bd:C.redBd,tx:C.redTx,bar:C.red,note:'โควตาแยกจากคำขอเดี่ยว · เตือนที่ 90% ก่อนตัดการอัปโหลด'},
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

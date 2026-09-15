@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="kru-icons.js"></script>
+  <style>
+    body { margin:0; background:#E7ECE4; }
+    a { color:#1C6B21; text-decoration:none; }
+    a:hover { color:#145018; text-decoration:underline; }
+  </style>
+</helmet>
+
+<div style="font-family:'Inter','Anuphan',sans-serif;color:#16210F;padding:26px 30px 60px;width:1770px">
+
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#16210F;border-radius:14px;padding:12px 16px;margin-bottom:24px;position:sticky;top:12px;z-index:50;box-shadow:0 10px 30px rgba(14,58,19,0.22)">
+    <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:18px;display:block">
+    <span style="color:rgba(255,255,255,0.45);font-size:12px">|</span>
+    <span style="color:#fff;font-size:13px;font-weight:700">กลุ่มที่ 5 · อีเมล · รหัสผ่าน · นโยบาย PDPA</span>
+    <div style="display:flex;gap:6px;margin-left:6px">
+      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
+        <button onClick="{{ tb.go }}" style="border:1px solid {{ tb.bd }};background:{{ tb.bg }};color:{{ tb.tx }};font-family:'Inter','Anuphan',sans-serif;font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;cursor:pointer">{{ tb.label }}</button>
+      </sc-for>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <div style="display:flex;background:rgba(255,255,255,0.12);border-radius:8px;padding:2px">
+        <button onClick="{{ setTh }}" style="border:none;background:{{ lTh.bg }};color:{{ lTh.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">ไทย</button>
+        <button onClick="{{ setEn }}" style="border:none;background:{{ lEn.bg }};color:{{ lEn.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:26px;align-items:flex-start">
+    <div style="width:1280px;flex:none">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;background:#16210F;color:#fff;padding:3px 8px;border-radius:5px">DESKTOP 1280</span>
+        <span style="font-size:12.5px;color:#4B5A47;font-weight:600">{{ screenTitle }}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5E6D58">{{ screenRoute }}</span>
+      </div>
+      <div style="border-radius:14px;overflow:hidden;box-shadow:0 18px 44px rgba(14,58,19,0.14);background:#fff;min-height:800px">
+
+        <sc-if value="{{ isEmails }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;min-height:800px">
+            <div style="width:286px;flex:none;background:#F8FBF7;border-right:1px solid #E6EBE2;padding:18px 14px">
+              <div style="font-size:12px;font-weight:700;color:#5E6D58;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:13px;padding:0 4px">{{ t.templates }}</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{ emailList }}" as="e" hint-placeholder-count="6">
+                  <button onClick="{{ e.go }}" style="display:flex;gap:11px;align-items:flex-start;padding:11px;border-radius:11px;background:{{ e.bg }};border:1px solid {{ e.bd }};cursor:pointer;text-align:left;width:100%;font-family:'Inter','Anuphan',sans-serif">
+                    <div style="width:32px;height:32px;border-radius:9px;background:{{ e.iconBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ e.el }}</div>
+                    <div style="min-width:0;flex:1">
+                      <div style="font-size:12.5px;font-weight:{{ e.weight }};color:{{ e.tx }};line-height:1.3">{{ e.name }}</div>
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#5E6D58;margin-top:3px">{{ e.key }}</div>
+                    </div>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="background:#E2F2F6;border:1px solid #C5E3EB;border-radius:12px;padding:13px;margin-top:16px">
+                <div style="display:flex;gap:9px;align-items:flex-start">
+                  <div style="margin-top:1px">{{ info16.info }}</div>
+                  <div style="font-size:11px;color:#0A4F66;line-height:1.55">{{ t.emailNote }}</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1;min-width:0;background:#EEF2EC;padding:22px;display:flex;flex-direction:column;align-items:center">
+              <div style="width:100%;max-width:640px;background:#fff;border:1px solid #DEE5DB;border-radius:12px;padding:14px 16px;margin-bottom:16px">
+                <div style="display:flex;gap:10px;margin-bottom:8px">
+                  <span style="font-size:11.5px;color:#5E6D58;width:54px;flex-shrink:0">{{ t.from }}</span>
+                  <span style="font-size:12px;font-weight:600">Krirk Verify &lt;no-reply@krirk.ac.th&gt;</span>
+                </div>
+                <div style="display:flex;gap:10px;margin-bottom:8px">
+                  <span style="font-size:11.5px;color:#5E6D58;width:54px;flex-shrink:0">{{ t.to }}</span>
+                  <span style="font-size:12px">{{ email.to }}</span>
+                </div>
+                <div style="display:flex;gap:10px">
+                  <span style="font-size:11.5px;color:#5E6D58;width:54px;flex-shrink:0">{{ t.subject }}</span>
+                  <span style="font-size:12.5px;font-weight:700;flex:1">{{ email.subject }}</span>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid #F1F4EE">
+                  <span style="font-size:11.5px;color:#5E6D58;width:54px;flex-shrink:0">{{ t.preheader }}</span>
+                  <span style="font-size:11.5px;color:#4B5A47;flex:1">{{ email.preheader }}</span>
+                </div>
+              </div>
+
+              <div style="width:100%;max-width:640px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(14,58,19,0.10)">
+                <div style="background:{{ email.headerBg }};padding:24px 28px;display:flex;align-items:center;gap:14px">
+                  <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:22px;display:block">
+                  <span style="color:rgba(255,255,255,0.55);font-size:13px">|</span>
+                  <span style="color:#fff;font-size:14px;font-weight:700">Krirk Verify</span>
+                </div>
+                <div style="padding:28px">
+                  <div style="width:52px;height:52px;border-radius:14px;background:{{ email.badgeBg }};display:flex;align-items:center;justify-content:center;margin-bottom:18px">{{ email.badgeEl }}</div>
+                  <h1 style="font-size:22px;font-weight:700;margin:0 0 12px;letter-spacing:-0.01em;line-height:1.3">{{ email.heading }}</h1>
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <sc-for list="{{ email.paras }}" as="p" hint-placeholder-count="2">
+                      <p style="font-size:14px;color:#4B5A47;line-height:1.65;margin:0">{{ p }}</p>
+                    </sc-for>
+                  </div>
+
+                  <sc-if value="{{ email.hasFacts }}" hint-placeholder-val="{{ true }}">
+                    <div style="background:#F8FBF7;border:1px solid #E6EBE2;border-radius:12px;padding:16px;margin-top:18px;display:flex;flex-direction:column;gap:10px">
+                      <sc-for list="{{ email.facts }}" as="f" hint-placeholder-count="3">
+                        <div style="display:flex;justify-content:space-between;gap:14px">
+                          <span style="font-size:12.5px;color:#5E6D58;flex-shrink:0">{{ f.k }}</span>
+                          <span style="font-size:13px;font-weight:600;text-align:right;font-family:{{ f.font }}">{{ f.v }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ email.hasCta }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:22px">
+                      <span style="display:inline-flex;align-items:center;gap:9px;background:{{ email.ctaBg }};color:{{ email.ctaTx }};font-size:15px;font-weight:700;padding:14px 26px;border-radius:11px">{{ email.ctaEl }}{{ email.cta }}</span>
+                      <div style="font-size:11.5px;color:#5E6D58;margin-top:11px;line-height:1.55">{{ email.ctaNote }}</div>
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:9px;padding:10px 12px;margin-top:10px;word-break:break-all">{{ email.url }}</div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ email.hasWarn }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:{{ email.warnBg }};border:1px solid {{ email.warnBd }};border-radius:12px;padding:14px;margin-top:18px;display:flex;gap:11px;align-items:flex-start">
+                      <div style="margin-top:1px">{{ email.warnEl }}</div>
+                      <span style="font-size:12.5px;color:{{ email.warnTx }};line-height:1.6">{{ email.warn }}</span>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="background:#F8FBF7;border-top:1px solid #E6EBE2;padding:20px 28px">
+                  <div style="font-size:11.5px;color:#5E6D58;line-height:1.65">{{ t.emailFooter }}</div>
+                  <div style="display:flex;gap:14px;margin-top:11px">
+                    <span style="font-size:11.5px;font-weight:600;color:#1C6B21">{{ t.privacyPolicy }}</span>
+                    <span style="font-size:11.5px;font-weight:600;color:#1C6B21">{{ t.terms }}</span>
+                    <span style="font-size:11.5px;color:#5E6D58">reg@krirk.ac.th · 02-970-5820</span>
+                  </div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#7C8B76;margin-top:12px">มหาวิทยาลัยเกริก · เลขที่ 3 ซ.รามอินทรา 1 เขตบางเขน กรุงเทพฯ 10220</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAuth }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;min-height:800px">
+            <div style="width:420px;flex:none;background:linear-gradient(165deg,#2C8F2B,#1C6B21 45%,#0E3A13);padding:40px 36px;display:flex;flex-direction:column;position:relative;overflow:hidden">
+              <div style="position:absolute;right:-80px;bottom:-80px;width:280px;height:280px;border-radius:50%;background:rgba(56,174,54,0.2)"></div>
+              <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:24px;display:block;position:relative;z-index:1">
+              <div style="margin-top:auto;position:relative;z-index:1">
+                <h2 style="color:#fff;font-size:27px;font-weight:700;line-height:1.3;margin:0 0 12px">{{ t.authAsideTitle }}</h2>
+                <p style="color:rgba(255,255,255,0.76);font-size:14px;line-height:1.65;margin:0">{{ t.authAsideSub }}</p>
+              </div>
+            </div>
+            <div style="flex:1;min-width:0;background:#F8FBF7;padding:30px 34px">
+              <div style="display:flex;gap:8px;margin-bottom:22px">
+                <sc-for list="{{ authSteps }}" as="a" hint-placeholder-count="3">
+                  <button onClick="{{ a.go }}" style="background:{{ a.bg }};color:{{ a.tx }};border:1px solid {{ a.bd }};border-radius:9px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ a.label }}</button>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{ isForgot }}" hint-placeholder-val="{{ true }}">
+                <div style="max-width:420px">
+                  <h1 style="font-size:26px;font-weight:700;margin:0 0 8px;letter-spacing:-0.01em">{{ t.forgotTitle }}</h1>
+                  <p style="font-size:13.5px;color:#5E6D58;margin:0 0 24px;line-height:1.6">{{ t.forgotSub }}</p>
+                  <div style="background:#fff;border:1px solid #DEE5DB;border-radius:16px;padding:24px">
+                    <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.email }}</div>
+                    <div style="border:1.5px solid #1C6B21;box-shadow:0 0 0 3px rgba(28,107,33,0.12);border-radius:10px;height:44px;display:flex;align-items:center;padding:0 13px;gap:9px;margin-bottom:18px">
+                      {{ p18.mail }}<span style="font-size:14px">hr@thaihr.co.th</span>
+                    </div>
+                    <button style="width:100%;height:46px;border-radius:11px;border:none;background:#1C6B21;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.mail }}{{ t.sendResetLink }}</button>
+                    <div style="display:flex;gap:9px;align-items:flex-start;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:10px;padding:11px;margin-top:16px">
+                      <div style="margin-top:1px">{{ dec16.info }}</div>
+                      <span style="font-size:11.5px;color:#4B5A47;line-height:1.55">{{ t.forgotNote }}</span>
+                    </div>
+                  </div>
+                  <div style="text-align:center;margin-top:18px;font-size:13px;color:#4B5A47">{{ t.rememberedIt }} <a href="#" style="font-weight:700">{{ t.backToLogin }}</a></div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isReset }}" hint-placeholder-val="{{ false }}">
+                <div style="max-width:440px">
+                  <h1 style="font-size:26px;font-weight:700;margin:0 0 8px;letter-spacing:-0.01em">{{ t.resetTitle }}</h1>
+                  <p style="font-size:13.5px;color:#5E6D58;margin:0 0 24px;line-height:1.6">{{ t.resetSub }}</p>
+                  <div style="background:#fff;border:1px solid #DEE5DB;border-radius:16px;padding:24px">
+                    <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.newPassword }}</div>
+                    <div style="border:1px solid #DEE5DB;border-radius:10px;height:44px;display:flex;align-items:center;padding:0 13px;gap:9px">
+                      {{ dec18.lock }}<span style="font-size:14px;letter-spacing:0.18em;flex:1">••••••••••</span>{{ dec18.eye }}
+                    </div>
+                    <div style="display:flex;gap:5px;margin-top:9px">
+                      <span style="flex:1;height:5px;border-radius:3px;background:#1C6B21;display:block"></span>
+                      <span style="flex:1;height:5px;border-radius:3px;background:#1C6B21;display:block"></span>
+                      <span style="flex:1;height:5px;border-radius:3px;background:#1C6B21;display:block"></span>
+                      <span style="flex:1;height:5px;border-radius:3px;background:#DEE5DB;display:block"></span>
+                    </div>
+                    <div style="font-size:11.5px;color:#145018;font-weight:600;margin-top:7px">{{ t.strengthGood }}</div>
+                    <div style="display:flex;flex-direction:column;gap:7px;margin-top:13px">
+                      <sc-for list="{{ pwRules }}" as="r" hint-placeholder-count="4">
+                        <div style="display:flex;align-items:center;gap:8px">
+                          <div>{{ r.el }}</div><span style="font-size:11.5px;color:{{ r.tx }}">{{ r.label }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <div style="font-size:13px;font-weight:600;margin:18px 0 6px">{{ t.confirmPassword }}</div>
+                    <div style="border:1px solid #DEE5DB;border-radius:10px;height:44px;display:flex;align-items:center;padding:0 13px;gap:9px;margin-bottom:18px">
+                      {{ dec18.lock }}<span style="font-size:14px;letter-spacing:0.18em;flex:1">••••••••••</span>{{ p18.checkCircle }}
+                    </div>
+                    <button style="width:100%;height:46px;border-radius:11px;border:none;background:#1C6B21;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.check }}{{ t.setPassword }}</button>
+                  </div>
+                  <div style="background:#FDF3DA;border:1px solid #F0DCAF;border-radius:12px;padding:13px;margin-top:14px;display:flex;gap:10px;align-items:flex-start">
+                    <div style="margin-top:1px">{{ amb16.clock }}</div>
+                    <span style="font-size:11.5px;color:#8A5A06;line-height:1.55">{{ t.resetExpiry }}</span>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isVerified }}" hint-placeholder-val="{{ false }}">
+                <div style="max-width:520px">
+                  <div style="background:#fff;border:1px solid #DEE5DB;border-radius:18px;padding:32px;text-align:center">
+                    <div style="width:74px;height:74px;border-radius:50%;background:#E7F5E5;border:2px solid #C6E6C2;display:flex;align-items:center;justify-content:center;margin:0 auto 18px">{{ p34.checkCircle }}</div>
+                    <h1 style="font-size:25px;font-weight:700;margin:0 0 10px;letter-spacing:-0.01em">{{ t.verifiedTitle }}</h1>
+                    <p style="font-size:13.5px;color:#4B5A47;margin:0 0 22px;line-height:1.65">{{ t.verifiedSub }}</p>
+                    <div style="background:#FDF3DA;border:1px solid #F0DCAF;border-radius:13px;padding:16px;text-align:left;display:flex;gap:12px;align-items:flex-start">
+                      <div style="margin-top:1px">{{ amb18.clock }}</div>
+                      <div>
+                        <div style="font-size:13px;font-weight:700;color:#8A5A06;margin-bottom:3px">{{ t.pendingApprovalTitle }}</div>
+                        <div style="font-size:12px;color:#8A5A06;line-height:1.6;opacity:0.92">{{ t.pendingApprovalBody }}</div>
+                      </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:12px;margin-top:22px">
+                      <sc-for list="{{ verifiedSteps }}" as="s" hint-placeholder-count="3">
+                        <div style="display:flex;gap:12px;align-items:center;text-align:left;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:12px;padding:13px">
+                          <div style="width:34px;height:34px;border-radius:10px;background:{{ s.bg }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ s.el }}</div>
+                          <div style="flex:1;min-width:0">
+                            <div style="font-size:12.5px;font-weight:700">{{ s.title }}</div>
+                            <div style="font-size:11.5px;color:#5E6D58;line-height:1.5;margin-top:2px">{{ s.sub }}</div>
+                          </div>
+                          <div>{{ s.mark }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <button style="width:100%;height:46px;border-radius:11px;border:1px solid #DEE5DB;background:#fff;font-size:14.5px;font-weight:600;margin-top:20px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ t.backToHome }}</button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isPolicy }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff">
+            <div style="height:70px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;padding:0 40px;gap:20px">
+              <img src="kru-logo.png" alt="มหาวิทยาลัยเกริก" style="height:26px;display:block">
+              <span style="width:1px;height:24px;background:#E6EBE2"></span>
+              <span style="font-size:14px;font-weight:700">Krirk Verify</span>
+              <div style="margin-left:auto;display:flex;background:#EEF2EC;border-radius:8px;padding:2px">
+                <span style="font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:6px;background:{{ hdTh.bg }};color:{{ hdTh.tx }}">TH</span>
+                <span style="font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:6px;background:{{ hdEn.bg }};color:{{ hdEn.tx }}">EN</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:40px;padding:36px 40px 50px;align-items:flex-start">
+              <div style="width:248px;flex:none;position:sticky;top:20px">
+                <div style="font-size:11.5px;font-weight:700;color:#5E6D58;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:12px">{{ t.contents }}</div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <sc-for list="{{ toc }}" as="c" hint-placeholder-count="7">
+                    <div style="display:flex;gap:10px;align-items:baseline;padding:8px 11px;border-radius:9px;background:{{ c.bg }}">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ c.numTx }};flex-shrink:0">{{ c.n }}</span>
+                      <span style="font-size:12.5px;font-weight:{{ c.weight }};color:{{ c.tx }};line-height:1.4">{{ c.title }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="background:#F8FBF7;border:1px solid #E6EBE2;border-radius:12px;padding:14px;margin-top:16px">
+                  <div style="font-size:11.5px;font-weight:700;margin-bottom:7px">{{ t.dpoTitle }}</div>
+                  <div style="font-size:11px;color:#4B5A47;line-height:1.6">{{ t.dpoBody }}</div>
+                </div>
+              </div>
+              <div style="flex:1;min-width:0;max-width:720px">
+                <span style="display:inline-flex;align-items:center;gap:8px;background:#E7F5E5;color:#145018;font-size:11.5px;font-weight:700;padding:5px 13px;border-radius:20px">{{ p14.lock }}{{ t.policyBadge }}</span>
+                <h1 style="font-size:32px;font-weight:700;margin:14px 0 10px;letter-spacing:-0.02em;line-height:1.25;text-wrap:pretty">{{ t.policyTitle }}</h1>
+                <div style="display:flex;gap:16px;align-items:center;padding-bottom:22px;border-bottom:1px solid #E6EBE2;margin-bottom:24px">
+                  <span style="font-size:12px;color:#5E6D58">{{ t.policyVersion }}</span>
+                  <span style="width:1px;height:12px;background:#DEE5DB"></span>
+                  <span style="font-size:12px;color:#5E6D58">{{ t.policyUpdated }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:26px">
+                  <sc-for list="{{ sections }}" as="s" hint-placeholder-count="5">
+                    <div>
+                      <div style="display:flex;gap:12px;align-items:baseline;margin-bottom:10px">
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#1C6B21;background:#E7F5E5;padding:3px 8px;border-radius:6px;flex-shrink:0">{{ s.n }}</span>
+                        <h2 style="font-size:19px;font-weight:700;margin:0;letter-spacing:-0.01em">{{ s.title }}</h2>
+                      </div>
+                      <div style="display:flex;flex-direction:column;gap:11px;padding-left:44px">
+                        <sc-for list="{{ s.paras }}" as="p" hint-placeholder-count="2">
+                          <p style="font-size:14px;color:#4B5A47;line-height:1.75;margin:0;text-wrap:pretty">{{ p }}</p>
+                        </sc-for>
+                        <sc-if value="{{ s.hasList }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;flex-direction:column;gap:9px;margin-top:2px">
+                            <sc-for list="{{ s.items }}" as="i" hint-placeholder-count="3">
+                              <div style="display:flex;gap:11px;align-items:flex-start">
+                                <div style="margin-top:2px">{{ i.el }}</div>
+                                <div>
+                                  <span style="font-size:13.5px;font-weight:700">{{ i.k }}</span>
+                                  <span style="font-size:13.5px;color:#4B5A47;line-height:1.7"> — {{ i.v }}</span>
+                                </div>
+                              </div>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ s.hasBox }}" hint-placeholder-val="{{ false }}">
+                          <div style="background:{{ s.boxBg }};border:1px solid {{ s.boxBd }};border-radius:12px;padding:15px;display:flex;gap:11px;align-items:flex-start;margin-top:3px">
+                            <div style="margin-top:1px">{{ s.boxEl }}</div>
+                            <span style="font-size:13px;color:{{ s.boxTx }};line-height:1.7">{{ s.box }}</span>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="width:390px;flex:none">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;background:#16210F;color:#fff;padding:3px 8px;border-radius:5px">MOBILE 390</span>
+        <span style="font-size:12.5px;color:#4B5A47;font-weight:600">{{ screenTitle }}</span>
+      </div>
+      <div style="width:390px;border-radius:34px;border:9px solid #16210F;overflow:hidden;background:#F8FBF7;box-shadow:0 18px 44px rgba(14,58,19,0.18);min-height:780px">
+        <div style="height:30px;background:#F8FBF7;display:flex;align-items:center;justify-content:space-between;padding:0 18px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;color:#4B5A47">09:41</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#4B5A47">5G ▮</span>
+        </div>
+
+        <sc-if value="{{ isEmails }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#EEF2EC;padding:14px;min-height:730px">
+            <div style="background:#fff;border:1px solid #DEE5DB;border-radius:11px;padding:12px;margin-bottom:12px">
+              <div style="font-size:12.5px;font-weight:700;line-height:1.4">{{ email.subject }}</div>
+              <div style="font-size:11px;color:#5E6D58;margin-top:5px;line-height:1.45">{{ email.preheader }}</div>
+            </div>
+            <div style="background:#fff;border-radius:13px;overflow:hidden">
+              <div style="background:{{ email.headerBg }};padding:16px;display:flex;align-items:center;gap:10px">
+                <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:17px;display:block">
+                <span style="color:#fff;font-size:12px;font-weight:700">Krirk Verify</span>
+              </div>
+              <div style="padding:18px">
+                <div style="width:44px;height:44px;border-radius:12px;background:{{ email.badgeBg }};display:flex;align-items:center;justify-content:center;margin-bottom:14px">{{ email.badgeEl }}</div>
+                <h1 style="font-size:18px;font-weight:700;margin:0 0 10px;line-height:1.35">{{ email.heading }}</h1>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ email.paras }}" as="p" hint-placeholder-count="2">
+                    <p style="font-size:13px;color:#4B5A47;line-height:1.65;margin:0">{{ p }}</p>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ email.hasFacts }}" hint-placeholder-val="{{ true }}">
+                  <div style="background:#F8FBF7;border:1px solid #E6EBE2;border-radius:11px;padding:13px;margin-top:14px;display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ email.facts }}" as="f" hint-placeholder-count="3">
+                      <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span style="font-size:11.5px;color:#5E6D58;flex-shrink:0">{{ f.k }}</span>
+                        <span style="font-size:12px;font-weight:600;text-align:right;font-family:{{ f.font }}">{{ f.v }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ email.hasCta }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin-top:16px">
+                    <span style="display:flex;align-items:center;justify-content:center;gap:9px;background:{{ email.ctaBg }};color:{{ email.ctaTx }};font-size:14px;font-weight:700;padding:14px;border-radius:11px">{{ email.ctaEl }}{{ email.cta }}</span>
+                    <div style="font-size:11px;color:#5E6D58;margin-top:9px;line-height:1.5">{{ email.ctaNote }}</div>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="background:#F8FBF7;border-top:1px solid #E6EBE2;padding:14px">
+                <div style="font-size:10.5px;color:#5E6D58;line-height:1.6">{{ t.emailFooter }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAuth }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:22px 18px 30px;min-height:730px">
+            <img src="kru-logo.png" alt="มหาวิทยาลัยเกริก" style="height:23px;display:block;margin-bottom:24px">
+            <sc-if value="{{ isForgot }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <h1 style="font-size:23px;font-weight:700;margin:0 0 8px;letter-spacing:-0.01em">{{ t.forgotTitle }}</h1>
+                <p style="font-size:13px;color:#5E6D58;margin:0 0 20px;line-height:1.6">{{ t.forgotSub }}</p>
+                <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                  <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.email }}</div>
+                  <div style="border:1px solid #DEE5DB;border-radius:10px;height:48px;display:flex;align-items:center;padding:0 13px;gap:9px;margin-bottom:16px">
+                    {{ dec18.mail }}<span style="font-size:14px">hr@thaihr.co.th</span>
+                  </div>
+                  <button style="width:100%;height:50px;border-radius:11px;border:none;background:#1C6B21;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.mail }}{{ t.sendResetLink }}</button>
+                </div>
+                <div style="text-align:center;margin-top:16px;font-size:12.5px"><a href="#" style="font-weight:700">{{ t.backToLogin }}</a></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isReset }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <h1 style="font-size:23px;font-weight:700;margin:0 0 8px;letter-spacing:-0.01em">{{ t.resetTitle }}</h1>
+                <p style="font-size:13px;color:#5E6D58;margin:0 0 20px;line-height:1.6">{{ t.resetSub }}</p>
+                <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                  <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.newPassword }}</div>
+                  <div style="border:1px solid #DEE5DB;border-radius:10px;height:48px;display:flex;align-items:center;padding:0 13px;gap:9px">
+                    {{ dec18.lock }}<span style="font-size:14px;letter-spacing:0.18em;flex:1">••••••••••</span>{{ dec18.eye }}
+                  </div>
+                  <div style="display:flex;gap:5px;margin-top:9px">
+                    <span style="flex:1;height:5px;border-radius:3px;background:#1C6B21;display:block"></span>
+                    <span style="flex:1;height:5px;border-radius:3px;background:#1C6B21;display:block"></span>
+                    <span style="flex:1;height:5px;border-radius:3px;background:#1C6B21;display:block"></span>
+                    <span style="flex:1;height:5px;border-radius:3px;background:#DEE5DB;display:block"></span>
+                  </div>
+                  <div style="font-size:11.5px;color:#145018;font-weight:600;margin-top:7px">{{ t.strengthGood }}</div>
+                  <div style="font-size:13px;font-weight:600;margin:16px 0 6px">{{ t.confirmPassword }}</div>
+                  <div style="border:1px solid #DEE5DB;border-radius:10px;height:48px;display:flex;align-items:center;padding:0 13px;gap:9px;margin-bottom:16px">
+                    {{ dec18.lock }}<span style="font-size:14px;letter-spacing:0.18em;flex:1">••••••••••</span>{{ p18.checkCircle }}
+                  </div>
+                  <button style="width:100%;height:50px;border-radius:11px;border:none;background:#1C6B21;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.check }}{{ t.setPassword }}</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isVerified }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;background:#fff;border:1px solid #DEE5DB;border-radius:16px;padding:24px 18px">
+                <div style="width:64px;height:64px;border-radius:50%;background:#E7F5E5;border:2px solid #C6E6C2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">{{ p28.checkCircle }}</div>
+                <h1 style="font-size:21px;font-weight:700;margin:0 0 9px;letter-spacing:-0.01em">{{ t.verifiedTitle }}</h1>
+                <p style="font-size:13px;color:#4B5A47;margin:0 0 18px;line-height:1.65">{{ t.verifiedSub }}</p>
+                <div style="background:#FDF3DA;border:1px solid #F0DCAF;border-radius:12px;padding:14px;text-align:left;display:flex;gap:11px;align-items:flex-start">
+                  <div style="margin-top:1px">{{ amb18.clock }}</div>
+                  <div>
+                    <div style="font-size:12.5px;font-weight:700;color:#8A5A06;margin-bottom:3px">{{ t.pendingApprovalTitle }}</div>
+                    <div style="font-size:11.5px;color:#8A5A06;line-height:1.6;opacity:0.92">{{ t.pendingApprovalBody }}</div>
+                  </div>
+                </div>
+                <button style="width:100%;height:48px;border-radius:11px;border:1px solid #DEE5DB;background:#fff;font-size:14px;font-weight:600;margin-top:18px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ t.backToHome }}</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isPolicy }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;min-height:730px">
+            <div style="height:52px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;padding:0 16px;gap:10px">
+              <img src="kru-logo.png" alt="มหาวิทยาลัยเกริก" style="height:19px;display:block">
+              <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#1C6B21">{{ langShort }}</span>
+            </div>
+            <div style="padding:18px 16px 26px">
+              <span style="display:inline-flex;align-items:center;gap:7px;background:#E7F5E5;color:#145018;font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px">{{ p14.lock }}{{ t.policyBadge }}</span>
+              <h1 style="font-size:22px;font-weight:700;margin:12px 0 8px;letter-spacing:-0.01em;line-height:1.3">{{ t.policyTitle }}</h1>
+              <div style="font-size:11.5px;color:#5E6D58;padding-bottom:16px;border-bottom:1px solid #E6EBE2;margin-bottom:18px">{{ t.policyVersion }} · {{ t.policyUpdated }}</div>
+              <div style="display:flex;flex-direction:column;gap:20px">
+                <sc-for list="{{ sectionsMobile }}" as="s" hint-placeholder-count="4">
+                  <div>
+                    <div style="display:flex;gap:10px;align-items:baseline;margin-bottom:8px">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:#1C6B21;background:#E7F5E5;padding:3px 7px;border-radius:5px;flex-shrink:0">{{ s.n }}</span>
+                      <h2 style="font-size:15.5px;font-weight:700;margin:0;line-height:1.35">{{ s.title }}</h2>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:9px">
+                      <sc-for list="{{ s.paras }}" as="p" hint-placeholder-count="1">
+                        <p style="font-size:13px;color:#4B5A47;line-height:1.75;margin:0">{{ p }}</p>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1770},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;emails&quot;,&quot;auth&quot;,&quot;policy&quot;],&quot;default&quot;:&quot;emails&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;มุมมอง&quot;},&quot;startEmail&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;verifyEmail&quot;,&quot;resetPassword&quot;,&quot;requestReceived&quot;,&quot;approved&quot;,&quot;rejected&quot;,&quot;orgApproved&quot;],&quot;default&quot;:&quot;requestReceived&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;อีเมล&quot;}}">
+class Component extends DCLogic {
+  state = { screen:'emails', lang:'th', email:'requestReceived', auth:'forgot' };
+  C = { pri:'#1C6B21', priLt:'#2C8F2B', priDp:'#0E3A13', priSoft:'#E7F5E5', priTx:'#145018', priBd:'#C6E6C2',
+        gold:'#C69A2E', goldSoft:'#FDF6E4', goldBd:'#EAD9A8', goldTx:'#6B4E0A',
+        tx:'#16210F', tx2:'#4B5A47', tx3:'#5E6D58', dec:'#7C8B76', bd:'#DEE5DB',
+        amb:'#B8760B', ambBg:'#FDF3DA', ambTx:'#8A5A06', ambBd:'#F0DCAF',
+        red:'#C4322B', redBg:'#FCE9E7', redTx:'#8F211C', redBd:'#F3CFCB',
+        info:'#0F6E8C', infoBg:'#E2F2F6', infoTx:'#0A4F66', infoBd:'#C5E3EB',
+        gray:'#7C8B76', grayBg:'#EFF1ED', grayTx:'#4C5A46' };
+
+  ic(name,size,color,sw){
+    const h=React.createElement, P=(window.KRU_ICON_PATHS||{})[name]||[];
+    return h('svg',{viewBox:'0 0 24 24',width:size||20,height:size||20,fill:'none',stroke:color||'currentColor',strokeWidth:sw||1.5,strokeLinecap:'round',strokeLinejoin:'round',style:{display:'block',flexShrink:0}},
+      ...P.map((p,i)=>h(p[0],{key:i,...p[1]})));
+  }
+  set(size,color){ const o={}; Object.keys(window.KRU_ICON_PATHS||{}).forEach(n=>{o[n]=this.ic(n,size,color);}); return o; }
+  go(s){ return ()=>this.setState({screen:s}); }
+
+  TH={ templates:'เทมเพลตอีเมล', from:'จาก', to:'ถึง', subject:'หัวเรื่อง', preheader:'Preheader',
+    emailNote:'ทุกเทมเพลตมีสองภาษา เลือกตามภาษาที่ผู้ใช้ตั้งไว้ในโปรไฟล์ · ส่งด้วย Nodemailer ผ่าน SMTP มหาวิทยาลัย และบันทึกทุกฉบับใน EmailLog',
+    emailFooter:'อีเมลฉบับนี้ส่งโดยอัตโนมัติจากระบบตรวจสอบวุฒิการศึกษาออนไลน์ มหาวิทยาลัยเกริก กรุณาไม่ตอบกลับอีเมลนี้ หากไม่ได้เป็นผู้ดำเนินการ กรุณาแจ้งฝ่ายทะเบียนทันที',
+    privacyPolicy:'นโยบายความเป็นส่วนตัว', terms:'ข้อกำหนดการใช้บริการ',
+    authAsideTitle:'ความปลอดภัยของบัญชีคือด่านแรกของข้อมูลส่วนบุคคล',
+    authAsideSub:'ลิงก์รีเซ็ตรหัสผ่านใช้ได้ครั้งเดียวและหมดอายุใน 30 นาที ทุกการเปลี่ยนรหัสผ่านถูกบันทึกใน Audit Log',
+    email:'อีเมล', forgotTitle:'ลืมรหัสผ่าน', forgotSub:'กรอกอีเมลที่ลงทะเบียนไว้ ระบบจะส่งลิงก์ตั้งรหัสผ่านใหม่ให้',
+    sendResetLink:'ส่งลิงก์ตั้งรหัสผ่านใหม่',
+    forgotNote:'หากอีเมลนี้มีอยู่ในระบบ ท่านจะได้รับลิงก์ภายใน 5 นาที — ระบบจะไม่แจ้งว่าอีเมลมีอยู่จริงหรือไม่ เพื่อป้องกันการคาดเดาบัญชี',
+    rememberedIt:'จำรหัสผ่านได้แล้ว?', backToLogin:'กลับไปหน้าเข้าสู่ระบบ',
+    resetTitle:'ตั้งรหัสผ่านใหม่', resetSub:'ตั้งรหัสผ่านใหม่สำหรับบัญชี hr@thaihr.co.th',
+    newPassword:'รหัสผ่านใหม่', confirmPassword:'ยืนยันรหัสผ่านใหม่', strengthGood:'ความแข็งแรง: ดี',
+    setPassword:'บันทึกรหัสผ่านใหม่', resetExpiry:'ลิงก์นี้ใช้ได้ครั้งเดียว และหมดอายุ 30 นาทีหลังการขอ · เหลือเวลา 24 นาที',
+    verifiedTitle:'ยืนยันอีเมลสำเร็จ', verifiedSub:'อีเมล hr@thaihr.co.th ได้รับการยืนยันแล้ว ขั้นต่อไปรอเจ้าหน้าที่ทะเบียนอนุมัติหน่วยงานของท่าน',
+    pendingApprovalTitle:'สถานะหน่วยงาน: รออนุมัติ',
+    pendingApprovalBody:'เจ้าหน้าที่จะตรวจสอบข้อมูลองค์กรภายใน 1–2 วันทำการ และส่งอีเมลแจ้งผล จึงจะเริ่มยื่นคำขอตรวจสอบวุฒิได้',
+    backToHome:'กลับไปหน้าแรก',
+    contents:'สารบัญ', dpoTitle:'เจ้าหน้าที่คุ้มครองข้อมูล (DPO)',
+    dpoBody:'ฝ่ายทะเบียนและวัดผล มหาวิทยาลัยเกริก · dpo@krirk.ac.th · 02-970-5820 ต่อ 201',
+    policyBadge:'พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562',
+    policyTitle:'นโยบายความเป็นส่วนตัวของระบบตรวจสอบวุฒิการศึกษาออนไลน์',
+    policyVersion:'ฉบับที่ 1.0', policyUpdated:'ปรับปรุงล่าสุด 12 กันยายน 2569' };
+  EN={ templates:'Email templates', from:'From', to:'To', subject:'Subject', preheader:'Preheader',
+    emailNote:'Every template is bilingual and follows the language set in the user profile · sent with Nodemailer over the university SMTP and recorded in EmailLog.',
+    emailFooter:'This message was sent automatically by the Krirk University online credential verification system. Please do not reply. If you did not request this, contact the registrar immediately.',
+    privacyPolicy:'Privacy policy', terms:'Terms of service',
+    authAsideTitle:'Account security is the first line of defence for personal data',
+    authAsideSub:'Reset links are single-use and expire in 30 minutes. Every password change is written to the audit log.',
+    email:'Email', forgotTitle:'Forgot password', forgotSub:'Enter your registered email and we will send a link to set a new password.',
+    sendResetLink:'Send reset link',
+    forgotNote:'If this email exists in the system you will receive a link within 5 minutes — we never confirm whether an address is registered, to prevent account guessing.',
+    rememberedIt:'Remembered it?', backToLogin:'Back to sign in',
+    resetTitle:'Set a new password', resetSub:'Set a new password for hr@thaihr.co.th',
+    newPassword:'New password', confirmPassword:'Confirm new password', strengthGood:'Strength: good',
+    setPassword:'Save new password', resetExpiry:'This link is single-use and expires 30 minutes after the request · 24 minutes remaining',
+    verifiedTitle:'Email verified', verifiedSub:'hr@thaihr.co.th is confirmed. Next, registrar staff review and approve your organisation.',
+    pendingApprovalTitle:'Organisation status: pending',
+    pendingApprovalBody:'Staff review the organisation details within 1–2 business days and email you the outcome. You can submit verification requests once approved.',
+    backToHome:'Back to home',
+    contents:'Contents', dpoTitle:'Data Protection Officer',
+    dpoBody:'Office of the Registrar, Krirk University · dpo@krirk.ac.th · 02-970-5820 ext. 201',
+    policyBadge:'Personal Data Protection Act B.E. 2562',
+    policyTitle:'Privacy policy for the online credential verification system',
+    policyVersion:'Version 1.0', policyUpdated:'Last updated 12 September 2026' };
+
+  emails(en){
+    const C=this.C, mono="'JetBrains Mono',monospace", sans="'Inter','Anuphan',sans-serif";
+    const base={headerBg:'linear-gradient(135deg,#1C6B21,#0E3A13)',hasCta:true,hasFacts:false,hasWarn:false,
+      ctaBg:C.pri,ctaTx:'#fff',facts:[],paras:[],warnBg:C.ambBg,warnBd:C.ambBd,warnTx:C.ambTx};
+    return {
+      verifyEmail:{...base, name:en?'Verify your email':'ยืนยันอีเมล', key:'verify-email', icon:'mail',
+        to:'hr@thaihr.co.th', subject:en?'Verify your email for Krirk Verify':'ยืนยันอีเมลสำหรับระบบ Krirk Verify',
+        preheader:en?'One click to confirm this address — the link expires in 24 hours.':'กดยืนยันอีเมลเพื่อดำเนินการต่อ ลิงก์หมดอายุใน 24 ชั่วโมง',
+        heading:en?'Confirm this email address':'ยืนยันอีเมลของท่าน',
+        badgeBg:C.priSoft, badgeEl:this.ic('mail',26,C.pri),
+        paras:en?['You registered Thai HR Solutions Co., Ltd. on the Krirk University credential verification system. Confirm this address to continue.',
+          'After confirming, registrar staff review your organisation before you can submit requests.']
+          :['ท่านได้ลงทะเบียน บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด ในระบบตรวจสอบวุฒิการศึกษาออนไลน์ มหาวิทยาลัยเกริก กรุณายืนยันอีเมลเพื่อดำเนินการต่อ',
+           'หลังยืนยันอีเมล เจ้าหน้าที่ทะเบียนจะตรวจสอบข้อมูลหน่วยงานก่อนเปิดสิทธิ์ยื่นคำขอ'],
+        cta:en?'Verify email':'ยืนยันอีเมล', ctaEl:this.ic('check',18,'#fff'),
+        ctaNote:en?'Link expires in 24 hours. If the button does not work, copy this URL:':'ลิงก์หมดอายุใน 24 ชั่วโมง หากปุ่มใช้งานไม่ได้ ให้คัดลอก URL นี้:',
+        url:'https://verify.krirk.ac.th/verify-email?token=7f3a91c4d2e8'},
+      resetPassword:{...base, name:en?'Reset your password':'รีเซ็ตรหัสผ่าน', key:'reset-password', icon:'lock',
+        to:'hr@thaihr.co.th', subject:en?'Reset your Krirk Verify password':'ตั้งรหัสผ่านใหม่สำหรับ Krirk Verify',
+        preheader:en?'Single-use link, expires in 30 minutes.':'ลิงก์ใช้ได้ครั้งเดียว หมดอายุใน 30 นาที',
+        heading:en?'Set a new password':'ตั้งรหัสผ่านใหม่',
+        badgeBg:C.priSoft, badgeEl:this.ic('key',26,C.pri),
+        paras:en?['We received a request to reset the password for this account.']
+          :['ระบบได้รับคำขอตั้งรหัสผ่านใหม่สำหรับบัญชีนี้'],
+        cta:en?'Set new password':'ตั้งรหัสผ่านใหม่', ctaEl:this.ic('key',18,'#fff'),
+        ctaNote:en?'Single-use link, expires 30 minutes after the request.':'ลิงก์ใช้ได้ครั้งเดียว หมดอายุ 30 นาทีหลังการขอ',
+        url:'https://verify.krirk.ac.th/reset-password?token=c91d4a7b3e55',
+        hasWarn:true, warnEl:this.ic('alert',18,C.amb),
+        warn:en?'If you did not request this, ignore this email — your password stays unchanged. The request was made from 203.150.xx.xx at 09:12 on 12 Sep 2026.'
+          :'หากท่านไม่ได้ร้องขอ กรุณาเพิกเฉยอีเมลนี้ รหัสผ่านเดิมจะไม่เปลี่ยน คำขอนี้มาจาก 203.150.xx.xx เมื่อ 12 ก.ย. 2569 09:12'},
+      requestReceived:{...base, name:en?'Request received':'รับคำขอแล้ว', key:'request-received', icon:'fileSearch',
+        to:'hr@thaihr.co.th', subject:en?'Request received · KRU-2569-000123':'รับคำขอตรวจสอบแล้ว · KRU-2569-000123',
+        preheader:en?'We are processing your verification request.':'ระบบกำลังดำเนินการคำขอตรวจสอบวุฒิของท่าน',
+        heading:en?'We received your verification request':'ระบบรับคำขอตรวจสอบวุฒิของท่านแล้ว',
+        badgeBg:C.priSoft, badgeEl:this.ic('fileSearch',26,C.pri),
+        paras:en?['Your request is being processed. If the record matches clearly you will get the result within minutes; otherwise registrar staff review it, usually within one business day.']
+          :['คำขอของท่านอยู่ระหว่างดำเนินการ หากข้อมูลตรงชัดเจนท่านจะได้รับผลภายในไม่กี่นาที หากต้องให้เจ้าหน้าที่ตรวจสอบ โดยทั่วไปใช้เวลาไม่เกิน 1 วันทำการ'],
+        hasFacts:true, facts:[
+          {k:en?'Reference no.':'เลขอ้างอิง',v:'KRU-2569-000123',font:mono},
+          {k:en?'Search key':'คีย์ค้นหา',v:'1-2345-xxxxx-xx-3',font:mono},
+          {k:en?'Purpose':'วัตถุประสงค์',v:en?'Employment application':'สมัครงาน',font:sans},
+          {k:en?'Submitted':'ยื่นเมื่อ',v:en?'12 Sep 2026 09:14':'12 ก.ย. 2569 09:14',font:sans}],
+        cta:en?'Track this request':'ติดตามสถานะคำขอ', ctaEl:this.ic('external',18,'#fff'),
+        ctaNote:en?'You can also see all your requests in the portal.':'ดูคำขอทั้งหมดของท่านได้ในพอร์ทัล',
+        url:'https://verify.krirk.ac.th/requests/KRU-2569-000123'},
+      approved:{...base, name:en?'Result approved':'แจ้งผล: อนุมัติ', key:'result-approved', icon:'checkCircle',
+        to:'hr@thaihr.co.th', subject:en?'Verification result ready · KRU-2569-000122':'ผลการตรวจสอบวุฒิพร้อมแล้ว · KRU-2569-000122',
+        preheader:en?'The credential was verified. Open the result to view it.':'ตรวจสอบวุฒิเรียบร้อย เปิดดูผลได้ทันที',
+        heading:en?'The verification result is ready':'ผลการตรวจสอบวุฒิพร้อมแล้ว',
+        badgeBg:C.priSoft, badgeEl:this.ic('shieldCheck',26,C.pri),
+        paras:en?['The credential has been verified against the university registry. Open the link below to view the full result.']
+          :['ระบบตรวจสอบวุฒิกับฐานข้อมูลทะเบียนของมหาวิทยาลัยเรียบร้อยแล้ว เปิดลิงก์ด้านล่างเพื่อดูผลฉบับเต็ม'],
+        hasFacts:true, facts:[
+          {k:en?'Reference no.':'เลขอ้างอิง',v:'KRU-2569-000122',font:mono},
+          {k:en?'Name':'ชื่อ-นามสกุล',v:en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี',font:sans},
+          {k:en?'Degree':'วุฒิการศึกษา',v:en?'B.B.A. (Marketing)':'บริหารธุรกิจบัณฑิต (การตลาด)',font:sans},
+          {k:en?'Status':'สถานภาพ',v:en?'Graduated 31 May 2022':'สำเร็จการศึกษา 31 พ.ค. 2565',font:sans},
+          {k:en?'Decision':'การตัดสิน',v:en?'AUTO (system)':'AUTO (ระบบ)',font:sans}],
+        cta:en?'Open the result':'เปิดผลการตรวจสอบ', ctaEl:this.ic('shieldCheck',18,'#fff'),
+        ctaNote:en?'The access code is valid for 30 days and every view is logged.':'รหัสเข้าถึงใช้ได้ 30 วัน และทุกการเปิดดูจะถูกบันทึก',
+        url:'https://verify.krirk.ac.th/verify/result/KRU-2569-000122?t=8fa2…'},
+      rejected:{...base, name:en?'Result rejected':'แจ้งผล: ปฏิเสธ', key:'result-rejected', icon:'xCircle',
+        to:'hr@thaihr.co.th', subject:en?'Verification could not be completed · KRU-2569-000102':'ไม่สามารถตรวจสอบวุฒิได้ · KRU-2569-000102',
+        preheader:en?'Staff reviewed the request and could not confirm the record.':'เจ้าหน้าที่พิจารณาแล้วไม่สามารถยืนยันข้อมูลได้',
+        heading:en?'We could not complete this verification':'ไม่สามารถดำเนินการตรวจสอบคำขอนี้ได้',
+        badgeBg:C.redBg, badgeEl:this.ic('xCircle',26,C.red),
+        headerBg:'linear-gradient(135deg,#1C6B21,#0E3A13)',
+        paras:en?['Registrar staff reviewed this request and could not confirm a matching graduate record.']
+          :['เจ้าหน้าที่ทะเบียนได้พิจารณาคำขอนี้แล้ว และไม่พบข้อมูลผู้สำเร็จการศึกษาที่ตรงกัน'],
+        hasFacts:true, facts:[
+          {k:en?'Reference no.':'เลขอ้างอิง',v:'KRU-2569-000102',font:mono},
+          {k:en?'Reason':'เหตุผล',v:en?'No matching record':'ไม่พบข้อมูลที่ตรงกัน',font:sans},
+          {k:en?'Reviewed by':'ผู้พิจารณา',v:en?'Registrar staff':'เจ้าหน้าที่ทะเบียน',font:sans},
+          {k:en?'Decided':'วันที่พิจารณา',v:en?'8 Sep 2026 11:47':'8 ก.ย. 2569 11:47',font:sans}],
+        cta:en?'View request detail':'ดูรายละเอียดคำขอ', ctaEl:this.ic('doc',18,'#fff'),
+        ctaNote:en?'Check the ID number against the applicant document and submit again if it was mistyped.':'กรุณาตรวจเลขบัตรกับเอกสารของผู้สมัคร และยื่นคำขอใหม่หากกรอกผิด',
+        url:'https://verify.krirk.ac.th/requests/KRU-2569-000102',
+        hasWarn:true, warnBg:C.infoBg, warnBd:C.infoBd, warnTx:C.infoTx, warnEl:this.ic('info',18,C.info),
+        warn:en?'This outcome does not necessarily mean the person did not graduate — the details provided may not match the registry. Call 02-970-5820 if you need assistance.'
+          :'ผลนี้ไม่ได้หมายความว่าบุคคลดังกล่าวไม่ได้สำเร็จการศึกษา แต่ข้อมูลที่ให้มาอาจไม่ตรงกับฐานทะเบียน หากต้องการความช่วยเหลือ โทร 02-970-5820'},
+      orgApproved:{...base, name:en?'Organisation approved':'หน่วยงานได้รับอนุมัติ', key:'organization-approved', icon:'building',
+        to:'hr@thaihr.co.th', subject:en?'Your organisation has been approved':'หน่วยงานของท่านได้รับอนุมัติแล้ว',
+        preheader:en?'You can now submit verification requests.':'เริ่มยื่นคำขอตรวจสอบวุฒิได้ทันที',
+        heading:en?'Your organisation is approved':'หน่วยงานของท่านได้รับอนุมัติ',
+        badgeBg:C.priSoft, badgeEl:this.ic('building',26,C.pri),
+        paras:en?['Thai HR Solutions Co., Ltd. is now approved to use the credential verification service. Single and batch requests are available immediately.']
+          :['บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด ได้รับอนุมัติให้ใช้บริการตรวจสอบวุฒิการศึกษาแล้ว สามารถยื่นคำขอเดี่ยวและแบบชุดได้ทันที'],
+        hasFacts:true, facts:[
+          {k:en?'Approved on':'วันที่อนุมัติ',v:en?'4 Jul 2026':'4 ก.ค. 2569',font:sans},
+          {k:en?'Single requests':'โควตาคำขอเดี่ยว',v:en?'20 per hour':'20 คำขอ/ชั่วโมง',font:sans},
+          {k:en?'Batch rows':'โควตาแบบชุด',v:en?'500 rows per day':'500 แถว/วัน',font:sans}],
+        cta:en?'Submit the first request':'ยื่นคำขอแรก', ctaEl:this.ic('plus',18,'#fff'),
+        ctaNote:en?'Remember: every request requires a stated purpose and PDPA consent.':'โปรดทราบ: ทุกคำขอต้องระบุวัตถุประสงค์และยินยอมตาม PDPA',
+        url:'https://verify.krirk.ac.th/requests/new'},
+    };
+  }
+
+  renderVals(){
+    const C=this.C, S=this.state, en=S.lang==='en', t=en?this.EN:this.TH;
+    const p14=this.set(14,C.pri), p18=this.set(18,C.pri), p28=this.set(28,C.pri), p34=this.set(34,C.pri);
+    const w18=this.set(18,'#fff'), dec16=this.set(16,C.dec), dec18=this.set(18,C.dec);
+    const amb16=this.set(16,C.amb), amb18=this.set(18,C.amb), info16=this.set(16,C.info);
+    const on=(b)=>b?{bg:'#fff',tx:C.pri}:{bg:'transparent',tx:'rgba(255,255,255,0.6)'};
+    const seg=(b)=>b?{bg:'#fff',tx:C.pri}:{bg:'transparent',tx:C.tx3};
+    const E=this.emails(en), email=E[S.email]||E.requestReceived;
+
+    const screens={ emails:{title:en?'Email templates':'เทมเพลตอีเมล (6 แบบ)',route:'lib/emails/*.tsx'},
+      auth:{title:en?'Password & email verification':'รหัสผ่านและยืนยันอีเมล',route:'/(public)/forgot-password · /reset-password'},
+      policy:{title:en?'PDPA privacy policy':'นโยบายความเป็นส่วนตัว (PDPA)',route:'/(public)/privacy-policy'} };
+    const cur=screens[S.screen]||screens.emails;
+
+    const sec=(n,title,paras,extra)=>Object.assign({n,title,paras,hasList:false,items:[],hasBox:false,box:'',boxBg:C.priSoft,boxBd:C.priBd,boxTx:C.priTx,boxEl:null},extra||{});
+    const sections = en ? [
+      sec('1','Data controller',['Krirk University, through the Office of the Registrar, is the data controller for all personal data processed by this verification system. Requests for access, correction or erasure go to the Data Protection Officer listed alongside this policy.']),
+      sec('2','Personal data we process',['The system processes only what verification requires.'],{hasList:true,items:[
+        {k:'Identifiers',v:'citizen ID or passport number of the person being verified, stored as an HMAC-SHA256 hash for searching and AES-256-GCM ciphertext for staff review',el:this.ic('idCard',17,C.pri)},
+        {k:'Academic records',v:'name, student code, education level, degree, programme, faculty, status, graduation and council approval dates, GPA and honours, synced from the registry system',el:this.ic('graduation',17,C.pri)},
+        {k:'Requester data',v:'organisation details, contact name, email, phone, plus IP address, user agent and consent timestamp for each request',el:this.ic('building',17,C.pri)}]}),
+      sec('3','Purpose and lawful basis',['Data is processed to verify academic credentials at the request of an organisation with legitimate grounds, and to keep the access records the law requires. We do not use it for marketing and we do not sell or transfer it abroad.'],
+        {hasBox:true,box:'Requests are never processed without an explicit PDPA consent tick, recorded with its exact timestamp.',boxEl:this.ic('checkCircle',18,C.pri)}),
+      sec('4','Protection measures',['Identifiers are hashed with a server-side pepper and encrypted at rest. Screens always show masked values; revealing a full number requires a staff role and writes an audit entry. Requests are rate limited per user and per IP, and results are only reachable with a single-use access token.']),
+      sec('5','Retention',['Verification requests are anonymised 5 years after the decision. Audit log entries are retained for 10 years to support external inspection. Result access tokens expire 30 days after approval; the result snapshot itself is retained for the request retention period.']),
+      sec('6','Your rights',['Data subjects may request access, correction, erasure, restriction or objection, and may withdraw consent at any time.'],
+        {hasBox:true,boxBg:C.goldSoft,boxBd:C.goldBd,boxTx:C.goldTx,boxEl:this.ic('info',18,C.gold),
+         box:'Withdrawing consent does not invalidate results already issued, because those records must remain verifiable. It does stop any further processing.'}),
+      sec('7','Contact',['Office of the Registrar, Krirk University, 3 Soi Ram Inthra 1, Anusawari, Bang Khen, Bangkok 10220 · dpo@krirk.ac.th · 02-970-5820 ext. 201. Complaints may also be filed with the Personal Data Protection Committee.']),
+    ] : [
+      sec('1','ผู้ควบคุมข้อมูลส่วนบุคคล',['มหาวิทยาลัยเกริก โดยฝ่ายทะเบียนและวัดผล เป็นผู้ควบคุมข้อมูลส่วนบุคคลทั้งหมดที่ประมวลผลในระบบตรวจสอบวุฒิการศึกษาออนไลน์นี้ การใช้สิทธิเข้าถึง แก้ไข หรือลบข้อมูล ให้ติดต่อเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคลตามรายละเอียดข้างนโยบายฉบับนี้']),
+      sec('2','ข้อมูลส่วนบุคคลที่เก็บรวบรวม',['ระบบเก็บเฉพาะข้อมูลที่จำเป็นต่อการตรวจสอบวุฒิเท่านั้น'],{hasList:true,items:[
+        {k:'ข้อมูลระบุตัวตน',v:'เลขบัตรประจำตัวประชาชนหรือเลขที่หนังสือเดินทางของผู้ถูกตรวจสอบ จัดเก็บเป็นค่า HMAC-SHA256 สำหรับใช้ค้นหา และ ciphertext แบบ AES-256-GCM สำหรับกรณีที่เจ้าหน้าที่ต้องตรวจสอบ',el:this.ic('idCard',17,C.pri)},
+        {k:'ข้อมูลการศึกษา',v:'ชื่อ-นามสกุล รหัสนักศึกษา ระดับการศึกษา วุฒิ หลักสูตร สาขาวิชา คณะ สถานภาพ วันสำเร็จการศึกษา วันสภาอนุมัติ GPA และเกียรตินิยม ซึ่งซิงก์มาจากระบบทะเบียน',el:this.ic('graduation',17,C.pri)},
+        {k:'ข้อมูลผู้ยื่นคำขอ',v:'ข้อมูลองค์กร ชื่อผู้ติดต่อ อีเมล เบอร์โทรศัพท์ พร้อมหมายเลข IP เบราว์เซอร์ และเวลาที่ให้ความยินยอมของทุกคำขอ',el:this.ic('building',17,C.pri)}]}),
+      sec('3','วัตถุประสงค์และฐานทางกฎหมาย',['ระบบประมวลผลข้อมูลเพื่อการตรวจสอบวุฒิการศึกษาตามคำขอของหน่วยงานที่มีเหตุอันควร และเพื่อจัดเก็บหลักฐานการเข้าถึงข้อมูลตามที่กฎหมายกำหนด มหาวิทยาลัยไม่นำข้อมูลไปใช้ทางการตลาด ไม่จำหน่าย และไม่โอนข้อมูลไปต่างประเทศ'],
+        {hasBox:true,box:'ระบบจะไม่ดำเนินการคำขอใด ๆ หากผู้ยื่นไม่ติ๊กยินยอมตาม PDPA และจะบันทึกเวลาที่ให้ความยินยอมไว้ทุกครั้ง',boxEl:this.ic('checkCircle',18,C.pri)}),
+      sec('4','มาตรการคุ้มครองข้อมูล',['เลขบัตรถูกแฮชด้วย pepper ฝั่งเซิร์ฟเวอร์และเข้ารหัสขณะจัดเก็บ หน้าจอแสดงผลแบบปิดบังเสมอ การเปิดดูเลขเต็มทำได้เฉพาะเจ้าหน้าที่ที่มีสิทธิ์และจะถูกบันทึกใน Audit Log ทันที ระบบจำกัดจำนวนคำขอทั้งต่อผู้ใช้และต่อหมายเลข IP และผลการตรวจสอบเข้าถึงได้ด้วย access token เฉพาะรายเท่านั้น']),
+      sec('5','ระยะเวลาเก็บรักษาข้อมูล',['คำขอตรวจสอบจะถูก anonymise เมื่อพ้น 5 ปีนับจากวันที่มีการพิจารณา บันทึก Audit Log เก็บไว้ 10 ปีเพื่อรองรับการตรวจสอบจากหน่วยงานภายนอก รหัสเข้าถึงผลหมดอายุ 30 วันหลังอนุมัติ ส่วนสำเนาผล (snapshot) เก็บไว้ตามระยะเวลาเก็บรักษาคำขอ']),
+      sec('6','สิทธิของเจ้าของข้อมูล',['เจ้าของข้อมูลมีสิทธิขอเข้าถึง ขอสำเนา ขอแก้ไขให้ถูกต้อง ขอลบ ขอระงับการใช้ คัดค้านการประมวลผล และเพิกถอนความยินยอมได้ตลอดเวลา'],
+        {hasBox:true,boxBg:C.goldSoft,boxBd:C.goldBd,boxTx:C.goldTx,boxEl:this.ic('info',18,C.gold),
+         box:'การเพิกถอนความยินยอมไม่กระทบผลตรวจสอบที่ออกไปแล้ว เนื่องจากผลดังกล่าวต้องคงความสามารถในการตรวจสอบย้อนหลัง แต่จะมีผลกับการประมวลผลในอนาคตทั้งหมด'}),
+      sec('7','ช่องทางติดต่อ',['ฝ่ายทะเบียนและวัดผล มหาวิทยาลัยเกริก เลขที่ 3 ซ.รามอินทรา 1 แขวงอนุสาวรีย์ เขตบางเขน กรุงเทพฯ 10220 · dpo@krirk.ac.th · 02-970-5820 ต่อ 201 · ทั้งนี้ท่านมีสิทธิร้องเรียนต่อคณะกรรมการคุ้มครองข้อมูลส่วนบุคคลได้']),
+    ];
+    const secs = sections.filter(Boolean);
+
+    return {
+      t, screenTitle:cur.title, screenRoute:cur.route, langShort:en?'EN':'TH',
+      isEmails:S.screen==='emails', isAuth:S.screen==='auth', isPolicy:S.screen==='policy',
+      isForgot:S.auth==='forgot', isReset:S.auth==='reset', isVerified:S.auth==='verified',
+      lTh:on(!en), lEn:on(en), hdTh:seg(!en), hdEn:seg(en),
+      setTh:()=>this.setState({lang:'th'}), setEn:()=>this.setState({lang:'en'}),
+      tabs:[['emails',en?'Email templates':'เทมเพลตอีเมล'],['auth',en?'Password & verify':'รหัสผ่าน / ยืนยันอีเมล'],['policy',en?'PDPA policy':'นโยบาย PDPA']]
+        .map(([k,label])=>({label,go:this.go(k),bg:S.screen===k?'#fff':'rgba(255,255,255,0.08)',tx:S.screen===k?C.tx:'rgba(255,255,255,0.78)',bd:S.screen===k?'#fff':'rgba(255,255,255,0.18)'})),
+      p14,p18,p28,p34,w18,dec16,dec18,amb16,amb18,info16,
+      email,
+      emailList:Object.keys(E).map(k=>{
+        const e=E[k], active=S.email===k;
+        return {name:e.name,key:e.key,go:()=>this.setState({email:k}),el:this.ic(e.icon,17,active?C.pri:C.tx3),
+          bg:active?'#fff':'transparent', bd:active?C.pri:'transparent', iconBg:active?C.priSoft:C.grayBg,
+          tx:active?C.tx:C.tx2, weight:active?'700':'500'};
+      }),
+      authSteps:[['forgot',en?'Forgot password':'ลืมรหัสผ่าน'],['reset',en?'Set new password':'ตั้งรหัสผ่านใหม่'],['verified',en?'Email verified':'ยืนยันอีเมลสำเร็จ']]
+        .map(([k,label])=>({label,go:()=>this.setState({auth:k}),
+          bg:S.auth===k?C.pri:'#fff', tx:S.auth===k?'#fff':C.tx2, bd:S.auth===k?C.pri:C.bd})),
+      pwRules:[
+        {label:en?'At least 10 characters':'ความยาวอย่างน้อย 10 ตัวอักษร',el:this.ic('checkCircle',14,C.pri),tx:C.priTx},
+        {label:en?'Upper and lower case letters':'มีตัวพิมพ์ใหญ่และพิมพ์เล็ก',el:this.ic('checkCircle',14,C.pri),tx:C.priTx},
+        {label:en?'At least one number':'มีตัวเลขอย่างน้อย 1 ตัว',el:this.ic('checkCircle',14,C.pri),tx:C.priTx},
+        {label:en?'A symbol makes it stronger':'เพิ่มอักขระพิเศษจะแข็งแรงขึ้น',el:this.ic('info',14,C.dec),tx:C.tx3},
+      ],
+      verifiedSteps:[
+        {title:en?'Email confirmed':'ยืนยันอีเมลแล้ว',sub:en?'hr@thaihr.co.th':'hr@thaihr.co.th',bg:C.priSoft,el:this.ic('mail',17,C.pri),mark:this.ic('checkCircle',17,C.pri)},
+        {title:en?'Registrar review':'เจ้าหน้าที่ตรวจสอบ',sub:en?'In progress · 1–2 business days':'กำลังดำเนินการ · 1–2 วันทำการ',bg:C.ambBg,el:this.ic('clock',17,C.amb),mark:null},
+        {title:en?'Start submitting requests':'เริ่มยื่นคำขอได้',sub:en?'Unlocks after approval':'เปิดใช้หลังได้รับอนุมัติ',bg:C.grayBg,el:this.ic('fileSearch',17,C.dec),mark:null},
+      ],
+      toc:secs.map((s,i)=>({n:s.n,title:s.title,bg:i===1?C.priSoft:'transparent',tx:i===1?C.priTx:C.tx2,numTx:i===1?C.pri:C.dec,weight:i===1?'700':'500'})),
+      sections:secs, sectionsMobile:secs.slice(0,4),
+    };
+  }
+}
+</script>
+</body>
+</html>

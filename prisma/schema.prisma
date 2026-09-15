@@ -1,0 +1,401 @@
+// Krirk Verify — Prisma schema
+// โมเดลถูกเพิ่มตามแต่ละ Phase — ดู docs/spec.md ข้อ 5.3
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// Enums
+// ============================================================
+
+enum Role {
+  ADMIN
+  REGISTRAR
+  EXTERNAL
+  ALUMNI
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION // ยังไม่ยืนยันอีเมล
+  ACTIVE
+  SUSPENDED
+}
+
+enum OrgStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
+
+enum OrgType {
+  PRIVATE_COMPANY
+  GOVERNMENT
+  STATE_ENTERPRISE
+  EDUCATION
+  OTHER
+}
+
+enum AuthTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum StudentStatus {
+  GRADUATED
+  STUDYING
+  WITHDRAWN
+  REVOKED
+}
+
+enum Honors {
+  FIRST_CLASS
+  SECOND_CLASS
+}
+
+enum RequestStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  NOT_FOUND
+  EXPIRED
+}
+
+enum SearchType {
+  CITIZEN_ID
+  PASSPORT
+}
+
+enum DecisionType {
+  AUTO
+  MANUAL
+}
+
+enum RequestPurpose {
+  EMPLOYMENT
+  FURTHER_STUDY
+  GOVERNMENT_SERVICE
+  BACKGROUND_CHECK
+  OTHER
+}
+
+// เหตุที่คำขอเข้าคิวเจ้าหน้าที่ — แสดงเฉพาะฝั่งเจ้าหน้าที่ (F-VER-11)
+enum ReviewReason {
+  NO_MATCH
+  MULTIPLE_MATCHES
+  MANUAL_FLAG
+  NOT_GRADUATED
+  INCOMPLETE_RECORD
+  AUTO_APPROVE_DISABLED
+}
+
+enum SyncType {
+  FULL
+  INCREMENTAL
+  SINGLE
+}
+
+enum SyncStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
+// ============================================================
+// Phase 1 — Authentication & Authorization
+// ============================================================
+
+model User {
+  id                String       @id @default(cuid())
+  email             String       @unique
+  passwordHash      String
+  role              Role
+  status            UserStatus   @default(PENDING_VERIFICATION)
+  name              String
+  position          String?
+  phone             String?
+  locale            String       @default("th")
+  organizationId    String?
+  organization      Organization? @relation(fields: [organizationId], references: [id])
+  // ศิษย์เก่าผูกกับระเบียนนักศึกษาที่ยืนยันตัวตนแล้ว
+  studentId         String?      @unique
+  student           Student?     @relation(fields: [studentId], references: [id])
+  emailVerifiedAt   DateTime?
+  failedLoginCount  Int          @default(0)
+  lockedUntil       DateTime?
+  lastLoginAt       DateTime?
+  passwordChangedAt DateTime     @default(now())
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  authTokens      AuthToken[]
+  auditLogs       AuditLog[]
+  syncJobs        SyncJob[]
+  requests        VerificationRequest[] @relation("RequestRequester")
+  decidedRequests VerificationRequest[] @relation("RequestDecider")
+  requestNotes    RequestNote[]
+
+  @@index([organizationId])
+  @@index([role, status])
+  @@map("users")
+}
+
+model Organization {
+  id           String    @id @default(cuid())
+  nameTh       String
+  nameEn       String?
+  taxId        String    @unique
+  orgType      OrgType
+  address      String
+  contactEmail String
+  phone        String
+  status       OrgStatus @default(PENDING)
+  approvedAt   DateTime?
+  approvedById String?
+  // ระงับ/ปฏิเสธโดยเจ้าหน้าที่ (F-REG-08) — statusReason แสดงบนการ์ดหน่วยงาน
+  suspendedAt   DateTime?
+  suspendedById String?
+  statusReason  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  users    User[]
+  requests VerificationRequest[]
+
+  @@index([status])
+  @@map("organizations")
+}
+
+// token ยืนยันอีเมล / รีเซ็ตรหัสผ่าน — เก็บเฉพาะ SHA-256 hash ใช้ได้ครั้งเดียว
+model AuthToken {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      AuthTokenType
+  tokenHash String        @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  @@index([userId, type])
+  @@map("auth_tokens")
+}
+
+// ============================================================
+// Phase 2 — ข้อมูลผู้สำเร็จการศึกษา (ทำล่วงหน้าเพราะ F-AUTH-05 ต้องใช้)
+// ============================================================
+
+model Student {
+  id                   String        @id @default(cuid())
+  studentCode          String        @unique
+  // คนเดียวอาจมีหลายระเบียน (เช่น ป.ตรี + ป.โท) จึงเป็น index ไม่ใช่ unique
+  citizenIdHash        String?
+  citizenIdEnc         String?
+  passportNoHash       String?
+  passportNoEnc        String?
+  prefixTh             String?
+  firstNameTh          String
+  lastNameTh           String
+  prefixEn             String?
+  firstNameEn          String?
+  lastNameEn           String?
+  educationLevel       String
+  degreeNameTh         String
+  degreeNameEn         String?
+  programTh            String
+  programEn            String?
+  majorTh              String?
+  majorEn              String?
+  facultyTh            String
+  facultyEn            String?
+  gpa                  Decimal?      @db.Decimal(3, 2)
+  honors               Honors?
+  status               StudentStatus
+  graduationDate       DateTime?     @db.Date
+  councilApprovalDate  DateTime?     @db.Date
+  requiresManualReview Boolean       @default(false)
+  sourceUpdatedAt      DateTime?
+  syncedAt             DateTime      @default(now())
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  user                 User?
+  verificationRequests VerificationRequest[]
+
+  @@index([citizenIdHash])
+  @@index([passportNoHash])
+  @@map("students")
+}
+
+// ประวัติการ sync (F-DATA-06) — triggeredById = null หมายถึงเรียกจาก system cron
+model SyncJob {
+  id              String     @id @default(cuid())
+  type            SyncType
+  status          SyncStatus @default(RUNNING)
+  // ค่าคงที่ขณะ FULL/INCREMENTAL กำลังรัน แล้วคืนเป็น null — unique จึงกันการรันซ้อนกันได้ในระดับฐานข้อมูล
+  runLock         String?    @unique
+  studentCode     String?
+  triggeredById   String?
+  triggeredBy     User?      @relation(fields: [triggeredById], references: [id], onDelete: SetNull)
+  recordsFetched  Int        @default(0)
+  recordsUpserted Int        @default(0)
+  recordsInvalid  Int        @default(0)
+  errorCode       String?
+  errorMessage    String?
+  startedAt       DateTime   @default(now())
+  finishedAt      DateTime?
+
+  @@index([startedAt])
+  @@index([type, status, startedAt])
+  @@map("sync_jobs")
+}
+
+// ============================================================
+// Phase 3 — Core Verification
+// ============================================================
+
+model VerificationRequest {
+  id                 String          @id @default(cuid())
+  refNo              String          @unique
+  requesterId        String
+  requester          User            @relation("RequestRequester", fields: [requesterId], references: [id])
+  // หน่วยงานของผู้ยื่น ณ เวลายื่น — ผู้ใช้ในหน่วยงานเดียวกันเห็นคำขอร่วมกัน
+  organizationId     String?
+  organization       Organization?   @relation(fields: [organizationId], references: [id])
+  searchType         SearchType
+  searchValueHash    String
+  // ให้เจ้าหน้าที่เห็นคีย์ที่ผู้ขอกรอกจริง · ฝั่งผู้ขอแสดงแบบ mask เสมอ
+  searchValueEnc     String
+  purpose            RequestPurpose
+  requesterReference String?
+  note               String?
+  status             RequestStatus   @default(PENDING_REVIEW)
+  reviewReason       ReviewReason?
+  matchedStudentId   String?
+  matchedStudent     Student?        @relation(fields: [matchedStudentId], references: [id], onDelete: SetNull)
+  decisionType       DecisionType?
+  decidedById        String?
+  decidedBy          User?           @relation("RequestDecider", fields: [decidedById], references: [id], onDelete: SetNull)
+  decidedAt          DateTime?
+  // รหัสเหตุผล (REJECT_REASONS) — แปลสองภาษาตอนแสดงผล · rejectDetail = ข้อความเพิ่มเติมถึงผู้ขอ
+  rejectReason       String?
+  rejectDetail       String?
+  consentAt          DateTime
+  ipAddress          String?
+  userAgent          String?
+  // รหัสเข้าถึง permalink — hash ใช้ตรวจ, ciphertext ให้ผู้ขอคัดลอกลิงก์ซ้ำได้
+  accessTokenHash    String?         @unique
+  accessTokenEnc     String?
+  expiresAt          DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  result VerificationResult?
+  notes  RequestNote[]
+
+  @@index([requesterId, createdAt])
+  @@index([organizationId, createdAt])
+  @@index([status, createdAt])
+  @@index([searchValueHash])
+  @@map("verification_requests")
+}
+
+// snapshot ผลที่อนุมัติ (spec ข้อ 4.4) — ห้ามแก้ไข: migration ติด trigger ปฏิเสธ UPDATE
+model VerificationResult {
+  id                  String              @id @default(cuid())
+  requestId           String              @unique
+  request             VerificationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  studentId           String?
+  studentCode         String
+  prefixTh            String?
+  firstNameTh         String
+  lastNameTh          String
+  prefixEn            String?
+  firstNameEn         String?
+  lastNameEn          String?
+  educationLevel      String
+  degreeNameTh        String
+  degreeNameEn        String?
+  programTh           String
+  programEn           String?
+  majorTh             String?
+  majorEn             String?
+  facultyTh           String
+  facultyEn           String?
+  gpa                 Decimal?            @db.Decimal(3, 2)
+  honors              Honors?
+  status              StudentStatus
+  graduationDate      DateTime?           @db.Date
+  councilApprovalDate DateTime?           @db.Date
+  sourceUpdatedAt     DateTime?
+  createdAt           DateTime            @default(now())
+
+  @@map("verification_results")
+}
+
+// หมายเหตุภายในของเจ้าหน้าที่ (F-REG-06) — ผู้ขอมองไม่เห็น
+model RequestNote {
+  id        String              @id @default(cuid())
+  requestId String
+  request   VerificationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    User?               @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  body      String
+  createdAt DateTime            @default(now())
+
+  @@index([requestId, createdAt])
+  @@map("request_notes")
+}
+
+// ตัวนับเลขอ้างอิงรายปี พ.ศ. (F-VER-02)
+model RefNoCounter {
+  year      Int @id
+  lastValue Int
+
+  @@map("ref_no_counters")
+}
+
+// ตารางของ rate-limiter-flexible (RateLimiterPostgres) — โครงสร้างต้องตรงกับไลบรารี (F-VER-10)
+model RateLimit {
+  key    String  @id @db.VarChar(255)
+  points Int     @default(0)
+  expire BigInt?
+
+  @@map("rate_limits")
+}
+
+// ============================================================
+// Phase 7 — Audit (ฝังตั้งแต่ Phase 1 ตามลำดับงานข้อ 7)
+// ============================================================
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String?
+  entityId   String?
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+model AppSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("app_settings")
+}

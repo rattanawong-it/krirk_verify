@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="kru-icons.js"></script>
+  <style>
+    body { margin:0; background:#E7ECE4; }
+    a { color:#1C6B21; text-decoration:none; }
+    a:hover { color:#145018; text-decoration:underline; }
+  </style>
+</helmet>
+
+<div style="font-family:'Inter','Anuphan',sans-serif;color:#16210F;padding:26px 30px 60px;width:1770px">
+
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#16210F;border-radius:14px;padding:12px 16px;margin-bottom:24px;position:sticky;top:12px;z-index:50;box-shadow:0 10px 30px rgba(14,58,19,0.22)">
+    <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:18px;display:block">
+    <span style="color:rgba(255,255,255,0.45);font-size:12px">|</span>
+    <span style="color:#fff;font-size:13px;font-weight:700">กลุ่มที่ 3 · เจ้าหน้าที่ทะเบียน (REGISTRAR)</span>
+    <div style="display:flex;gap:6px;margin-left:6px">
+      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="4">
+        <button onClick="{{ tb.go }}" style="border:1px solid {{ tb.bd }};background:{{ tb.bg }};color:{{ tb.tx }};font-family:'Inter','Anuphan',sans-serif;font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;cursor:pointer">{{ tb.label }}</button>
+      </sc-for>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <sc-if value="{{ hasVariant }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span style="color:rgba(255,255,255,0.55);font-size:11px">ทางเลือก</span>
+          <div style="display:flex;background:rgba(255,255,255,0.12);border-radius:8px;padding:2px">
+            <button onClick="{{ setA }}" style="border:none;background:{{ vA.bg }};color:{{ vA.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">A</button>
+            <button onClick="{{ setB }}" style="border:none;background:{{ vB.bg }};color:{{ vB.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">B</button>
+          </div>
+          <span style="color:rgba(255,255,255,0.7);font-size:11px">{{ variantNote }}</span>
+        </div>
+      </sc-if>
+      <div style="display:flex;background:rgba(255,255,255,0.12);border-radius:8px;padding:2px">
+        <button onClick="{{ setTh }}" style="border:none;background:{{ lTh.bg }};color:{{ lTh.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">ไทย</button>
+        <button onClick="{{ setEn }}" style="border:none;background:{{ lEn.bg }};color:{{ lEn.tx }};font-size:11px;font-weight:700;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:26px;align-items:flex-start">
+    <div style="width:1280px;flex:none">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;background:#16210F;color:#fff;padding:3px 8px;border-radius:5px">DESKTOP 1280</span>
+        <span style="font-size:12.5px;color:#4B5A47;font-weight:600">{{ screenTitle }}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5E6D58">{{ screenRoute }}</span>
+      </div>
+      <div style="border-radius:14px;overflow:hidden;box-shadow:0 18px 44px rgba(14,58,19,0.14);background:#fff;display:flex;min-height:820px">
+
+        <div style="width:232px;flex:none;background:linear-gradient(180deg,#16431A,#0E3A13);padding:18px 12px;display:flex;flex-direction:column;gap:3px">
+          <div style="padding:4px 8px 16px">
+            <img src="kru-logo-white.png" alt="มหาวิทยาลัยเกริก" style="height:20px;display:block;margin-bottom:8px">
+            <div style="color:#fff;font-size:13px;font-weight:700;line-height:1.2">Krirk Verify</div>
+            <div style="color:rgba(255,255,255,0.55);font-size:10px;margin-top:2px">{{ t.staffLabel }}</div>
+          </div>
+          <sc-for list="{{ nav }}" as="n" hint-placeholder-count="7">
+            <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:11px;padding:10px;border-radius:9px;background:{{ n.bg }};border:none;cursor:pointer;width:100%;text-align:left;font-family:'Inter','Anuphan',sans-serif">
+              <div>{{ n.el }}</div>
+              <span style="font-size:12.5px;font-weight:{{ n.weight }};color:{{ n.color }};flex:1">{{ n.label }}</span>
+              <span style="font-size:9.5px;font-weight:700;color:{{ n.badgeTx }};background:{{ n.badgeBg }};border-radius:10px;padding:1px 6px;font-family:'JetBrains Mono',monospace">{{ n.count }}</span>
+            </button>
+          </sc-for>
+          <div style="margin-top:auto;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:13px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">{{ mark16.database }}<span style="color:#fff;font-size:11px;font-weight:700">{{ t.syncStatus }}</span></div>
+            <div style="color:rgba(255,255,255,0.62);font-size:10.5px;line-height:1.5">{{ t.syncBody }}</div>
+            <button style="width:100%;height:32px;margin-top:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.22);background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w14.refresh }}{{ t.syncNow }}</button>
+          </div>
+        </div>
+
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;background:#F8FBF7">
+          <div style="height:58px;background:#fff;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;padding:0 22px;gap:14px;flex-shrink:0">
+            <div style="flex:1;display:flex;align-items:center;gap:7px;font-size:12px;color:#5E6D58">
+              <span>{{ t.staffLabel }}</span>{{ dec14.chevronR }}<span style="color:#16210F;font-weight:600">{{ screenTitle }}</span>
+            </div>
+            <div style="width:250px;background:#F8FBF7;border:1px solid #DEE5DB;border-radius:9px;height:34px;display:flex;align-items:center;padding:0 11px;gap:8px">
+              {{ dec16.search }}<span style="font-size:12.5px;color:#ADB5A7;flex:1">{{ t.searchPh }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E6D58;background:#EEF2EC;border-radius:5px;padding:2px 6px">⌘K</span>
+            </div>
+            <div style="display:flex;background:#EEF2EC;border-radius:8px;padding:2px">
+              <span style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;background:{{ hdTh.bg }};color:{{ hdTh.tx }}">TH</span>
+              <span style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;background:{{ hdEn.bg }};color:{{ hdEn.tx }}">EN</span>
+            </div>
+            <div style="position:relative">
+              <button onClick="{{ toggleBell }}" style="position:relative;width:34px;height:34px;border-radius:9px;border:1px solid {{ bellBd }};background:{{ bellBg }};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0">
+                {{ tx18.bell }}<span style="position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:#C4322B;border:1.5px solid #fff"></span>
+              </button>
+              <sc-if value="{{ bellOpen }}" hint-placeholder-val="{{ true }}">
+                <div style="position:absolute;top:42px;right:0;width:352px;background:#fff;border:1px solid #DEE5DB;border-radius:14px;box-shadow:0 18px 44px rgba(14,58,19,0.18);z-index:60;overflow:hidden">
+                  <div style="padding:13px 15px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;gap:9px">
+                    <span style="font-size:13.5px;font-weight:700">{{ t.notifTitle }}</span>
+                    <span style="font-size:10px;font-weight:700;color:#8F211C;background:#FCE9E7;border-radius:20px;padding:2px 8px">{{ t.notifUnread }}</span>
+                    <button style="margin-left:auto;border:none;background:none;color:#1C6B21;font-size:11.5px;font-weight:600;cursor:pointer;padding:0;font-family:'Inter','Anuphan',sans-serif">{{ t.notifMarkAll }}</button>
+                  </div>
+                  <div style="max-height:352px;overflow:auto">
+                    <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="4">
+                      <div style="display:flex;gap:11px;padding:12px 15px;border-bottom:1px solid #F1F4EF;background:{{ n.rowBg }};text-align:left">
+                        <div style="width:30px;height:30px;border-radius:9px;background:{{ n.bg }};border:1px solid {{ n.bd }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ n.el }}</div>
+                        <div style="min-width:0;flex:1">
+                          <div style="font-size:12.5px;font-weight:{{ n.weight }};line-height:1.4">{{ n.title }}</div>
+                          <div style="font-size:11.5px;color:#4B5A47;line-height:1.5;margin-top:2px">{{ n.body }}</div>
+                          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#7C8B76;margin-top:4px">{{ n.time }}</div>
+                        </div>
+                        <span style="width:8px;height:8px;border-radius:50%;background:{{ n.dot }};flex-shrink:0;margin-top:11px;display:block"></span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <button style="width:100%;height:42px;border:none;background:#F8FBF7;color:#1C6B21;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:'Inter','Anuphan',sans-serif">{{ t.notifAll }}{{ dec14.chevronR }}</button>
+                </div>
+              </sc-if>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="width:32px;height:32px;border-radius:50%;background:#E7F5E5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#145018">{{ t.avatar }}</div>
+              <div style="line-height:1.25">
+                <div style="font-size:12px;font-weight:600">{{ t.userName }}</div>
+                <div style="font-size:9.5px;color:#5E6D58;font-family:'JetBrains Mono',monospace">REGISTRAR</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:22px;flex:1;min-width:0">
+
+            <sc-if value="{{ isQueue }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px">
+                  <div>
+                    <h1 style="font-size:23px;font-weight:700;margin:0 0 4px;letter-spacing:-0.01em">{{ t.queueTitle }}</h1>
+                    <p style="font-size:13px;color:#5E6D58;margin:0">{{ t.queueSub }}</p>
+                  </div>
+                  <div style="display:flex;gap:10px">
+                    <button style="height:38px;padding:0 15px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx16.excel }}{{ t.exportExcel }}</button>
+                    <button style="height:38px;padding:0 15px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx16.filter }}{{ t.moreFilters }}</button>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:16px">
+                  <sc-for list="{{ queueStats }}" as="s" hint-placeholder-count="4">
+                    <div style="background:{{ s.bg }};border:1px solid {{ s.bd }};border-radius:14px;padding:15px 16px">
+                      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+                        <div>{{ s.el }}</div><span style="font-size:11.5px;font-weight:700;color:{{ s.tx }}">{{ s.k }}</span>
+                      </div>
+                      <div style="font-size:25px;font-weight:700;color:{{ s.tx }};letter-spacing:-0.02em;font-variant-numeric:tabular-nums">{{ s.v }}</div>
+                      <div style="font-size:11px;color:{{ s.tx }};opacity:0.78;margin-top:2px">{{ s.note }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;overflow:hidden">
+                  <div style="padding:13px 18px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                    <div style="display:flex;gap:7px">
+                      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
+                        <span style="background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.bd }};border-radius:20px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer">{{ c.label }}</span>
+                      </sc-for>
+                    </div>
+                    <div style="margin-left:auto;display:flex;align-items:center;gap:9px">
+                      <span style="font-size:11.5px;color:#5E6D58">{{ t.sortBy }}</span>
+                      <button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx14.sort }}{{ t.waitLongest }}</button>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:26px 150px 1fr 118px 126px 108px 40px;gap:11px;padding:11px 18px;background:#F8FBF7;border-bottom:1px solid #E6EBE2;font-size:11.5px;font-weight:700;color:#4B5A47;align-items:center">
+                    <span style="width:17px;height:17px;border-radius:5px;border:1.5px solid #C7CFC2;display:block"></span>
+                    <span>{{ t.thRef }}</span><span>{{ t.thOrg }}</span><span>{{ t.thKey }}</span><span>{{ t.thReason }}</span><span>{{ t.thWait }}</span><span></span>
+                  </div>
+                  <sc-for list="{{ queueRows }}" as="r" hint-placeholder-count="7">
+                    <button onClick="{{ goReview }}" style="width:100%;display:grid;grid-template-columns:26px 150px 1fr 118px 126px 108px 40px;gap:11px;padding:12px 18px;border:none;border-left:3px solid {{ r.edge }};border-bottom:1px solid #F1F4EE;background:{{ r.rowBg }};align-items:center;cursor:pointer;text-align:left;font-family:'Inter','Anuphan',sans-serif">
+                      <span style="width:17px;height:17px;border-radius:5px;border:1.5px solid #C7CFC2;display:block"></span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#1C6B21">{{ r.ref }}</span>
+                      <div style="min-width:0">
+                        <div style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.org }}</div>
+                        <div style="font-size:10.5px;color:#5E6D58;margin-top:2px">{{ r.email }}</div>
+                      </div>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4B5A47">{{ r.key }}</span>
+                      <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.bg }};color:{{ r.tx }};font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:20px;justify-self:start">{{ r.reasonEl }}{{ r.reason }}</span>
+                      <div>
+                        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;color:{{ r.slaTx }}">{{ r.wait }}</div>
+                        <div style="font-size:9.5px;color:{{ r.slaTx }};opacity:0.8">{{ r.slaNote }}</div>
+                      </div>
+                      <span style="justify-self:end">{{ dec16.chevronR }}</span>
+                    </button>
+                  </sc-for>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:#F8FBF7">
+                    <span style="font-size:12px;color:#5E6D58">{{ t.pageInfo }}</span>
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center">{{ dec16.chevronL }}</span>
+                      <span style="width:30px;height:30px;border-radius:8px;background:#1C6B21;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700">1</span>
+                      <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:#4B5A47">2</span>
+                      <span style="width:30px;height:30px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;display:flex;align-items:center;justify-content:center">{{ dec16.chevronR }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <button onClick="{{ goQueue }}" style="display:flex;align-items:center;gap:7px;border:none;background:none;color:#4B5A47;font-size:12.5px;font-weight:600;cursor:pointer;padding:0;margin-bottom:12px;font-family:'Inter','Anuphan',sans-serif">{{ tx16.chevronL }}{{ t.backToQueue }}</button>
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:16px">
+                  <div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                      <h1 style="font-size:22px;font-weight:700;margin:0;letter-spacing:-0.01em">{{ t.reviewTitle }}</h1>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;color:#1C6B21;background:#E7F5E5;padding:4px 10px;border-radius:7px">KRU-2569-000123</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px">
+                      <span style="display:inline-flex;align-items:center;gap:7px;background:#FDF3DA;color:#8A5A06;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:20px">{{ amb14.clock }}{{ t.waited }}</span>
+                      <span style="display:inline-flex;align-items:center;gap:7px;background:#FCE9E7;color:#8F211C;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:20px">{{ red14.alert }}{{ t.reasonDuplicate }}</span>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:10px;flex-shrink:0">
+                    <button style="height:42px;padding:0 17px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx18.edit }}{{ t.internalNote }}</button>
+                    <button style="height:42px;padding:0 17px;border-radius:10px;border:1px solid #F3CFCB;background:#fff;color:#C4322B;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ red18.xCircle }}{{ t.reject }}</button>
+                    <button style="height:42px;padding:0 20px;border-radius:10px;border:none;background:#1C6B21;color:#fff;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.check }}{{ t.approveSelected }}</button>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:16px;align-items:flex-start;flex-direction:{{ reviewDir }}">
+                  <div style="flex:{{ reqFlex }};min-width:0;display:flex;flex-direction:column;gap:14px;width:{{ reqWidth }}">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:12px;font-weight:700;color:#5E6D58;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:14px">{{ t.requestInfo }}</div>
+                      <div style="display:grid;grid-template-columns:{{ reqCols }};gap:12px">
+                        <sc-for list="{{ reqRows }}" as="r" hint-placeholder-count="6">
+                          <div>
+                            <div style="font-size:11px;color:#5E6D58;margin-bottom:3px">{{ r.k }}</div>
+                            <div style="font-size:13.5px;font-weight:600;font-family:{{ r.font }};display:flex;align-items:center;gap:7px">{{ r.v }}{{ r.suffix }}</div>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <div style="display:flex;gap:10px;align-items:center;background:#FDF6E4;border:1px solid #EAD9A8;border-radius:11px;padding:11px 13px;margin-top:14px">
+                        {{ gold17.lock }}
+                        <span style="font-size:11.5px;color:#6B4E0A;line-height:1.5;flex:1">{{ t.revealNote }}</span>
+                        <button style="height:30px;padding:0 12px;border-radius:8px;border:1px solid #EAD9A8;background:#fff;color:#6B4E0A;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;flex-shrink:0;font-family:'Inter','Anuphan',sans-serif">{{ gold14.eye }}{{ t.revealId }}</button>
+                      </div>
+                    </div>
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:12px;font-weight:700;color:#5E6D58;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:13px">{{ t.whyQueued }}</div>
+                      <div style="display:flex;flex-direction:column;gap:10px">
+                        <sc-for list="{{ reasons }}" as="r" hint-placeholder-count="3">
+                          <div style="display:flex;gap:11px;align-items:flex-start;background:{{ r.bg }};border:1px solid {{ r.bd }};border-radius:11px;padding:11px 12px">
+                            <div style="margin-top:1px">{{ r.el }}</div>
+                            <div>
+                              <div style="font-size:12.5px;font-weight:700;color:{{ r.tx }}">{{ r.title }}</div>
+                              <div style="font-size:11.5px;color:{{ r.tx }};opacity:0.85;line-height:1.5;margin-top:2px">{{ r.sub }}</div>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="flex:{{ matchFlex }};min-width:0;display:flex;flex-direction:column;gap:14px;width:{{ matchWidth }}">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;overflow:hidden">
+                      <div style="padding:15px 18px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;justify-content:space-between">
+                        <div style="display:flex;align-items:center;gap:9px">
+                          <span style="font-size:14.5px;font-weight:700">{{ t.matches }}</span>
+                          <span style="background:#FDF3DA;color:#8A5A06;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;font-family:'JetBrains Mono',monospace">2</span>
+                        </div>
+                        <button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx14.search }}{{ t.manualSearch }}</button>
+                      </div>
+                      <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+                        <sc-for list="{{ matches }}" as="m" hint-placeholder-count="2">
+                          <div style="border:{{ m.border }};background:{{ m.bg }};border-radius:13px;padding:15px;box-shadow:{{ m.shadow }}">
+                            <div style="display:flex;align-items:flex-start;gap:13px">
+                              <span style="width:20px;height:20px;border-radius:50%;border:1.5px solid {{ m.radio }};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px"><span style="width:10px;height:10px;border-radius:50%;background:{{ m.dot }};display:block"></span></span>
+                              <div style="flex:1;min-width:0">
+                                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+                                  <span style="font-size:15.5px;font-weight:700">{{ m.name }}</span>
+                                  <span style="display:inline-flex;align-items:center;gap:6px;background:{{ m.stBg }};color:{{ m.stTx }};font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.stDot }};display:block"></span>{{ m.status }}</span>
+                                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5E6D58">{{ m.code }}</span>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+                                  <sc-for list="{{ m.fields }}" as="f" hint-placeholder-count="6">
+                                    <div>
+                                      <div style="font-size:10.5px;color:#5E6D58">{{ f.k }}</div>
+                                      <div style="font-size:12.5px;font-weight:600;margin-top:1px;font-family:{{ f.font }}">{{ f.v }}</div>
+                                    </div>
+                                  </sc-for>
+                                </div>
+                                <div style="display:flex;gap:9px;margin-top:12px;align-items:center">
+                                  <button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx14.refresh }}{{ t.refreshOne }}</button>
+                                  <button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx14.external }}{{ t.openStudent }}</button>
+                                  <span style="margin-left:auto;font-size:10.5px;color:#5E6D58;font-family:'JetBrains Mono',monospace">{{ m.sourceAt }}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:12px;font-weight:700;color:#5E6D58;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:12px">{{ t.decisionPreview }}</div>
+                      <div style="display:flex;gap:12px;align-items:center;background:#E7F5E5;border:1px solid #C6E6C2;border-radius:12px;padding:14px">
+                        <div style="width:40px;height:40px;border-radius:11px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ p20.shieldCheck }}</div>
+                        <div style="flex:1">
+                          <div style="font-size:13px;font-weight:700;color:#145018">{{ t.willApprove }}</div>
+                          <div style="font-size:11.5px;color:#145018;opacity:0.88;line-height:1.5;margin-top:2px">{{ t.willApproveBody }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;overflow:hidden;margin-top:16px">
+                  <div style="padding:15px 18px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;justify-content:space-between;gap:14px">
+                    <div style="display:flex;align-items:center;gap:9px">{{ tx18.history }}<span style="font-size:14.5px;font-weight:700">{{ t.activityTitle }}</span></div>
+                    <div style="display:flex;align-items:center;gap:12px">
+                      <span style="font-size:11px;color:#5E6D58">{{ t.activityNote }}</span>
+                      <button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #DEE5DB;background:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx14.external }}{{ t.openAudit }}</button>
+                    </div>
+                  </div>
+                  <div style="padding:18px 18px 4px">
+                    <sc-for list="{{ activity }}" as="a" hint-placeholder-count="6">
+                      <div style="display:grid;grid-template-columns:150px 30px minmax(0,1fr);gap:13px">
+                        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5E6D58;text-align:right;padding-top:7px;line-height:1.4">{{ a.time }}</div>
+                        <div style="display:flex;flex-direction:column;align-items:center">
+                          <div style="width:30px;height:30px;border-radius:9px;background:{{ a.bg }};border:1px solid {{ a.bd }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ a.el }}</div>
+                          <div style="width:1.5px;flex:1;background:{{ a.lineBg }}"></div>
+                        </div>
+                        <div style="padding:5px 0 18px">
+                          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+                            <span style="font-size:13px;font-weight:700">{{ a.title }}</span>
+                            <span style="font-size:10.5px;font-weight:600;color:#5E6D58;background:#F1F4EF;border-radius:5px;padding:2px 7px;font-family:'JetBrains Mono',monospace">{{ a.actor }}</span>
+                          </div>
+                          <div style="font-size:12px;color:#4B5A47;line-height:1.55;margin-top:3px">{{ a.body }}</div>
+                          <sc-if value="{{ a.mail }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:inline-flex;align-items:center;gap:9px;background:#F8FBF7;border:1px solid #E6EBE2;border-radius:9px;padding:7px 11px;margin-top:8px;flex-wrap:wrap">
+                              {{ dec14.mail }}
+                              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:#16210F">{{ a.mail }}</span>
+                              <span style="width:1px;height:13px;background:#DEE5DB;display:block"></span>
+                              <span style="font-size:11px;color:#4B5A47">{{ a.mailTo }}</span>
+                              <span style="display:inline-flex;align-items:center;gap:5px;background:{{ a.mailBg }};color:{{ a.mailTx }};font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px"><span style="width:6px;height:6px;border-radius:50%;background:{{ a.mailDot }};display:block"></span>{{ a.mailStatus }}</span>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isStudents }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px">
+                  <div>
+                    <h1 style="font-size:23px;font-weight:700;margin:0 0 4px;letter-spacing:-0.01em">{{ t.studentsTitle }}</h1>
+                    <p style="font-size:13px;color:#5E6D58;margin:0">{{ t.studentsSub }}</p>
+                  </div>
+                  <button style="height:38px;padding:0 15px;border-radius:10px;border:1px solid #DEE5DB;background:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx16.refresh }}{{ t.syncNow }}</button>
+                </div>
+                <div style="background:#FDF6E4;border:1px solid #EAD9A8;border-radius:13px;padding:13px 15px;display:flex;gap:11px;align-items:center;margin-bottom:16px">
+                  {{ gold18.lock }}
+                  <span style="font-size:12px;color:#6B4E0A;line-height:1.55;flex:1">{{ t.studentsPdpa }}</span>
+                </div>
+                <div style="display:flex;gap:16px;align-items:flex-start">
+                  <div style="flex:1;min-width:0;background:#fff;border:1px solid #DEE5DB;border-radius:15px;overflow:hidden">
+                    <div style="padding:14px 18px;border-bottom:1px solid #E6EBE2;display:flex;align-items:center;gap:10px">
+                      <div style="flex:1;background:#F8FBF7;border:1px solid #DEE5DB;border-radius:9px;height:36px;display:flex;align-items:center;padding:0 11px;gap:8px">
+                        {{ dec16.search }}<span style="font-size:12.5px;color:#ADB5A7">{{ t.studentSearchPh }}</span>
+                      </div>
+                      <button style="height:36px;padding:0 13px;border-radius:9px;border:1px solid #DEE5DB;background:#fff;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ tx16.filter }}{{ t.faculty }}</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:126px 1fr 168px 122px 108px;gap:12px;padding:11px 18px;background:#F8FBF7;border-bottom:1px solid #E6EBE2;font-size:11.5px;font-weight:700;color:#4B5A47">
+                      <span>{{ t.thCode }}</span><span>{{ t.thName }}</span><span>{{ t.thProgram }}</span><span>{{ t.thStatus }}</span><span>{{ t.thGrad }}</span>
+                    </div>
+                    <sc-for list="{{ studentRows }}" as="r" hint-placeholder-count="7">
+                      <div style="display:grid;grid-template-columns:126px 1fr 168px 122px 108px;gap:12px;padding:12px 18px;border-bottom:1px solid #F1F4EE;align-items:center">
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#1C6B21">{{ r.code }}</span>
+                        <div style="min-width:0">
+                          <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div>
+                          <div style="font-size:10.5px;color:#5E6D58;margin-top:1px">{{ r.nameEn }}</div>
+                        </div>
+                        <span style="font-size:11.5px;color:#4B5A47;line-height:1.4">{{ r.program }}</span>
+                        <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.bg }};color:{{ r.tx }};font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:20px;justify-self:start">{{ r.flagEl }}{{ r.status }}</span>
+                        <span style="font-size:11.5px;color:#4B5A47">{{ r.grad }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="width:290px;flex:none;display:flex;flex-direction:column;gap:14px">
+                    <div style="background:#fff;border:1px solid #DEE5DB;border-radius:15px;padding:18px">
+                      <div style="font-size:13.5px;font-weight:700;margin-bottom:13px">{{ t.registryCounts }}</div>
+                      <div style="display:flex;flex-direction:column;gap:10px">
+                        <sc-for list="{{ registryCounts }}" as="c" hint-placeholder-count="4">
+                          <div style="display:flex;align-items:center;gap:11px">
+                            <div style="width:32px;height:32px;border-radius:9px;background:{{ c.bg }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ c.el }}</div>
+                            <span style="font-size:12.5px;color:#4B5A47;flex:1">{{ c.k }}</span>
+                            <span style="font-size:14.5px;font-weight:700;font-variant-numeric:tabular-nums">{{ c.v }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="background:#FCE9E7;border:1px solid #F3CFCB;border-radius:15px;padding:16px">
+                      <div style="display:flex;gap:10px;align-items:flex-start">
+                        <div style="margin-top:1px">{{ red18.alert }}</div>
+                        <div>
+                          <div style="font-size:12.5px;font-weight:700;color:#8F211C;margin-bottom:3px">{{ t.manualFlagTitle }}</div>
+                          <div style="font-size:11.5px;color:#8F211C;line-height:1.55;opacity:0.9">{{ t.manualFlagBody }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isOrgs }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px">
+                  <div>
+                    <h1 style="font-size:23px;font-weight:700;margin:0 0 4px;letter-spacing:-0.01em">{{ t.orgsTitle }}</h1>
+                    <p style="font-size:13px;color:#5E6D58;margin:0">{{ t.orgsSub }}</p>
+                  </div>
+                  <div style="display:flex;gap:7px">
+                    <sc-for list="{{ orgChips }}" as="c" hint-placeholder-count="3">
+                      <span style="background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.bd }};border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">{{ c.label }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:13px">
+                  <sc-for list="{{ orgs }}" as="o" hint-placeholder-count="4">
+                    <div style="background:#fff;border:1px solid {{ o.bd }};border-radius:15px;padding:18px;display:flex;gap:16px;align-items:flex-start">
+                      <div style="width:48px;height:48px;border-radius:13px;background:{{ o.iconBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ o.el }}</div>
+                      <div style="flex:1;min-width:0">
+                        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:5px">
+                          <span style="font-size:15.5px;font-weight:700">{{ o.name }}</span>
+                          <span style="display:inline-flex;align-items:center;gap:6px;background:{{ o.stBg }};color:{{ o.stTx }};font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px"><span style="width:6px;height:6px;border-radius:50%;background:{{ o.stDot }};display:block"></span>{{ o.status }}</span>
+                        </div>
+                        <div style="font-size:12px;color:#5E6D58;margin-bottom:11px">{{ o.meta }}</div>
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+                          <sc-for list="{{ o.stats }}" as="s" hint-placeholder-count="4">
+                            <div>
+                              <div style="font-size:10.5px;color:#5E6D58">{{ s.k }}</div>
+                              <div style="font-size:13px;font-weight:600;margin-top:1px;font-family:{{ s.font }}">{{ s.v }}</div>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </div>
+                      <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;width:160px">
+                        <sc-for list="{{ o.actions }}" as="a" hint-placeholder-count="2">
+                          <button style="height:36px;border-radius:9px;border:1px solid {{ a.bd }};background:{{ a.bg }};color:{{ a.tx }};font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ a.el }}{{ a.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:390px;flex:none">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;background:#16210F;color:#fff;padding:3px 8px;border-radius:5px">MOBILE 390</span>
+        <span style="font-size:12.5px;color:#4B5A47;font-weight:600">{{ screenTitle }}</span>
+      </div>
+      <div style="width:390px;border-radius:34px;border:9px solid #16210F;overflow:hidden;background:#F8FBF7;box-shadow:0 18px 44px rgba(14,58,19,0.18);display:flex;flex-direction:column;min-height:790px">
+        <div style="height:30px;background:#16431A;display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;color:rgba(255,255,255,0.8)">09:41</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.8)">5G ▮</span>
+        </div>
+        <div style="height:52px;background:#16431A;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0">
+          <div style="width:44px;height:44px;margin-left:-12px;display:flex;align-items:center;justify-content:center">{{ w20.menu }}</div>
+          <span style="color:#fff;font-size:13.5px;font-weight:700;flex:1">{{ screenTitleShort }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:rgba(255,255,255,0.85)">{{ langShort }}</span>
+          <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-right:-10px">{{ w20.bell }}</div>
+        </div>
+
+        <div style="flex:1;min-width:0;padding:16px">
+          <sc-if value="{{ isQueue }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+                <sc-for list="{{ queueStatsMobile }}" as="s" hint-placeholder-count="2">
+                  <div style="background:{{ s.bg }};border:1px solid {{ s.bd }};border-radius:13px;padding:13px">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">{{ s.el }}<span style="font-size:11px;font-weight:700;color:{{ s.tx }}">{{ s.k }}</span></div>
+                    <div style="font-size:22px;font-weight:700;color:{{ s.tx }};font-variant-numeric:tabular-nums">{{ s.v }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+                <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4">
+                  <span style="background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.bd }};border-radius:20px;padding:7px 13px;font-size:12px;font-weight:600;white-space:nowrap;flex-shrink:0">{{ c.label }}</span>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ queueRowsMobile }}" as="r" hint-placeholder-count="4">
+                  <button onClick="{{ goReview }}" style="background:#fff;border:1px solid #DEE5DB;border-left:3px solid {{ r.edge }};border-radius:13px;padding:13px;text-align:left;cursor:pointer;font-family:'Inter','Anuphan',sans-serif;width:100%">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;color:#1C6B21">{{ r.ref }}</span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:{{ r.slaTx }}">{{ r.wait }}</span>
+                    </div>
+                    <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.org }}</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#5E6D58;margin-top:3px">{{ r.key }}</div>
+                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.bg }};color:{{ r.tx }};font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:9px">{{ r.reasonEl }}{{ r.reason }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="background:#fff;border:1px solid #DEE5DB;border-radius:14px;padding:15px;margin-bottom:12px">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#1C6B21;background:#E7F5E5;padding:4px 9px;border-radius:6px">KRU-2569-000123</span>
+                <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+                  <span style="display:inline-flex;align-items:center;gap:6px;background:#FDF3DA;color:#8A5A06;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px">{{ amb14.clock }}{{ t.waited }}</span>
+                  <span style="display:inline-flex;align-items:center;gap:6px;background:#FCE9E7;color:#8F211C;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px">{{ red14.alert }}{{ t.reasonDuplicate }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px;margin-top:13px">
+                  <sc-for list="{{ reqRowsMobile }}" as="r" hint-placeholder-count="4">
+                    <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px">
+                      <span style="color:#5E6D58;flex-shrink:0">{{ r.k }}</span>
+                      <span style="font-weight:600;text-align:right;font-family:{{ r.font }}">{{ r.v }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="font-size:13.5px;font-weight:700;margin-bottom:10px">{{ t.matches }} (2)</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ matchesMobile }}" as="m" hint-placeholder-count="2">
+                  <div style="border:{{ m.border }};background:{{ m.bg }};border-radius:13px;padding:14px">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                      <span style="width:19px;height:19px;border-radius:50%;border:1.5px solid {{ m.radio }};display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="width:9px;height:9px;border-radius:50%;background:{{ m.dot }};display:block"></span></span>
+                      <span style="font-size:14px;font-weight:700;flex:1">{{ m.name }}</span>
+                      <span style="background:{{ m.stBg }};color:{{ m.stTx }};font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px">{{ m.status }}</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:7px">
+                      <sc-for list="{{ m.fields }}" as="f" hint-placeholder-count="3">
+                        <div style="display:flex;justify-content:space-between;gap:10px;font-size:11.5px">
+                          <span style="color:#5E6D58">{{ f.k }}</span>
+                          <span style="font-weight:600;text-align:right;font-family:{{ f.font }}">{{ f.v }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="background:#fff;border:1px solid #DEE5DB;border-radius:14px;padding:14px;margin-top:14px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">{{ tx16.history }}<span style="font-size:13px;font-weight:700">{{ t.activityTitle }}</span></div>
+                <sc-for list="{{ activityMobile }}" as="a" hint-placeholder-count="4">
+                  <div style="display:grid;grid-template-columns:26px minmax(0,1fr);gap:11px">
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                      <div style="width:26px;height:26px;border-radius:8px;background:{{ a.bg }};border:1px solid {{ a.bd }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ a.el }}</div>
+                      <div style="width:1.5px;flex:1;background:{{ a.lineBg }}"></div>
+                    </div>
+                    <div style="padding:2px 0 14px">
+                      <div style="font-size:12.5px;font-weight:700;line-height:1.4">{{ a.title }}</div>
+                      <div style="font-size:11.5px;color:#4B5A47;line-height:1.5;margin-top:2px">{{ a.body }}</div>
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#7C8B76;margin-top:4px">{{ a.time }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:14px">
+                <button style="flex:1;height:48px;border-radius:11px;border:1px solid #F3CFCB;background:#fff;color:#C4322B;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ red18.xCircle }}{{ t.reject }}</button>
+                <button style="flex:1.3;height:48px;border-radius:11px;border:none;background:#1C6B21;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ w18.check }}{{ t.approve }}</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isStudents }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="background:#F8FBF7;border:1px solid #DEE5DB;border-radius:10px;height:44px;display:flex;align-items:center;padding:0 12px;gap:9px;margin-bottom:13px">
+                {{ dec18.search }}<span style="font-size:13px;color:#ADB5A7">{{ t.studentSearchPh }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ studentRowsMobile }}" as="r" hint-placeholder-count="4">
+                  <div style="background:#fff;border:1px solid #DEE5DB;border-radius:13px;padding:13px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;color:#1C6B21">{{ r.code }}</span>
+                      <span style="display:inline-flex;align-items:center;gap:5px;background:{{ r.bg }};color:{{ r.tx }};font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px">{{ r.status }}</span>
+                    </div>
+                    <div style="font-size:13.5px;font-weight:600">{{ r.name }}</div>
+                    <div style="font-size:11.5px;color:#4B5A47;margin-top:3px;line-height:1.45">{{ r.program }}</div>
+                    <div style="font-size:10.5px;color:#7C8B76;margin-top:5px">{{ r.grad }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isOrgs }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <sc-for list="{{ orgsMobile }}" as="o" hint-placeholder-count="3">
+                <div style="background:#fff;border:1px solid {{ o.bd }};border-radius:14px;padding:14px">
+                  <div style="display:flex;align-items:flex-start;gap:11px;margin-bottom:10px">
+                    <div style="width:38px;height:38px;border-radius:11px;background:{{ o.iconBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ o.el }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:13.5px;font-weight:700;line-height:1.3">{{ o.name }}</div>
+                      <span style="display:inline-flex;align-items:center;gap:5px;background:{{ o.stBg }};color:{{ o.stTx }};font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:5px">{{ o.status }}</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11.5px;color:#5E6D58;line-height:1.5;margin-bottom:11px">{{ o.meta }}</div>
+                  <div style="display:flex;gap:9px">
+                    <sc-for list="{{ o.actions }}" as="a" hint-placeholder-count="2">
+                      <button style="flex:1;height:44px;border-radius:10px;border:1px solid {{ a.bd }};background:{{ a.bg }};color:{{ a.tx }};font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">{{ a.el }}{{ a.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="height:64px;background:#fff;border-top:1px solid #E6EBE2;display:flex;align-items:center;justify-content:space-around;padding:0 6px;flex-shrink:0">
+          <sc-for list="{{ bottomNav }}" as="b" hint-placeholder-count="4">
+            <button onClick="{{ b.go }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:56px;min-height:48px;justify-content:center;border:none;background:none;cursor:pointer;font-family:'Inter','Anuphan',sans-serif">
+              <div>{{ b.el }}</div>
+              <span style="font-size:9.5px;font-weight:600;color:{{ b.color }}">{{ b.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1770},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;queue&quot;,&quot;review&quot;,&quot;students&quot;,&quot;orgs&quot;],&quot;default&quot;:&quot;queue&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;มุมมอง&quot;},&quot;highlightOverSla&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;คิวงาน&quot;}}">
+class Component extends DCLogic {
+  state = { screen:'queue', lang:'th', variant:'a', bellOpen:true };
+  C = { pri:'#1C6B21', priSoft:'#E7F5E5', priTx:'#145018', priBd:'#C6E6C2', gold:'#C69A2E', mark:'#38AE36',
+        tx:'#16210F', tx2:'#4B5A47', tx3:'#5E6D58', dec:'#7C8B76', bd:'#DEE5DB',
+        amb:'#B8760B', ambBg:'#FDF3DA', ambTx:'#8A5A06', ambBd:'#F0DCAF',
+        red:'#C4322B', redBg:'#FCE9E7', redTx:'#8F211C', redBd:'#F3CFCB',
+        slate:'#4A5B7A', slateBg:'#ECEFF5', slateTx:'#35425C', slateBd:'#D7DEEA',
+        info:'#0F6E8C', infoBg:'#E2F2F6', infoTx:'#0A4F66', infoBd:'#C5E3EB',
+        gray:'#7C8B76', grayBg:'#EFF1ED', grayTx:'#4C5A46', grayBd:'#DFE4DA' };
+
+  ic(name,size,color,sw){
+    const h=React.createElement, P=(window.KRU_ICON_PATHS||{})[name]||[];
+    return h('svg',{viewBox:'0 0 24 24',width:size||20,height:size||20,fill:'none',stroke:color||'currentColor',strokeWidth:sw||1.5,strokeLinecap:'round',strokeLinejoin:'round',style:{display:'block',flexShrink:0}},
+      ...P.map((p,i)=>h(p[0],{key:i,...p[1]})));
+  }
+  set(size,color){ const o={}; Object.keys(window.KRU_ICON_PATHS||{}).forEach(n=>{o[n]=this.ic(n,size,color);}); return o; }
+  go(s){ return ()=>this.setState({screen:s}); }
+
+  TH={ staffLabel:'พื้นที่ทำงานเจ้าหน้าที่ทะเบียน', searchPh:'ค้นหาเลขอ้างอิง ชื่อ หรือรหัสนักศึกษา…', avatar:'สร', userName:'สมร รัตนกุล',
+    syncStatus:'สถานะข้อมูลทะเบียน', syncBody:'ซิงก์สำเร็จล่าสุด 02:00 น. · 18,402 ระเบียน', syncNow:'ซิงก์ข้อมูลตอนนี้',
+    queueTitle:'คิวคำขอรอพิจารณา', queueSub:'คำขอที่ระบบจับคู่ไม่ชัดเจน เรียงตามเวลารอนานที่สุด',
+    exportExcel:'Export Excel', moreFilters:'ตัวกรองเพิ่มเติม', sortBy:'เรียงตาม', waitLongest:'รอนานที่สุด',
+    thRef:'เลขอ้างอิง', thOrg:'ผู้ขอ / หน่วยงาน', thKey:'คีย์ค้นหา', thReason:'เหตุที่เข้าคิว', thWait:'เวลารอ',
+    pageInfo:'แสดง 1–7 จาก 12 รายการในคิว', backToQueue:'กลับไปคิวคำขอ',
+    reviewTitle:'พิจารณาคำขอ', waited:'รอมาแล้ว 4 ชม. 12 น.', reasonDuplicate:'พบผู้มีชื่อซ้ำ 2 รายการ',
+    internalNote:'หมายเหตุภายใน', reject:'ปฏิเสธคำขอ', approve:'อนุมัติ', approveSelected:'อนุมัติรายการที่เลือก',
+    requestInfo:'ข้อมูลคำขอ',
+    revealNote:'เลขบัตรแสดงแบบปิดบัง การกดดูเลขเต็มจะถูกบันทึกใน Audit Log พร้อมชื่อผู้ใช้และเวลา',
+    revealId:'ดูเลขเต็ม', whyQueued:'เหตุที่ระบบไม่อนุมัติอัตโนมัติ',
+    matches:'รายการที่จับคู่ได้', manualSearch:'ค้นหาด้วยตนเอง', refreshOne:'ดึงข้อมูลใหม่', openStudent:'เปิดข้อมูลนักศึกษา',
+    activityTitle:'ประวัติการดำเนินการและอีเมลที่ส่ง', activityNote:'ทุกเหตุการณ์บันทึกลง Audit Log แบบแก้ไขไม่ได้', openAudit:'เปิดใน Audit Log',
+    notifTitle:'การแจ้งเตือน', notifUnread:'ใหม่ 3', notifMarkAll:'อ่านแล้วทั้งหมด', notifAll:'ดูการแจ้งเตือนทั้งหมด',
+    decisionPreview:'ผลที่จะเกิดขึ้น', willApprove:'อนุมัติโดยเลือกรายการแรก',
+    willApproveBody:'ระบบจะสร้าง snapshot ผลตรวจสอบแบบแก้ไขไม่ได้ ส่งอีเมลแจ้งผู้ขอ และบันทึก decisionType = MANUAL พร้อมชื่อผู้อนุมัติ',
+    studentsTitle:'ข้อมูลผู้สำเร็จการศึกษา', studentsSub:'ค้นหาและตรวจสอบระเบียนที่ซิงก์จากระบบทะเบียน',
+    studentsPdpa:'หน้านี้เข้าถึงข้อมูลส่วนบุคคล ทุกการค้นหาและการเปิดดูระเบียนถูกบันทึกใน Audit Log',
+    studentSearchPh:'รหัสนักศึกษา ชื่อ เลขบัตร หรือพาสปอร์ต…', faculty:'คณะ',
+    thCode:'รหัสนักศึกษา', thName:'ชื่อ-นามสกุล', thProgram:'หลักสูตร / คณะ', thStatus:'สถานภาพ', thGrad:'วันสำเร็จ',
+    registryCounts:'สรุประเบียนในระบบ', manualFlagTitle:'ระเบียนที่ต้องตรวจด้วยคนเสมอ',
+    manualFlagBody:'ระเบียนที่ติดธง requiresManualReview เช่น วุฒิถูกเพิกถอน มีข้อพิพาท หรือข้อมูลก่อนยุคดิจิทัล จะไม่ถูกอนุมัติอัตโนมัติแม้ข้อมูลจะตรง',
+    orgsTitle:'จัดการหน่วยงานภายนอก', orgsSub:'อนุมัติ ระงับ และดูประวัติการใช้งานของแต่ละหน่วยงาน' };
+  EN={ staffLabel:'Registrar workspace', searchPh:'Search reference, name or student code…', avatar:'SR', userName:'Samorn R.',
+    syncStatus:'Registry data status', syncBody:'Last successful sync 02:00 · 18,402 records', syncNow:'Sync now',
+    queueTitle:'Review queue', queueSub:'Requests the system could not match clearly, longest wait first',
+    exportExcel:'Export Excel', moreFilters:'More filters', sortBy:'Sort by', waitLongest:'Longest wait',
+    thRef:'Reference', thOrg:'Requester', thKey:'Search key', thReason:'Queue reason', thWait:'Waiting',
+    pageInfo:'Showing 1–7 of 12 queued', backToQueue:'Back to queue',
+    reviewTitle:'Review request', waited:'Waiting 4h 12m', reasonDuplicate:'2 duplicate names found',
+    internalNote:'Internal note', reject:'Reject', approve:'Approve', approveSelected:'Approve selected match',
+    requestInfo:'Request details',
+    revealNote:'The ID is masked. Revealing the full number is written to the audit log with your name and the timestamp.',
+    revealId:'Reveal full ID', whyQueued:'Why this was not auto-approved',
+    matches:'Candidate matches', manualSearch:'Search manually', refreshOne:'Refresh record', openStudent:'Open student record',
+    activityTitle:'Activity & email log', activityNote:'Every event is written to the immutable audit log', openAudit:'Open in audit log',
+    notifTitle:'Notifications', notifUnread:'3 new', notifMarkAll:'Mark all read', notifAll:'See all notifications',
+    decisionPreview:'What will happen', willApprove:'Approve with the first match',
+    willApproveBody:'An immutable result snapshot is created, the requester is emailed, and decisionType = MANUAL is recorded with your name.',
+    studentsTitle:'Graduate records', studentsSub:'Search and inspect records synced from the registry system',
+    studentsPdpa:'This page accesses personal data. Every search and record view is written to the audit log.',
+    studentSearchPh:'Student code, name, citizen ID or passport…', faculty:'Faculty',
+    thCode:'Student code', thName:'Name', thProgram:'Programme / faculty', thStatus:'Status', thGrad:'Graduated',
+    registryCounts:'Record summary', manualFlagTitle:'Records that always need a human',
+    manualFlagBody:'Records flagged requiresManualReview — revoked degrees, disputes or pre-digital data — are never auto-approved even on an exact match.',
+    orgsTitle:'External organisations', orgsSub:'Approve, suspend and review usage history per organisation' };
+
+  renderVals(){
+    const C=this.C, S=this.state, en=S.lang==='en', t=en?this.EN:this.TH, wide=S.variant==='b';
+    const p18=this.set(18,C.pri), p20=this.set(20,C.pri);
+    const w14=this.set(14,'#fff'), w18=this.set(18,'#fff'), w20=this.set(20,'#fff');
+    const dec14=this.set(14,C.dec), dec16=this.set(16,C.dec), dec18=this.set(18,C.dec);
+    const tx14=this.set(14,C.tx2), tx16=this.set(16,C.tx2), tx18=this.set(18,C.tx2);
+    const amb14=this.set(14,C.amb), red14=this.set(14,C.red), red18=this.set(18,C.red);
+    const gold14=this.set(14,C.gold), gold17=this.set(17,C.gold), gold18=this.set(18,C.gold), mark16=this.set(16,C.mark);
+    const mono="'JetBrains Mono',monospace", sans="'Inter','Anuphan',sans-serif";
+    const on=(b)=>b?{bg:'#fff',tx:C.pri}:{bg:'transparent',tx:'rgba(255,255,255,0.6)'};
+    const seg=(b)=>b?{bg:'#fff',tx:C.pri}:{bg:'transparent',tx:C.tx3};
+
+    const screens={ queue:{title:en?'Review queue':'คิวคำขอรอพิจารณา',short:en?'Queue':'คิวคำขอ',route:'/(staff)/queue'},
+      review:{title:en?'Review a request':'หน้าพิจารณาคำขอ',short:en?'Review':'พิจารณา',route:'/(staff)/queue/[refNo]'},
+      students:{title:en?'Graduate records':'ข้อมูลผู้สำเร็จการศึกษา',short:en?'Records':'นักศึกษา',route:'/(staff)/students'},
+      orgs:{title:en?'External organisations':'จัดการหน่วยงาน',short:en?'Organisations':'หน่วยงาน',route:'/(staff)/organizations'} };
+    const cur=screens[S.screen]||screens.queue;
+    const navDef=[['dash','dashboard',en?'Dashboard':'แดชบอร์ด',''],['queue','fileSearch',en?'Review queue':'คิวคำขอ','12'],['students','graduation',en?'Graduate records':'ผู้สำเร็จการศึกษา',''],['orgs','building',en?'Organisations':'หน่วยงาน','3'],['reports','chart',en?'Reports':'รายงาน',''],['sync','database',en?'Data sync':'การซิงก์ข้อมูล',''],['audit','history',en?'Audit log':'Audit Log','']];
+
+    const mkMatch=(primary,name,code,status,stKind,fields,sourceAt)=>{
+      const st={grad:{bg:C.priSoft,tx:C.priTx,dot:C.pri},wd:{bg:C.grayBg,tx:C.grayTx,dot:C.gray}}[stKind];
+      return {name,code,status,fields,sourceAt,
+        border:primary?('1.5px solid '+C.pri):('1px solid '+C.bd), bg:primary?'#F3F9F1':'#fff',
+        shadow:primary?'0 2px 10px rgba(28,107,33,0.10)':'none', radio:primary?C.pri:'#C7CFC2', dot:primary?C.pri:'transparent',
+        stBg:st.bg, stTx:st.tx, stDot:st.dot};
+    };
+    const mFields1=[{k:en?'Programme':'หลักสูตร',v:en?'BBA (Marketing)':'บริหารธุรกิจบัณฑิต (การตลาด)',font:sans},
+      {k:en?'Faculty':'คณะ',v:en?'Business Administration':'คณะบริหารธุรกิจ',font:sans},
+      {k:en?'Graduated':'วันสำเร็จการศึกษา',v:en?'31 May 2022':'31 พฤษภาคม 2565',font:sans},
+      {k:en?'Council approval':'วันสภาอนุมัติ',v:en?'28 Jun 2022':'28 มิถุนายน 2565',font:sans},
+      {k:'GPA',v:'3.87',font:mono},{k:en?'Honours':'เกียรตินิยม',v:en?'First class':'อันดับหนึ่ง',font:sans}];
+    const mFields2=[{k:en?'Programme':'หลักสูตร',v:en?'BA (English)':'ศิลปศาสตรบัณฑิต (ภาษาอังกฤษ)',font:sans},
+      {k:en?'Faculty':'คณะ',v:en?'Liberal Arts':'คณะศิลปศาสตร์',font:sans},
+      {k:en?'Graduated':'วันสำเร็จการศึกษา',v:'—',font:sans},
+      {k:en?'Council approval':'วันสภาอนุมัติ',v:'—',font:sans},
+      {k:'GPA',v:'2.14',font:mono},{k:en?'Last update':'ปรับปรุงล่าสุด',v:en?'12 Aug 2019':'12 ส.ค. 2562',font:sans}];
+
+    const orgAct=(kind)=>({
+      approve:{label:en?'Approve':'อนุมัติ',bg:C.pri,bd:C.pri,tx:'#fff',el:this.ic('check',15,'#fff')},
+      reject:{label:en?'Reject':'ปฏิเสธ',bg:'#fff',bd:C.redBd,tx:C.red,el:this.ic('xCircle',15,C.red)},
+      view:{label:en?'Usage history':'ประวัติการใช้งาน',bg:'#fff',bd:C.bd,tx:C.tx2,el:this.ic('history',15,C.tx2)},
+      suspend:{label:en?'Suspend':'ระงับการใช้งาน',bg:'#fff',bd:C.redBd,tx:C.red,el:this.ic('lock',15,C.red)},
+      restore:{label:en?'Restore access':'คืนสิทธิ์การใช้งาน',bg:C.pri,bd:C.pri,tx:'#fff',el:this.ic('refresh',15,'#fff')},
+    }[kind]);
+
+    const qRow=(ref,org,email,key,reasonKind,wait,slaLevel)=>{
+      const R={dup:{label:en?'Duplicate names':'ชื่อซ้ำ 2 รายการ',bg:C.ambBg,tx:C.ambTx,el:this.ic('users',13,C.amb)},
+        none:{label:en?'No match found':'ไม่พบข้อมูล',bg:C.slateBg,tx:C.slateTx,el:this.ic('search',13,C.slate)},
+        flag:{label:en?'Manual flag':'ติดธงตรวจมือ',bg:C.redBg,tx:C.redTx,el:this.ic('alert',13,C.red)},
+        old:{label:en?'Pre-digital record':'ข้อมูลเก่า',bg:C.infoBg,tx:C.infoTx,el:this.ic('database',13,C.info)}}[reasonKind];
+      const sla={ok:{tx:C.tx2,edge:'transparent',bg:'#fff',note:en?'within SLA':'อยู่ใน SLA'},
+        warn:{tx:C.amb,edge:C.amb,bg:'#FFFDF7',note:en?'near SLA':'ใกล้ครบ SLA'},
+        over:{tx:C.red,edge:C.red,bg:'#FFFAF9',note:en?'over SLA':'เกิน SLA'}}[slaLevel];
+      return {ref,org,email,key,reason:R.label,bg:R.bg,tx:R.tx,reasonEl:R.el,wait,slaTx:sla.tx,slaNote:sla.note,edge:sla.edge,rowBg:sla.bg};
+    };
+
+    const sRow=(code,name,nameEn,program,stKind,grad,flag)=>{
+      const st={grad:{label:en?'Graduated':'สำเร็จการศึกษา',bg:C.priSoft,tx:C.priTx},
+        study:{label:en?'Studying':'กำลังศึกษา',bg:C.infoBg,tx:C.infoTx},
+        wd:{label:en?'Withdrawn':'พ้นสภาพ',bg:C.grayBg,tx:C.grayTx},
+        rev:{label:en?'Revoked':'เพิกถอนวุฒิ',bg:C.redBg,tx:C.redTx}}[stKind];
+      return {code,name,nameEn,program,grad,status:st.label,bg:st.bg,tx:st.tx,flagEl:flag?this.ic('alert',12,st.tx):null};
+    };
+
+    const act=(time,kind,title,actor,body,mail,mailTo,mailStatus,last)=>{
+      const K={mail:{bg:C.infoBg,bd:C.infoBd,el:this.ic('mail',15,C.info)},
+        system:{bg:C.ambBg,bd:C.ambBd,el:this.ic('shieldCheck',15,C.amb)},
+        submit:{bg:C.priSoft,bd:C.priBd,el:this.ic('fileCheck',15,C.pri)},
+        read:{bg:C.slateBg,bd:C.slateBd,el:this.ic('eye',15,C.slate)},
+        note:{bg:'#F6F2E6',bd:'#E7DCBC',el:this.ic('edit',15,C.gold)},
+        wait:{bg:C.grayBg,bd:C.grayBd,el:this.ic('clock',15,C.gray)}}[kind];
+      const ms={sent:{bg:C.priSoft,tx:C.priTx,dot:C.pri},queued:{bg:C.grayBg,tx:C.grayTx,dot:C.gray}}[mailStatus||'sent'];
+      return {time,title,actor,body,el:K.el,bg:K.bg,bd:K.bd,lineBg:last?'transparent':'#E6EBE2',
+        mail:mail||false,mailTo:mailTo||'',mailStatus:mailStatus==='queued'?(en?'Queued':'รอส่ง'):(en?'Delivered':'ส่งสำเร็จ'),
+        mailBg:ms.bg,mailTx:ms.tx,mailDot:ms.dot};
+    };
+    const D=en?'12 Sep 2026':'12 ก.ย. 2569';
+    const activity=[
+      act(D+' 09:14','submit',en?'Request submitted':'ยื่นคำขอเข้าระบบ','SYSTEM',
+        en?'Thai HR Solutions Co., Ltd. · purpose: employment application · consent recorded':'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด · วัตถุประสงค์: สมัครงาน · บันทึกความยินยอมแล้ว',
+        'REQUEST_RECEIVED','hr@thaihr.co.th','sent'),
+      act(D+' 09:14','system',en?'Auto-match inconclusive':'ระบบจับคู่ไม่ชัดเจน','MATCH_ENGINE',
+        en?'2 records share the same name — routed to the manual review queue, SLA 24 hours':'พบระเบียนชื่อเดียวกัน 2 รายการ จึงส่งเข้าคิวตรวจสอบด้วยตนเอง · SLA 24 ชั่วโมง',
+        'REQUEST_UNDER_REVIEW','hr@thaihr.co.th','sent'),
+      act(D+' 11:02','read',en?'Request opened by staff':'เจ้าหน้าที่เปิดดูคำขอ',en?'S. Rattanakul':'สมร รัตนกุล',
+        en?'Personal data viewed · 10.14.xx.xx · logged as READ_PERSONAL_DATA':'เข้าถึงข้อมูลส่วนบุคคล · 10.14.xx.xx · บันทึกเป็น READ_PERSONAL_DATA'),
+      act(D+' 12:40','note',en?'Internal note added':'บันทึกโน้ตภายใน',en?'S. Rattanakul':'สมร รัตนกุล',
+        en?'“Waiting on the full ID number from the requester before choosing a match.”':'“รอเลขบัตรประชาชนเต็มจากผู้ขอ ก่อนเลือกระเบียนที่ตรงกัน”'),
+      act(D+' 13:26','wait',en?'Awaiting decision':'รอการตัดสิน','—',
+        en?'4h 12m waited · on approval RESULT_READY is emailed automatically with the permalink':'รอมาแล้ว 4 ชม. 12 นาที · เมื่ออนุมัติ ระบบจะส่งอีเมล RESULT_READY พร้อมลิงก์ผลตรวจสอบ',
+        'RESULT_READY','hr@thaihr.co.th','queued',true),
+    ];
+    const notif=(kind,title,body,time,unread)=>{
+      const K={sla:{bg:C.redBg,bd:C.redBd,el:this.ic('alert',15,C.red)},
+        queue:{bg:C.ambBg,bd:C.ambBd,el:this.ic('fileSearch',15,C.amb)},
+        org:{bg:C.infoBg,bd:C.infoBd,el:this.ic('building',15,C.info)},
+        sync:{bg:C.priSoft,bd:C.priBd,el:this.ic('database',15,C.pri)}}[kind];
+      return {title,body,time,el:K.el,bg:K.bg,bd:K.bd,rowBg:unread?'#F8FBF7':'#fff',weight:unread?'700':'600',dot:unread?C.red:'transparent'};
+    };
+
+    return {
+      t, screenTitle:cur.title, screenTitleShort:cur.short, screenRoute:cur.route,
+      activity, activityMobile:activity.slice(0,4).map((a,i,arr)=>({...a,lineBg:i===arr.length-1?'transparent':'#E6EBE2'})),
+      bellOpen:S.bellOpen, toggleBell:()=>this.setState({bellOpen:!S.bellOpen}),
+      bellBg:S.bellOpen?C.priSoft:'#fff', bellBd:S.bellOpen?C.priBd:'#E6EBE2',
+      notifs:[
+        notif('sla',en?'2 requests are over SLA':'มีคำขอเกิน SLA 2 รายการ',
+          en?'KRU-2569-000121 and KRU-2569-000118 have waited more than 24 hours':'KRU-2569-000121 และ KRU-2569-000118 รอเกิน 24 ชั่วโมง',
+          en?'8 min ago':'8 นาทีที่ผ่านมา',true),
+        notif('queue',en?'3 new requests in the queue':'มีคำขอใหม่ในคิว 3 รายการ',
+          en?'Auto-match was inconclusive — duplicate names and one pre-digital record':'ระบบจับคู่ไม่ชัดเจน · ชื่อซ้ำและข้อมูลก่อนระบบดิจิทัล',
+          en?'42 min ago':'42 นาทีที่ผ่านมา',true),
+        notif('org',en?'Nova Logistics is awaiting approval':'บริษัท โนวา โลจิสติกส์ รออนุมัติ',
+          en?'Email domain verified · registration submitted 11 Sep 2026':'ยืนยันโดเมนอีเมลแล้ว · ลงทะเบียน 11 ก.ย. 2569',
+          en?'Yesterday 16:20':'เมื่อวาน 16:20',true),
+        notif('sync',en?'Nightly registry sync completed':'ซิงก์ข้อมูลทะเบียนสำเร็จ',
+          en?'18,402 records · 12 updated, 0 conflicts':'18,402 ระเบียน · ปรับปรุง 12 รายการ · ไม่มีข้อขัดแย้ง',
+          en?'Today 02:00':'วันนี้ 02:00',false),
+      ],
+      isQueue:S.screen==='queue', isReview:S.screen==='review', isStudents:S.screen==='students', isOrgs:S.screen==='orgs',
+      hasVariant:S.screen==='review',
+      variantNote:S.screen==='review'?(S.variant==='a'?(en?'side-by-side panes':'สองคอลัมน์เทียบกัน'):(en?'stacked, matches full width':'เรียงลงมา เน้นการ์ดจับคู่')):'',
+      reviewDir:wide?'column':'row', reqFlex:wide?'none':'1', matchFlex:wide?'none':'1.15',
+      reqWidth:wide?'100%':'auto', matchWidth:wide?'100%':'auto', reqCols:wide?'repeat(3,1fr)':'1fr 1fr',
+      vA:on(S.variant==='a'), vB:on(S.variant==='b'), lTh:on(!en), lEn:on(en), hdTh:seg(!en), hdEn:seg(en), langShort:en?'EN':'TH',
+      setA:()=>this.setState({variant:'a'}), setB:()=>this.setState({variant:'b'}),
+      setTh:()=>this.setState({lang:'th'}), setEn:()=>this.setState({lang:'en'}),
+      goQueue:this.go('queue'), goReview:this.go('review'),
+      tabs:[['queue',en?'Queue':'คิวคำขอ'],['review',en?'Review':'หน้าพิจารณา'],['students',en?'Records':'ผู้สำเร็จการศึกษา'],['orgs',en?'Organisations':'หน่วยงาน']]
+        .map(([k,label])=>({label,go:this.go(k),bg:S.screen===k?'#fff':'rgba(255,255,255,0.08)',tx:S.screen===k?C.tx:'rgba(255,255,255,0.78)',bd:S.screen===k?'#fff':'rgba(255,255,255,0.18)'})),
+      nav:navDef.map(([k,icon,label,count])=>({label,count,go:this.go(k),el:this.ic(icon,17,S.screen===k?'#fff':'rgba(255,255,255,0.62)'),
+        bg:S.screen===k?'rgba(255,255,255,0.13)':'transparent', color:S.screen===k?'#fff':'rgba(255,255,255,0.72)', weight:S.screen===k?'700':'500',
+        badgeBg:count?(k==='queue'?C.gold:'rgba(255,255,255,0.16)'):'transparent', badgeTx:count?(k==='queue'?'#2C2003':'#fff'):'transparent'})),
+      bottomNav:[['queue','fileSearch',en?'Queue':'คิวคำขอ'],['students','graduation',en?'Records':'นักศึกษา'],['orgs','building',en?'Orgs':'หน่วยงาน'],['review','user',en?'Me':'ฉัน']]
+        .map(([k,icon,label])=>({label,go:this.go(k),el:this.ic(icon,21,S.screen===k?C.pri:C.dec),color:S.screen===k?C.pri:C.dec})),
+      p18,p20,w14,w18,w20,dec14,dec16,dec18,tx14,tx16,tx18,amb14,red14,red18,gold14,gold17,gold18,mark16,
+
+      queueStats:[
+        {k:en?'In queue':'อยู่ในคิว',v:'12',note:en?'awaiting decision':'รอการพิจารณา',bg:C.ambBg,bd:C.ambBd,tx:C.ambTx,el:this.ic('clock',17,C.amb)},
+        {k:en?'Over SLA':'เกิน SLA',v:'2',note:en?'more than 24 hours':'รอเกิน 24 ชั่วโมง',bg:C.redBg,bd:C.redBd,tx:C.redTx,el:this.ic('alert',17,C.red)},
+        {k:en?'Decided today':'พิจารณาวันนี้',v:'34',note:en?'by 3 staff members':'โดยเจ้าหน้าที่ 3 คน',bg:C.priSoft,bd:C.priBd,tx:C.priTx,el:this.ic('fileCheck',17,C.pri)},
+        {k:en?'Auto-approved':'อนุมัติอัตโนมัติ',v:'88%',note:en?'of today requests':'ของคำขอวันนี้',bg:C.infoBg,bd:C.infoBd,tx:C.infoTx,el:this.ic('shieldCheck',17,C.info)},
+      ],
+      queueStatsMobile:[
+        {k:en?'In queue':'อยู่ในคิว',v:'12',bg:C.ambBg,bd:C.ambBd,tx:C.ambTx,el:this.ic('clock',16,C.amb)},
+        {k:en?'Over SLA':'เกิน SLA',v:'2',bg:C.redBg,bd:C.redBd,tx:C.redTx,el:this.ic('alert',16,C.red)},
+      ],
+      chips:[
+        {label:en?'All 12':'ทั้งหมด 12',bg:C.pri,tx:'#fff',bd:C.pri},
+        {label:en?'Over SLA 2':'เกิน SLA 2',bg:C.redBg,tx:C.redTx,bd:C.redBd},
+        {label:en?'Duplicate names':'ชื่อซ้ำ',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:en?'No match':'ไม่พบข้อมูล',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:en?'Manual flag':'ติดธงตรวจมือ',bg:'#fff',tx:C.tx2,bd:C.bd},
+      ],
+      queueRows:[
+        qRow('KRU-2569-000121','Global Talent Co., Ltd.','recruit@globaltalent.com','AB123456','none','26h 40m','over'),
+        qRow('KRU-2569-000118',en?'Bangkok Metropolitan Admin.':'กรุงเทพมหานคร','verify@bangkok.go.th','1-1044-xxxxx-xx-8','flag','25h 05m','over'),
+        qRow('KRU-2569-000123',en?'Thai HR Solutions Co., Ltd.':'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด','hr@thaihr.co.th','1-2345-xxxxx-xx-3','dup','4h 12m','warn'),
+        qRow('KRU-2569-000124',en?'Office of the Civil Service':'สำนักงาน ก.พ.','verify@ocsc.go.th','3-1002-xxxxx-xx-4','old','3h 48m','ok'),
+        qRow('KRU-2569-000126',en?'Siam Commercial Recruit':'บริษัท สยามรีครูท จำกัด','hr@siamrecruit.co.th','1-5566-xxxxx-xx-9','dup','2h 10m','ok'),
+        qRow('KRU-2569-000127',en?'Ministry of Education':'กระทรวงศึกษาธิการ','check@moe.go.th','1-7788-xxxxx-xx-0','none','1h 32m','ok'),
+        qRow('KRU-2569-000128',en?'Nova Logistics Co., Ltd.':'บริษัท โนวา โลจิสติกส์ จำกัด','people@novalog.co.th','CD987654','old','48m','ok'),
+      ],
+      queueRowsMobile:[
+        qRow('KRU-2569-000121','Global Talent Co., Ltd.','recruit@globaltalent.com','AB123456','none','26h 40m','over'),
+        qRow('KRU-2569-000118',en?'Bangkok Metropolitan Admin.':'กรุงเทพมหานคร','verify@bangkok.go.th','1-1044-xxxxx-xx-8','flag','25h 05m','over'),
+        qRow('KRU-2569-000123',en?'Thai HR Solutions Co., Ltd.':'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด','hr@thaihr.co.th','1-2345-xxxxx-xx-3','dup','4h 12m','warn'),
+        qRow('KRU-2569-000124',en?'Office of the Civil Service':'สำนักงาน ก.พ.','verify@ocsc.go.th','3-1002-xxxxx-xx-4','old','3h 48m','ok'),
+      ],
+      reqRows:[
+        {k:en?'Requester':'ผู้ขอ',v:en?'Thai HR Solutions Co., Ltd.':'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด',font:sans,suffix:null},
+        {k:en?'Contact':'ผู้ติดต่อ',v:'hr@thaihr.co.th',font:sans,suffix:null},
+        {k:en?'Search key':'คีย์ค้นหา',v:'1-2345-xxxxx-xx-3',font:mono,suffix:this.ic('lock',14,C.gold)},
+        {k:en?'Purpose':'วัตถุประสงค์',v:en?'Employment application':'สมัครงาน',font:sans,suffix:null},
+        {k:en?'Consent recorded':'บันทึกความยินยอม',v:en?'12 Sep 2026 09:14':'12 ก.ย. 2569 09:14',font:sans,suffix:null},
+        {k:en?'Submitted from':'ยื่นจาก',v:'203.150.xx.xx · Chrome 141',font:mono,suffix:null},
+      ],
+      reqRowsMobile:[
+        {k:en?'Requester':'ผู้ขอ',v:en?'Thai HR Solutions':'ไทยเอชอาร์ โซลูชันส์',font:sans},
+        {k:en?'Search key':'คีย์ค้นหา',v:'1-2345-xxxxx-xx-3',font:mono},
+        {k:en?'Purpose':'วัตถุประสงค์',v:en?'Employment':'สมัครงาน',font:sans},
+        {k:en?'Consent':'ความยินยอม',v:en?'12 Sep 09:14':'12 ก.ย. 09:14',font:sans},
+      ],
+      reasons:[
+        {title:en?'Two records share this citizen ID history':'พบ 2 ระเบียนที่เชื่อมโยงกับเลขบัตรนี้',sub:en?'One graduated in 2022, one withdrawn in 2019 — pick the record the requester is asking about.':'รายการหนึ่งสำเร็จการศึกษา 2565 อีกรายการพ้นสภาพ 2562 — เลือกระเบียนที่ตรงกับคำขอ',bg:C.ambBg,bd:C.ambBd,tx:C.ambTx,el:this.ic('users',17,C.amb)},
+        {title:en?'Auto-approve requires exactly one match':'เงื่อนไขอนุมัติอัตโนมัติต้องพบเพียง 1 รายการ',sub:en?'Rule 4.2: exact match + single result + GRADUATED + no manual flag.':'ตามข้อ 4.2: ตรงแบบ exact + พบ 1 รายการ + GRADUATED + ไม่ติดธงตรวจมือ',bg:C.infoBg,bd:C.infoBd,tx:C.infoTx,el:this.ic('info',17,C.info)},
+        {title:en?'Requester has not been told a result yet':'ยังไม่แจ้งผลใด ๆ ให้ผู้ขอ',sub:en?'To prevent enumeration attacks the system never reveals “not found” automatically.':'เพื่อกัน enumeration attack ระบบไม่เปิดเผยผล “ไม่พบข้อมูล” โดยอัตโนมัติ',bg:C.grayBg,bd:C.grayBd,tx:C.grayTx,el:this.ic('shield',17,C.gray)},
+      ],
+      matches:[
+        mkMatch(true, en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี','6012345678', en?'Graduated':'สำเร็จการศึกษา','grad', mFields1, en?'source updated 12 Sep 02:00':'ข้อมูลต้นทาง 12 ก.ย. 02:00'),
+        mkMatch(false, en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี','5712345678', en?'Withdrawn':'พ้นสภาพ','wd', mFields2, en?'source updated 12 Sep 02:00':'ข้อมูลต้นทาง 12 ก.ย. 02:00'),
+      ],
+      matchesMobile:[
+        mkMatch(true, en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี','6012345678', en?'Graduated':'สำเร็จการศึกษา','grad', mFields1.slice(0,3), ''),
+        mkMatch(false, en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี','5712345678', en?'Withdrawn':'พ้นสภาพ','wd', mFields2.slice(0,3), ''),
+      ],
+      studentRows:[
+        sRow('6012345678',en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี','Ms. Siriporn Jaidee',en?'BBA (Marketing) · Business Admin.':'บริหารธุรกิจบัณฑิต (การตลาด) · บริหารธุรกิจ','grad',en?'31 May 2022':'31 พ.ค. 2565'),
+        sRow('6023456789',en?'Mr. Anan Thongdee':'นายอนันต์ ทองดี','Mr. Anan Thongdee',en?'LL.B. · Faculty of Law':'นิติศาสตรบัณฑิต · คณะนิติศาสตร์','grad',en?'31 May 2022':'31 พ.ค. 2565'),
+        sRow('6134567890',en?'Mr. Chen Wei':'นายเฉิน เหว่ย','Mr. Chen Wei',en?'BA (Chinese) · International College':'ศิลปศาสตรบัณฑิต (จีน) · วิทยาลัยนานาชาติ','grad',en?'30 Nov 2023':'30 พ.ย. 2566'),
+        sRow('6245678901',en?'Ms. Kanya Pimsai':'นางสาวกัญญา พิมพ์ใส','Ms. Kanya Pimsai',en?'BBA (Logistics) · Business Admin.':'บริหารธุรกิจบัณฑิต (โลจิสติกส์) · บริหารธุรกิจ','study','—'),
+        sRow('5712345678',en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี','Ms. Siriporn Jaidee',en?'BA (English) · Liberal Arts':'ศิลปศาสตรบัณฑิต (อังกฤษ) · ศิลปศาสตร์','wd','—'),
+        sRow('5598765432',en?'Mr. Prasert Wong':'นายประเสริฐ วงศ์','Mr. Prasert Wong',en?'MBA · Business Admin.':'บริหารธุรกิจมหาบัณฑิต · บริหารธุรกิจ','rev',en?'revoked 2021':'เพิกถอน 2564',true),
+        sRow('4812345670',en?'Mrs. Somjit Rakdee':'นางสมจิตร รักดี','Mrs. Somjit Rakdee',en?'BA · pre-digital record':'ศิลปศาสตรบัณฑิต · ข้อมูลก่อนยุคดิจิทัล','grad','2540',true),
+      ],
+      studentRowsMobile:[
+        sRow('6012345678',en?'Ms. Siriporn Jaidee':'นางสาวศิริพร ใจดี','',en?'BBA (Marketing) · Business Admin.':'บริหารธุรกิจบัณฑิต (การตลาด) · คณะบริหารธุรกิจ','grad',en?'Graduated 31 May 2022':'สำเร็จ 31 พ.ค. 2565'),
+        sRow('6134567890',en?'Mr. Chen Wei':'นายเฉิน เหว่ย','',en?'BA (Chinese) · International College':'ศิลปศาสตรบัณฑิต (จีน) · วิทยาลัยนานาชาติ','grad',en?'Graduated 30 Nov 2023':'สำเร็จ 30 พ.ย. 2566'),
+        sRow('6245678901',en?'Ms. Kanya Pimsai':'นางสาวกัญญา พิมพ์ใส','',en?'BBA (Logistics)':'บริหารธุรกิจบัณฑิต (โลจิสติกส์)','study',en?'In study year 4':'กำลังศึกษา ปี 4'),
+        sRow('5598765432',en?'Mr. Prasert Wong':'นายประเสริฐ วงศ์','',en?'MBA · revoked degree':'บริหารธุรกิจมหาบัณฑิต · วุฒิถูกเพิกถอน','rev',en?'Revoked 2021':'เพิกถอน 2564',true),
+      ],
+      registryCounts:[
+        {k:en?'Total records':'ระเบียนทั้งหมด',v:'18,402',bg:C.priSoft,el:this.ic('database',17,C.pri)},
+        {k:en?'Graduated':'สำเร็จการศึกษา',v:'15,861',bg:C.priSoft,el:this.ic('graduation',17,C.pri)},
+        {k:en?'Manual-review flags':'ติดธงตรวจมือ',v:'214',bg:C.redBg,el:this.ic('alert',17,C.red)},
+        {k:en?'Passport records':'ใช้พาสปอร์ต',v:'1,096',bg:C.infoBg,el:this.ic('passport',17,C.info)},
+      ],
+      orgChips:[
+        {label:en?'Pending 3':'รออนุมัติ 3',bg:C.pri,tx:'#fff',bd:C.pri},
+        {label:en?'Approved 128':'อนุมัติแล้ว 128',bg:'#fff',tx:C.tx2,bd:C.bd},
+        {label:en?'Suspended 2':'ระงับ 2',bg:'#fff',tx:C.tx2,bd:C.bd},
+      ],
+      orgs:[
+        {name:en?'Nova Logistics Co., Ltd.':'บริษัท โนวา โลจิสติกส์ จำกัด',status:en?'Pending':'รออนุมัติ',stBg:C.ambBg,stTx:C.ambTx,stDot:C.amb,bd:C.ambBd,iconBg:C.ambBg,el:this.ic('building',24,C.amb),
+         meta:en?'Tax ID 0105561xxxxxx · registered 11 Sep 2026 · people@novalog.co.th':'เลขผู้เสียภาษี 0105561xxxxxx · ลงทะเบียน 11 ก.ย. 2569 · people@novalog.co.th',
+         stats:[{k:en?'Contact':'ผู้ติดต่อ',v:en?'Ms. Ploy S.':'นางสาวพลอย ส.',font:sans},{k:en?'Email domain':'โดเมนอีเมล',v:'novalog.co.th',font:mono},{k:en?'Requests':'คำขอ',v:'0',font:mono},{k:en?'Email verified':'ยืนยันอีเมล',v:en?'Yes':'แล้ว',font:sans}],
+         actions:[orgAct('approve'),orgAct('reject')]},
+        {name:en?'Thai HR Solutions Co., Ltd.':'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด',status:en?'Approved':'อนุมัติแล้ว',stBg:C.priSoft,stTx:C.priTx,stDot:C.pri,bd:C.bd,iconBg:C.priSoft,el:this.ic('building',24,C.pri),
+         meta:en?'Tax ID 0105548xxxxxx · approved 4 Jul 2026 · hr@thaihr.co.th':'เลขผู้เสียภาษี 0105548xxxxxx · อนุมัติ 4 ก.ค. 2569 · hr@thaihr.co.th',
+         stats:[{k:en?'Users':'ผู้ใช้',v:'3',font:mono},{k:en?'Requests (30d)':'คำขอ (30 วัน)',v:'42',font:mono},{k:en?'Approved rate':'อัตราอนุมัติ',v:'88%',font:mono},{k:en?'Last activity':'ใช้งานล่าสุด',v:en?'12 Sep 2026':'12 ก.ย. 2569',font:sans}],
+         actions:[orgAct('view'),orgAct('suspend')]},
+        {name:en?'Office of the Civil Service':'สำนักงาน ก.พ.',status:en?'Approved':'อนุมัติแล้ว',stBg:C.priSoft,stTx:C.priTx,stDot:C.pri,bd:C.bd,iconBg:C.priSoft,el:this.ic('building',24,C.pri),
+         meta:en?'Government agency · approved 2 Feb 2026 · verify@ocsc.go.th':'หน่วยงานราชการ · อนุมัติ 2 ก.พ. 2569 · verify@ocsc.go.th',
+         stats:[{k:en?'Users':'ผู้ใช้',v:'8',font:mono},{k:en?'Requests (30d)':'คำขอ (30 วัน)',v:'316',font:mono},{k:en?'Batch jobs':'งานแบบชุด',v:'11',font:mono},{k:en?'Last activity':'ใช้งานล่าสุด',v:en?'12 Sep 2026':'12 ก.ย. 2569',font:sans}],
+         actions:[orgAct('view'),orgAct('suspend')]},
+        {name:en?'QuickCheck Services Co., Ltd.':'บริษัท ควิกเช็ค เซอร์วิส จำกัด',status:en?'Suspended':'ระงับการใช้งาน',stBg:C.redBg,stTx:C.redTx,stDot:C.red,bd:C.redBd,iconBg:C.redBg,el:this.ic('building',24,C.red),
+         meta:en?'Suspended 1 Aug 2026 · reason: exceeded quota repeatedly, unverified purposes':'ระงับ 1 ส.ค. 2569 · เหตุผล: ใช้เกินโควตาซ้ำ ๆ และวัตถุประสงค์ไม่ชัดเจน',
+         stats:[{k:en?'Users':'ผู้ใช้',v:'2',font:mono},{k:en?'Requests (30d)':'คำขอ (30 วัน)',v:'0',font:mono},{k:en?'Rate-limit hits':'ชนโควตา',v:'37',font:mono},{k:en?'Suspended by':'ระงับโดย',v:en?'Samorn R.':'สมร รัตนกุล',font:sans}],
+         actions:[orgAct('view'),orgAct('restore')]},
+      ],
+      orgsMobile:[
+        {name:en?'Nova Logistics Co., Ltd.':'บริษัท โนวา โลจิสติกส์ จำกัด',status:en?'Pending':'รออนุมัติ',stBg:C.ambBg,stTx:C.ambTx,bd:C.ambBd,iconBg:C.ambBg,el:this.ic('building',20,C.amb),
+         meta:en?'Registered 11 Sep 2026 · email verified · 0 requests':'ลงทะเบียน 11 ก.ย. 2569 · ยืนยันอีเมลแล้ว · ยังไม่มีคำขอ',actions:[orgAct('approve'),orgAct('reject')]},
+        {name:en?'Thai HR Solutions Co., Ltd.':'บริษัท ไทยเอชอาร์ โซลูชันส์ จำกัด',status:en?'Approved':'อนุมัติแล้ว',stBg:C.priSoft,stTx:C.priTx,bd:C.bd,iconBg:C.priSoft,el:this.ic('building',20,C.pri),
+         meta:en?'3 users · 42 requests in 30 days · 88% approved':'ผู้ใช้ 3 คน · 42 คำขอใน 30 วัน · อนุมัติ 88%',actions:[orgAct('view'),orgAct('suspend')]},
+        {name:en?'QuickCheck Services Co., Ltd.':'บริษัท ควิกเช็ค เซอร์วิส จำกัด',status:en?'Suspended':'ระงับ',stBg:C.redBg,stTx:C.redTx,bd:C.redBd,iconBg:C.redBg,el:this.ic('building',20,C.red),
+         meta:en?'Suspended 1 Aug 2026 · 37 rate-limit hits':'ระงับ 1 ส.ค. 2569 · ชนโควตา 37 ครั้ง',actions:[orgAct('view'),orgAct('restore')]},
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
