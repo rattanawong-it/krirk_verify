@@ -25,7 +25,8 @@ import { getRequestContext } from "@/lib/utils/request-context";
 import { cn } from "@/lib/utils";
 import { degreeLabel, displayName, fullNameEn, fullNameTh } from "@/lib/verification/display";
 import { REJECT_REASONS, isRejectReason } from "@/lib/verification/reject-reasons";
-import { reviewSlaHours, slaLevel, waitParts } from "@/lib/verification/sla";
+import { slaLevel, waitParts } from "@/lib/verification/sla";
+import { getSettings } from "@/lib/services/settings.service";
 
 // F-REG-02 ถึง F-REG-06 — หน้าพิจารณาคำขอ (ตาม project-ui/3 · หน้าพิจารณาคำขอ แบบสองคอลัมน์)
 
@@ -160,7 +161,7 @@ export default async function ReviewPage({
       : detail.organization.nameTh
     : null;
   const waited = waitParts(now.getTime() - detail.createdAt.getTime());
-  const level = slaLevel(detail.createdAt, now, reviewSlaHours());
+  const level = slaLevel(detail.createdAt, now, (await getSettings()).slaHours);
   const reasonStyle = detail.reviewReason ? REVIEW_REASON_STYLE[detail.reviewReason] : null;
 
   const header = (
@@ -263,18 +264,31 @@ export default async function ReviewPage({
             <p className="mt-0.5 text-[13px] whitespace-pre-line">{detail.note}</p>
           </div>
         )}
-        <div className="mt-3.5 flex flex-col gap-2.5 rounded-[11px] border border-gold/40 bg-gold-soft p-3 sm:flex-row sm:items-center">
-          <Icon name="lock" size={18} className="hidden shrink-0 text-gold sm:block" />
-          <p className="flex-1 text-[11.5px] leading-relaxed text-[#6b4e0a] dark:text-gold">
-            {t("revealNote")}
-          </p>
-          <RevealButton
-            action={revealRequestKeyAction.bind(null, detail.refNo)}
-            label={t("revealId")}
-            pendingLabel={t("revealing")}
-            failedLabel={t("revealFailed")}
-          />
-        </div>
+        {detail.anonymizedAt ? (
+          // F-AUD-08 — ข้อมูลส่วนบุคคลของคำขอนี้ถูกลบตามนโยบายเก็บรักษาแล้ว
+          <div className="mt-3.5 flex items-start gap-2.5 rounded-[11px] border bg-surface p-3">
+            <Icon name="history" size={18} className="mt-px shrink-0 text-muted-foreground" />
+            <div>
+              <p className="text-[12.5px] font-bold">{t("anonymizedTitle")}</p>
+              <p className="mt-0.5 text-[11.5px] leading-relaxed text-text-2">
+                {t("anonymizedBody", { date: dateTime(detail.anonymizedAt) })}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3.5 flex flex-col gap-2.5 rounded-[11px] border border-gold/40 bg-gold-soft p-3 sm:flex-row sm:items-center">
+            <Icon name="lock" size={18} className="hidden shrink-0 text-gold sm:block" />
+            <p className="flex-1 text-[11.5px] leading-relaxed text-[#6b4e0a] dark:text-gold">
+              {t("revealNote")}
+            </p>
+            <RevealButton
+              action={revealRequestKeyAction.bind(null, detail.refNo)}
+              label={t("revealId")}
+              pendingLabel={t("revealing")}
+              failedLabel={t("revealFailed")}
+            />
+          </div>
+        )}
       </section>
 
       {detail.reviewReason && (

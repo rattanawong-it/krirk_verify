@@ -9,6 +9,7 @@ export type ActionState = {
   errorValues?: Record<string, string | number>;
   fieldErrors?: Record<string, string>;
   message?: string;
+  messageValues?: Record<string, string | number>;
 };
 
 export function fieldErrorsOf(error: z.ZodError): Record<string, string> {

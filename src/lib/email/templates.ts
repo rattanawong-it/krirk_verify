@@ -166,6 +166,37 @@ function factsText(facts: { label: string; value: string }[]): string {
   return facts.map((f) => `${f.label}: ${f.value}`).join("\n");
 }
 
+// F-AUD-05 — เชิญเจ้าหน้าที่ตั้งรหัสผ่านสำหรับบัญชีที่ผู้ดูแลสร้างให้
+export function accountInviteTemplate(input: {
+  locale: AppLocale;
+  name: string;
+  inviterName: string;
+  role: keyof typeof th.common.roles;
+  url: string;
+}): Rendered {
+  const t = translator(input.locale);
+  const messages = input.locale === "en" ? en : th;
+  const body = t("invite.body", {
+    name: input.name,
+    inviter: input.inviterName,
+    role: messages.common.roles[input.role],
+  });
+
+  return {
+    subject: t("invite.subject"),
+    html: layout({
+      locale: input.locale,
+      preheader: t("invite.preheader"),
+      heading: t("invite.heading"),
+      paragraphs: [escapeHtml(body)],
+      cta: t("invite.cta"),
+      ctaNote: t("invite.ctaNote"),
+      url: input.url,
+    }),
+    text: `${t("invite.heading")}\n\n${body}\n\n${input.url}\n\n${t("invite.ctaNote")}`,
+  };
+}
+
 type RejectReasonCode = keyof typeof th.verify.rejectReasons;
 
 // F-REG-05 — แจ้งผู้ขอเมื่อเจ้าหน้าที่ปฏิเสธ (ไม่เปิดเผยชื่อเจ้าหน้าที่ผู้พิจารณา)

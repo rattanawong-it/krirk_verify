@@ -6,12 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { getSettings } from "@/lib/services/settings.service";
 
 // หน้าแรกสาธารณะ — project-ui/1 Public & Auth ทางเลือก A (ฮีโร่นำด้วยการค้นหา)
+
+// ประกาศมาจากค่าตั้งค่าระบบ: สร้างใหม่ทันทีเมื่อบันทึก (revalidatePath) และทุก 5 นาทีเป็นค่าสำรอง
+export const revalidate = 300;
+
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale as AppLocale);
-  const t = await getTranslations();
+  const [t, settings] = await Promise.all([getTranslations(), getSettings()]);
+  // F-AUD-06 — ข้อความประกาศจากหน้าตั้งค่าระบบ (ภาษาอังกฤษไม่มีค่า → ใช้ภาษาไทย)
+  const announcement =
+    locale === "en" ? settings.announcementEn || settings.announcementTh : settings.announcementTh;
 
   const stats = [
     { value: t("home.statFree"), label: t("home.statFreeSub") },
@@ -28,6 +36,16 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   return (
     <div className="flex flex-1 flex-col bg-card">
+      {announcement && (
+        <p
+          role="note"
+          className="flex items-center justify-center gap-2 bg-gold-soft px-4 py-2 text-center text-[12.5px] font-semibold text-[#6b4e0a] dark:text-gold"
+        >
+          <Icon name="bell" size={16} className="shrink-0 text-gold" />
+          <span className="sr-only">{t("home.announcement")}: </span>
+          {announcement}
+        </p>
+      )}
       <header className="flex h-[58px] items-center gap-4 border-b px-4 sm:h-[70px] sm:gap-7 sm:px-10">
         <Link href="/" className="flex items-center gap-3">
           <Image

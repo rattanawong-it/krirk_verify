@@ -13,13 +13,18 @@ import type { AppRole } from "@/lib/auth/rbac";
 import { generateToken, hashIdentifier, hashToken } from "@/lib/crypto";
 import { prisma } from "@/lib/db/prisma";
 import { sendMail } from "@/lib/email/mailer";
-import { resetPasswordTemplate, verifyEmailTemplate } from "@/lib/email/templates";
+import {
+  accountInviteTemplate,
+  resetPasswordTemplate,
+  verifyEmailTemplate,
+} from "@/lib/email/templates";
 import type {
   profileSchema,
   registerAlumniSchema,
   registerOrganizationSchema,
 } from "@/lib/validations/auth";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
+import { getSettings } from "./settings.service";
 
 const EMAIL_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const RESET_TOKEN_TTL_MS = 30 * 60 * 1000;
@@ -113,7 +118,8 @@ export async function verifyCredentials(
   }
 
   if (!(await verifyPassword(password, user.passwordHash))) {
-    const config = getLockoutConfig();
+    // จำนวนครั้งก่อนล็อกปรับได้ในหน้าตั้งค่าระบบ (F-AUD-06) · ระยะเวลาล็อกยังมาจาก env
+    const config = { ...getLockoutConfig(), maxAttempts: (await getSettings()).maxFailedLogins };
     const next = registerFailedAttempt(user, now, config);
     await prisma.user.update({
       where: { id: user.id },
@@ -492,6 +498,27 @@ export async function requestPasswordReset(email: string, context: RequestContex
     requestedAt,
   });
   await sendMail({ to: user.email, ...mail });
+}
+
+const INVITE_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+
+// F-AUD-05 — อีเมลเชิญเจ้าหน้าที่ที่ผู้ดูแลสร้างบัญชีให้ ใช้ token ประเภทรีเซ็ตรหัสผ่านแต่มีอายุ 24 ชั่วโมง
+export async function sendAccountInvite(
+  user: { id: string; email: string; name: string; locale: string; role: AppRole },
+  inviterName: string,
+): Promise<boolean> {
+  const locale = toLocale(user.locale);
+  const token = await prisma.$transaction((tx) =>
+    issueToken(tx, user.id, "PASSWORD_RESET", INVITE_TOKEN_TTL_MS),
+  );
+  const mail = accountInviteTemplate({
+    locale,
+    name: user.name,
+    inviterName,
+    role: user.role,
+    url: appUrl(`/reset-password?token=${token}`, locale),
+  });
+  return sendMail({ to: user.email, ...mail });
 }
 
 export async function getPasswordResetInfo(token: string) {

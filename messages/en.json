@@ -208,7 +208,7 @@
       "confirmPassword": "Confirm new password",
       "submit": "Save new password",
       "submitting": "Saving…",
-      "expiry": "This link is single-use and expires 30 minutes after the request · {minutes} minutes remaining",
+      "expiry": "This link is single-use · {minutes} minutes remaining",
       "invalidTitle": "Invalid or expired reset link",
       "invalidBody": "Please request a new link from the forgot password page.",
       "requestNew": "Request a new link"
@@ -390,6 +390,8 @@
       "copied": "Verification link copied",
       "openPermalink": "Open permalink",
       "snapshotNote": "This result is a permanent snapshot taken when the system approved it. Later changes to the source record do not alter this copy.",
+      "anonymizedTitle": "This request is past its retention period",
+      "anonymizedBody": "The result and personal data for this request were deleted under the privacy policy on {date}. Only the reference number and status remain, for statistics.",
       "linkExpires": "Verification link valid until {date}",
       "linkExpired": "The verification link has expired — you can still view the result here.",
       "pendingTitle": "This request is under review",
@@ -570,6 +572,8 @@
       "note": "Note from requester"
     },
     "revealNote": "The ID is masked. Revealing the full number is written to the audit log with your name and the timestamp.",
+    "anonymizedTitle": "Personal data anonymised",
+    "anonymizedBody": "This request passed its retention period and was anonymised on {date} — the ID, result snapshot and internal notes were deleted.",
     "revealId": "Reveal full ID",
     "revealing": "Revealing…",
     "revealFailed": "Could not reveal the ID",
@@ -780,6 +784,319 @@
       "other": "Other event"
     }
   },
+  "settings": {
+    "title": "System settings",
+    "subtitle": "Values affecting all users · every change is written to the audit log",
+    "groups": {
+      "verification": {
+        "title": "Verification rules",
+        "sub": "Auto-approve behaviour and review policy"
+      },
+      "quotas": {
+        "title": "Quotas & security",
+        "sub": "Rate limits and account lockout"
+      },
+      "pdpa": {
+        "title": "PDPA & retention",
+        "sub": "Data retention and public notices"
+      }
+    },
+    "fields": {
+      "autoApproveEnabled": {
+        "label": "Enable auto-approve",
+        "sub": "Approve automatically on a single exact match of a graduated record"
+      },
+      "alwaysQueueNotFound": {
+        "label": "Always queue “not found”",
+        "sub": "Required to prevent enumeration attacks — cannot be disabled"
+      },
+      "slaHours": {
+        "label": "Review SLA",
+        "sub": "Highlight requests waiting longer than this in the staff queue"
+      },
+      "userPerHour": {
+        "label": "Single requests per user / hour",
+        "sub": "Counted per user account"
+      },
+      "ipPerHour": {
+        "label": "Requests per IP / hour",
+        "sub": "Counted per source IP address"
+      },
+      "batchRowsPerDay": {
+        "label": "Batch rows per day",
+        "sub": "Separate quota from single requests — used by batch verification"
+      },
+      "maxFailedLogins": {
+        "label": "Failed sign-ins before lock",
+        "sub": "The account locks for {minutes} minutes"
+      },
+      "retentionYears": {
+        "label": "Retain requests for",
+        "sub": "Older requests are anonymised automatically"
+      },
+      "auditRetentionYears": {
+        "label": "Retain audit log for",
+        "sub": "Audit entries are never deleted before this"
+      },
+      "linkExpiresDays": {
+        "label": "Result permalink lifetime",
+        "sub": "Access code expiry after approval (applies to results approved after saving)"
+      },
+      "announcementTh": {
+        "label": "Homepage notice (Thai)",
+        "sub": "Shown above the homepage to every visitor · leave empty to hide"
+      },
+      "announcementEn": {
+        "label": "Homepage notice (English)",
+        "sub": "Shown when the visitor chooses English"
+      }
+    },
+    "units": {
+      "hours": "hours",
+      "times": "times",
+      "years": "years",
+      "days": "days"
+    },
+    "save": "Save settings",
+    "saving": "Saving…",
+    "saveNote": "Takes effect immediately",
+    "saved": "Saved {count} changed settings",
+    "noChanges": "Nothing changed",
+    "dangerTitle": "Care when disabling auto-approve",
+    "dangerBody": "With it off, every request enters the staff queue and the queue grows substantially.",
+    "retention": {
+      "title": "Retention policy effect",
+      "due": "Requests due for anonymisation",
+      "auditDue": "Audit entries due for deletion",
+      "anonymizedTotal": "Anonymised to date",
+      "lastRun": "Last run",
+      "never": "Never run",
+      "runNow": "Run retention now",
+      "running": "Running…",
+      "ran": "Retention finished · {anonymized} requests anonymised · {auditDeleted} audit entries deleted",
+      "schedule": "Schedule system cron to call /api/cron/retention once a day"
+    },
+    "errors": {
+      "integer": "Must be a whole number",
+      "range": "Value is outside the allowed range",
+      "auditShorter": "Keep the audit log at least as long as requests"
+    }
+  },
+  "audit": {
+    "title": "Audit log",
+    "subtitle": "Every data access recorded under the Personal Data Protection Act",
+    "exportCsv": "Export CSV",
+    "exportNote": "The CSV uses the same filters as this page (up to 100,000 rows) and the export itself is logged.",
+    "searchPh": "Search user, reference, IP or action…",
+    "search": "Search",
+    "allActions": "All actions",
+    "ranges": {
+      "24h": "Last 24 hours",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "all": "All time"
+    },
+    "from": "From",
+    "to": "To",
+    "apply": "Filter",
+    "clear": "Clear filters",
+    "detail": "Details",
+    "detailTitle": "Audit entry details",
+    "close": "Close",
+    "empty": "No entries match these filters",
+    "pageInfo": "Showing {from}–{to} of {total}",
+    "anonymous": "Anonymous",
+    "fields": {
+      "time": "Time",
+      "action": "Action",
+      "actor": "Actor",
+      "entity": "Related record",
+      "ip": "IP",
+      "userAgent": "Browser",
+      "metadata": "Metadata"
+    },
+    "actions": {
+      "auth_login_success": "Signed in",
+      "auth_login_failed": "Sign-in failed",
+      "auth_account_locked": "Account temporarily locked",
+      "auth_logout": "Signed out",
+      "auth_register_organization": "Organisation registered",
+      "auth_register_alumni": "Alumni registered",
+      "auth_register_alumni_not_matched": "Alumni registration not matched",
+      "auth_email_verified": "Email verified",
+      "auth_password_reset_requested": "Password reset requested",
+      "auth_password_reset": "Password reset via link",
+      "auth_password_changed": "Password changed",
+      "user_profile_updated": "Profile updated",
+      "sync_started": "Registry sync started",
+      "sync_completed": "Registry sync completed",
+      "sync_failed": "Registry sync failed",
+      "student_refreshed": "Student record refreshed",
+      "verification_submitted": "Request submitted",
+      "verification_rate_limited": "Request quota exceeded",
+      "verification_result_viewed": "Result viewed",
+      "verification_permalink_denied": "Permalink access denied",
+      "verification_review_viewed": "Request opened by staff",
+      "verification_approved": "Request approved",
+      "verification_rejected": "Request rejected",
+      "verification_note_added": "Internal note added",
+      "personal_data_revealed": "Full ID revealed",
+      "student_searched": "Student records searched",
+      "student_viewed": "Student record viewed",
+      "organization_approved": "Organisation approved",
+      "organization_rejected": "Organisation registration rejected",
+      "organization_suspended": "Organisation suspended",
+      "organization_restored": "Organisation restored",
+      "settings_changed": "System settings changed",
+      "retention_run": "Retention job run",
+      "audit_exported": "Audit log exported",
+      "user_created": "User created",
+      "user_updated": "User updated",
+      "user_role_changed": "User role changed",
+      "user_suspended": "User suspended",
+      "user_activated": "User reactivated",
+      "user_unlocked": "User unlocked",
+      "user_password_reset_sent": "Password reset link sent to user"
+    }
+  },
+  "users": {
+    "title": "System users",
+    "subtitle": "Create staff accounts, change roles, suspend accounts and send password reset links",
+    "addUser": "Add user",
+    "roleCounts": {
+      "ADMIN": "administrators",
+      "REGISTRAR": "registrar staff",
+      "EXTERNAL": "organisation users",
+      "ALUMNI": "alumni accounts"
+    },
+    "searchPh": "Search name, email or organisation…",
+    "search": "Search",
+    "allRoles": "All roles",
+    "allStatuses": "All statuses",
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "org": "Organisation / student code",
+      "status": "Status",
+      "lastLogin": "Last sign-in"
+    },
+    "statuses": {
+      "PENDING_VERIFICATION": "Email unverified",
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "LOCKED": "Locked"
+    },
+    "never": "Never",
+    "you": "You",
+    "empty": "No users match these filters",
+    "pageInfo": "Showing {from}–{to} of {total} accounts",
+    "menu": {
+      "label": "Manage user {name}",
+      "edit": "Edit details",
+      "suspend": "Suspend account",
+      "activate": "Reactivate account",
+      "unlock": "Unlock account",
+      "sendReset": "Send password reset link"
+    },
+    "form": {
+      "createTitle": "Add a staff account",
+      "createSub": "The user is emailed an invitation to set their own password (link valid for 24 hours) · organisation and alumni accounts must self-register",
+      "editTitle": "Edit user",
+      "editSub": "Changing the role signs the user out",
+      "name": "Full name",
+      "email": "Email",
+      "role": "Role",
+      "position": "Position",
+      "phone": "Phone",
+      "roleLocked": "Roles of organisation and alumni accounts cannot be changed",
+      "create": "Create account and send invite",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel"
+    },
+    "confirm": {
+      "suspendTitle": "Suspend {name}",
+      "suspendBody": "The user is signed out immediately and cannot sign in until reactivated.",
+      "activateTitle": "Reactivate {name}",
+      "activateBody": "The user can sign in again.",
+      "unlockTitle": "Unlock {name}",
+      "unlockBody": "Clears failed sign-in attempts and the temporary lock.",
+      "sendResetTitle": "Send a password reset link to {name}",
+      "sendResetBody": "A link to set a new password is emailed to the user (expires in 30 minutes).",
+      "submit": "Confirm",
+      "cancel": "Cancel"
+    },
+    "done": {
+      "created": "Account created and invitation sent",
+      "updated": "User saved",
+      "suspend": "Account suspended",
+      "activate": "Account reactivated",
+      "unlock": "Account unlocked",
+      "sendReset": "Password reset link sent"
+    },
+    "errors": {
+      "notFound": "User not found",
+      "emailTaken": "An account with this email already exists",
+      "self": "You cannot do this to your own account",
+      "lastAdmin": "At least one active administrator must remain",
+      "roleNotAllowed": "Roles can only change between administrator and registrar staff",
+      "notApplicable": "The account status already changed — showing the latest state"
+    }
+  },
+  "policy": {
+    "contents": "Contents",
+    "backHome": "Back to home",
+    "dpoTitle": "Data Protection Officer (DPO)",
+    "dpoBody": "dpo@krirk.ac.th · 02-970-5820 ext. 201 · Mon–Fri 08:30–16:30",
+    "otherDoc": "Related document",
+    "privacy": {
+      "badge": "Personal Data Protection Act B.E. 2562",
+      "title": "Privacy policy for the online credential verification system",
+      "version": "Version 1.0",
+      "updated": "Last updated 12 September 2026",
+      "s1Title": "Data controller",
+      "s1Body": "Krirk University, through the Office of the Registrar, is the data controller for all personal data processed by this verification system. Requests for access, correction or erasure go to the Data Protection Officer listed alongside this policy.",
+      "s2Title": "Personal data we process",
+      "s2Body": "The system processes only what verification requires.",
+      "s2IdentifiersK": "Identifiers",
+      "s2IdentifiersV": "citizen ID or passport number of the person being verified, stored as an HMAC-SHA256 hash for searching and AES-256-GCM ciphertext for staff review",
+      "s2AcademicK": "Academic records",
+      "s2AcademicV": "name, student code, education level, degree, programme, faculty, status, graduation and council approval dates, GPA and honours, synced from the registry system",
+      "s2RequesterK": "Requester data",
+      "s2RequesterV": "organisation details, contact name, email, phone, plus IP address, user agent and consent timestamp for each request",
+      "s3Title": "Purpose and lawful basis",
+      "s3Body": "Data is processed to verify academic credentials at the request of an organisation with legitimate grounds, and to keep the access records the law requires. We do not use it for marketing and we do not sell or transfer it abroad.",
+      "s3Box": "Requests are never processed without an explicit PDPA consent tick, recorded with its exact timestamp.",
+      "s4Title": "Protection measures",
+      "s4Body": "Identifiers are hashed with a server-side pepper and encrypted at rest. Screens always show masked values; revealing a full number requires a staff role and writes an audit entry. Requests are rate limited per user and per IP, and results are only reachable with an individual access code.",
+      "s5Title": "Retention",
+      "s5Body": "Verification requests are anonymised {requestYears} years after the decision. Audit log entries are retained for {auditYears} years to support external inspection. Result access codes expire {linkDays} days after approval; the result snapshot itself is retained for the request retention period.",
+      "s6Title": "Your rights",
+      "s6Body": "Data subjects may request access, correction, erasure, restriction or objection, and may withdraw consent at any time.",
+      "s6Box": "Withdrawing consent does not invalidate results already issued, because those records must remain verifiable. It does stop any further processing.",
+      "s7Title": "Contact",
+      "s7Body": "Office of the Registrar, Krirk University, 3 Soi Ram Inthra 1, Anusawari, Bang Khen, Bangkok 10220 · dpo@krirk.ac.th · 02-970-5820 ext. 201. Complaints may also be filed with the Personal Data Protection Committee."
+    },
+    "terms": {
+      "badge": "Terms of service",
+      "title": "Terms of service for the online credential verification system",
+      "version": "Version 1.0",
+      "updated": "Last updated 15 September 2026",
+      "t1Title": "Scope of the service",
+      "t1Body": "This system verifies the credentials of Krirk University graduates free of charge. Results are shown on the web with a reference number that can be re-checked. It does not issue certificates or transcripts in place of the university's official documents.",
+      "t2Title": "Registration and accounts",
+      "t2Body": "Users must provide accurate, current information. External organisations must be approved by registrar staff before submitting requests. Users must keep their passwords secret and are responsible for all activity under their account.",
+      "t3Title": "Acceptable use",
+      "t3Body": "Submit requests only with legitimate grounds and the data subject's consent, for example when considering a job applicant. Do not use the system to guess or harvest personal data in bulk. Requests are rate limited per user and per IP, and the university may suspend accounts that misuse the service.",
+      "t3Box": "Every request and every result view is logged with the user, time and IP address for legally required inspection.",
+      "t4Title": "Verification results",
+      "t4Body": "A result reflects the record at the moment of approval and can be opened via its link until the access code expires. “No matching record” does not mean the person did not graduate; the details provided may simply not match the registry.",
+      "t5Title": "Limitation of liability",
+      "t5Body": "The service is provided as available. The university is not liable for decisions based on identifiers entered incorrectly by the requester, or for use of results beyond the purpose stated in the request.",
+      "t6Title": "Changes and contact",
+      "t6Body": "The university may update these terms from time to time; the version and update date are shown on this page. Questions go to the Office of the Registrar on 02-970-5820 or reg@krirk.ac.th."
+    }
+  },
   "sync": {
     "title": "Registry data sync",
     "subtitle": "Registry connection status and sync history",
@@ -899,7 +1216,8 @@
     "footerContact": "Contact",
     "footerRegistrar": "Office of the Registrar",
     "footerHours": "Mon–Fri 08:30–16:30",
-    "footerBadge": "PDPA compliant"
+    "footerBadge": "PDPA compliant",
+    "announcement": "Notice"
   },
   "email": {
     "footer": "This message was sent automatically by the Krirk University online credential verification system. Please do not reply. If you did not request this, contact the registrar immediately.",
@@ -928,6 +1246,14 @@
       "decided": "Decided",
       "approvedOn": "Approved on",
       "singleQuota": "Single requests"
+    },
+    "invite": {
+      "subject": "You're invited to Krirk Verify",
+      "preheader": "Set a password to start using your staff account.",
+      "heading": "Set a password for your account",
+      "body": "Dear {name} — {inviter} created a {role} account for you on the Krirk University online credential verification system. Please set a password to get started.",
+      "cta": "Set password",
+      "ctaNote": "Single-use link, expires in 24 hours."
     },
     "rejected": {
       "subject": "Verification could not be completed · {refNo}",

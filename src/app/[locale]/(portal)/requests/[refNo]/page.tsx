@@ -133,7 +133,17 @@ export default async function RequestDetailPage({
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1">
-          {request.status === "APPROVED" && request.result ? (
+          {request.anonymizedAt ? (
+            // F-AUD-08 — คำขอพ้นระยะเก็บรักษาแล้ว: ผลและข้อมูลส่วนบุคคลถูกลบ เหลือเพียงสถิติ
+            <StatusPanel
+              status={request.status}
+              refNo={request.refNo}
+              badge={t(`statuses.${request.status}`)}
+              title={t("detail.anonymizedTitle")}
+              body={t("detail.anonymizedBody", { date: dateOnly(request.anonymizedAt) })}
+              reason={null}
+            />
+          ) : request.status === "APPROVED" && request.result ? (
             <ResultCard
               result={request.result}
               meta={[

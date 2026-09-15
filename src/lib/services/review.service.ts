@@ -11,8 +11,9 @@ import { resultLinkExpiresAt } from "@/lib/verification/access-token";
 import { degreeLabel, displayName } from "@/lib/verification/display";
 import { normalizeRefNo } from "@/lib/verification/ref-no";
 import { statusForRejectReason } from "@/lib/verification/reject-reasons";
-import { reviewSlaHours, slaCutoff } from "@/lib/verification/sla";
+import { slaCutoff } from "@/lib/verification/sla";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
+import { getSettings } from "./settings.service";
 import { maskSearchValue, toResultSnapshot } from "./verification.service";
 
 // Phase 4 — งานพิจารณาคำขอของเจ้าหน้าที่ทะเบียน (F-REG-01 ถึง 06, 09)
@@ -23,11 +24,6 @@ type Staff = { id: string };
 
 function localeOf(value: string): "th" | "en" {
   return value === "en" ? "en" : "th";
-}
-
-function linkExpiresDays(): number {
-  const days = Number(process.env.RESULT_LINK_EXPIRES_DAYS ?? 90);
-  return Number.isFinite(days) && days > 0 ? days : 90;
 }
 
 // เที่ยงคืนตามเวลาไทยของวันนี้ — ใช้นับ "พิจารณาวันนี้"
@@ -45,7 +41,7 @@ function bangkokDay(isoDay: string, offsetDays = 0): Date {
 // ------------------------------------------------------------
 
 export async function getQueue(query: QueueQuery, now: Date = new Date()) {
-  const slaHours = reviewSlaHours();
+  const { slaHours } = await getSettings();
   const cutoff = slaCutoff(now, slaHours);
   const today = startOfBangkokDay(now);
   const pending: Prisma.VerificationRequestWhereInput = { status: "PENDING_REVIEW" };
@@ -210,7 +206,8 @@ export async function revealSearchValue(
         select: { id: true, searchType: true, searchValueEnc: true },
       })
     : null;
-  if (!request) return null;
+  // คำขอที่ถูก anonymise ตามนโยบายเก็บรักษาแล้ว ไม่มีเลขให้เปิดดู
+  if (!request?.searchValueEnc) return null;
 
   writeAuditLog({
     action: AuditAction.PERSONAL_DATA_REVEALED,
@@ -252,6 +249,7 @@ export async function approveRequest(
 
   const now = new Date();
   const token = generateToken();
+  const { linkExpiresDays } = await getSettings();
   // updateMany + เงื่อนไขสถานะ = เจ้าหน้าที่สองคนกดพร้อมกัน จะสำเร็จเพียงคนเดียว
   const decided = await prisma.$transaction(async (tx) => {
     const updated = await tx.verificationRequest.updateMany({
@@ -264,7 +262,7 @@ export async function approveRequest(
         matchedStudentId: student.id,
         accessTokenHash: token.tokenHash,
         accessTokenEnc: encrypt(token.token),
-        expiresAt: resultLinkExpiresAt(now),
+        expiresAt: resultLinkExpiresAt(now, linkExpiresDays),
       },
     });
     if (updated.count === 0) return false;
@@ -295,7 +293,7 @@ export async function approveRequest(
       graduationDate: student.graduationDate,
       decision: "MANUAL",
       url: appUrl(`/verify/result/${refNo}?t=${token.token}`, locale),
-      expiresDays: linkExpiresDays(),
+      expiresDays: linkExpiresDays,
     }),
   });
   return { ok: true };

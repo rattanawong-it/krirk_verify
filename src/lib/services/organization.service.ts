@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { sendMail } from "@/lib/email/mailer";
 import { organizationApprovedTemplate } from "@/lib/email/templates";
 import { appUrl } from "@/lib/utils/app-url";
+import { getSettings } from "./settings.service";
 import {
   AuditAction,
   type AuditActionValue,
@@ -166,7 +167,7 @@ export async function changeOrganizationStatus(
       where: { organizationId: org.id, emailVerifiedAt: { not: null }, status: "ACTIVE" },
       select: { email: true, locale: true },
     });
-    const quotaPerHour = Number(process.env.RATE_LIMIT_USER_PER_HOUR ?? 30) || 30;
+    const quotaPerHour = (await getSettings()).userPerHour;
     for (const user of users) {
       const locale = user.locale === "en" ? "en" : "th";
       void sendMail({

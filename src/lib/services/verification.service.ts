@@ -34,7 +34,7 @@ import {
   isPermalinkBlocked,
   recordPermalinkFailure,
 } from "./rate-limit.service";
-import { SettingKey, getBooleanSetting } from "./settings.service";
+import { getSettings } from "./settings.service";
 
 // หัวใจของระบบ (spec ข้อ 5.4) — Server Action เรียกผ่านไฟล์นี้เท่านั้น
 
@@ -46,12 +46,9 @@ function localeOf(value: string): AppLocale {
   return value === "en" ? "en" : "th";
 }
 
-function linkExpiresDays(): number {
-  const days = Number(process.env.RESULT_LINK_EXPIRES_DAYS ?? 90);
-  return Number.isFinite(days) && days > 0 ? days : 90;
-}
-
 export function maskSearchValue(searchType: SearchType, searchValueEnc: string): string {
+  // คำขอที่ถูก anonymise ตามนโยบายเก็บรักษา (F-AUD-08) ไม่มีคีย์ค้นหาเหลืออยู่
+  if (!searchValueEnc) return "—";
   const value = decrypt(searchValueEnc);
   return searchType === "CITIZEN_ID" ? maskCitizenId(value) : maskPassportNo(value);
 }
@@ -165,8 +162,9 @@ export async function submitRequest(
   });
 
   // 4–5. ตัดสินตามกฎข้อ 4.2 แล้วสร้างคำขอ (+ snapshot เมื่ออนุมัติ) ในธุรกรรมเดียว
+  const settings = await getSettings();
   const decision = decideVerification(candidates, {
-    autoApproveEnabled: await getBooleanSetting(SettingKey.AUTO_APPROVE_ENABLED, true),
+    autoApproveEnabled: settings.autoApproveEnabled,
   });
   const now = new Date();
   const approvedStudent =
@@ -199,7 +197,7 @@ export async function submitRequest(
               decidedAt: now,
               accessTokenHash: token.tokenHash,
               accessTokenEnc: encrypt(token.token),
-              expiresAt: resultLinkExpiresAt(now),
+              expiresAt: resultLinkExpiresAt(now, settings.linkExpiresDays),
               result: { create: toResultSnapshot(approvedStudent) },
             }
           : {
@@ -238,7 +236,7 @@ export async function submitRequest(
         graduationDate: approvedStudent.graduationDate,
         decision: "AUTO",
         url: appUrl(`/verify/result/${request.refNo}?t=${token.token}`, locale),
-        expiresDays: linkExpiresDays(),
+        expiresDays: settings.linkExpiresDays,
       }),
     });
   } else {
@@ -408,6 +406,7 @@ export async function getRequestDetail(
       accessTokenEnc: true,
       expiresAt: true,
       createdAt: true,
+      anonymizedAt: true,
       requester: { select: { name: true } },
       decidedBy: { select: { name: true } },
       result: true,

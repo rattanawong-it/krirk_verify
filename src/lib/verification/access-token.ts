@@ -15,8 +15,7 @@ export function isLinkExpired(expiresAt: Date | null, now: Date = new Date()): b
   return !expiresAt || expiresAt.getTime() <= now.getTime();
 }
 
-export function resultLinkExpiresAt(from: Date = new Date()): Date {
-  const days = Number(process.env.RESULT_LINK_EXPIRES_DAYS ?? 90);
-  const safeDays = Number.isFinite(days) && days > 0 ? days : 90;
-  return new Date(from.getTime() + safeDays * 86_400_000);
+// days มาจากหน้าตั้งค่าระบบ (อายุ permalink ผลตรวจสอบ · F-AUD-06)
+export function resultLinkExpiresAt(from: Date, days: number): Date {
+  return new Date(from.getTime() + days * 86_400_000);
 }

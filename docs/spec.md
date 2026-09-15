@@ -355,14 +355,16 @@ submitRequest(input, actor)
 
 ### Phase 7 — Audit, Admin & PDPA
 - [x] **F-AUD-01** Prisma schema: `AuditLog` + `audit.service.ts` (เขียน log แบบ non-blocking)
-- [~] **F-AUD-02** ฝัง audit ในทุกจุดสำคัญ: login/logout, ยื่นคำขอ, ดูผล, อนุมัติ/ปฏิเสธ, แก้ไขผู้ใช้, sync, export
-- [ ] **F-AUD-03** หน้า `/audit-logs` (ADMIN) — filter ตามผู้ใช้/action/ช่วงเวลา + ดูรายละเอียด
-- [ ] **F-AUD-04** Export audit log เป็น CSV สำหรับการตรวจสอบภายนอก
-- [ ] **F-AUD-05** หน้าจัดการผู้ใช้ `/users` (ADMIN) — สร้าง/แก้ไข/ระงับ/รีเซ็ตรหัสผ่าน/เปลี่ยนบทบาท
-- [ ] **F-AUD-06** หน้าตั้งค่าระบบ `/settings` — เปิด/ปิด auto-approve, โควตา rate limit, retention days, ข้อความประกาศหน้าแรก
-- [ ] **F-AUD-07** หน้านโยบายความเป็นส่วนตัว (PDPA) + ข้อกำหนดการใช้บริการ สองภาษา
-- [ ] **F-AUD-08** งาน retention — anonymize/ลบคำขอที่เกินระยะเวลาเก็บรักษาโดยอัตโนมัติ
-- [ ] **F-AUD-09** Security headers (CSP, HSTS, X-Frame-Options) ใน `next.config`
+- [x] **F-AUD-02** ฝัง audit ในทุกจุดสำคัญ: login/logout, ยื่นคำขอ, ดูผล, อนุมัติ/ปฏิเสธ, แก้ไขผู้ใช้, sync, export
+- [x] **F-AUD-03** หน้า `/audit-logs` (ADMIN) — filter ตามผู้ใช้/action/ช่วงเวลา + ดูรายละเอียด
+- [x] **F-AUD-04** Export audit log เป็น CSV สำหรับการตรวจสอบภายนอก
+- [x] **F-AUD-05** หน้าจัดการผู้ใช้ `/users` (ADMIN) — สร้าง/แก้ไข/ระงับ/รีเซ็ตรหัสผ่าน/เปลี่ยนบทบาท
+- [x] **F-AUD-06** หน้าตั้งค่าระบบ `/settings` — เปิด/ปิด auto-approve, โควตา rate limit, retention days, ข้อความประกาศหน้าแรก
+- [~] **F-AUD-07** หน้านโยบายความเป็นส่วนตัว (PDPA) + ข้อกำหนดการใช้บริการ สองภาษา
+- [x] **F-AUD-08** งาน retention — anonymize/ลบคำขอที่เกินระยะเวลาเก็บรักษาโดยอัตโนมัติ
+- [x] **F-AUD-09** Security headers (CSP, HSTS, X-Frame-Options) ใน `next.config`
+
+> บันทึกสรุป Phase 7: [`docs/phases/phase-7-audit-admin.md`](phases/phase-7-audit-admin.md) · F-AUD-07 `[~]` — หน้าและโครงครบสองภาษา แต่ข้อความยังเป็นร่างรอฝ่ายกฎหมายอนุมัติ (ข้อ 10 รายการที่ 5)
 
 ### Phase 8 — i18n, Responsive & Accessibility
 - [x] **F-UX-01** ตั้งค่า `next-intl` + routing `[locale]` + middleware ตรวจภาษา
@@ -475,3 +477,4 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3  ← MVP ใช้งานได้
 | 1.3 | 2026-09-15 | ทีมพัฒนา | อนุมัติแล้ว (Phase 2): `SyncJob` เพิ่ม `runLock`/`studentCode`/`triggeredById`/`recordsInvalid`/`errorCode` + enum `SyncType`/`SyncStatus`, env `SYNC_PAGE_SIZE`/`SYNC_CRON_SCHEDULE`, `/api/cron/sync` ตอบ 202 แล้วทำงานเบื้องหลัง, `MOCK_REGISTRY_ENABLED=false` ปิดทั้ง route และ `MockRegistryClient` |
 | 1.4     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 3): `accessToken` เก็บเป็น `accessTokenHash` + `accessTokenEnc`, `VerificationRequest` เพิ่ม `organizationId`/`searchValueEnc`/`requesterReference`/`note`/`reviewReason` + enum `RequestPurpose`/`DecisionType`/`ReviewReason`, ตาราง `ref_no_counters`/`rate_limits`, trigger กันแก้ `verification_results`, ศิษย์เก่าตรวจเฉพาะวุฒิตนเอง, หน่วยงานเห็นคำขอทั้งหน่วยงาน, เลื่อนปุ่มฉบับร่าง/Export/ช่วงวันที่, จำกัดเปิด permalink ผิด 20 ครั้ง/IP/ชม. |
 | 1.5     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 4): ตาราง `request_notes`, `rejectReason` เก็บรหัสเหตุผล + `rejectDetail`, `Organization` เพิ่ม `suspendedAt`/`suspendedById`/`statusReason`, ปฏิเสธการลงทะเบียนหน่วยงาน = `SUSPENDED` พร้อมเหตุผล, เหตุผล "ไม่พบข้อมูลที่ตรงกัน" → `NOT_FOUND`, env `REVIEW_SLA_HOURS`, เลื่อนปุ่ม Export/เลือกหลายแถว/กระดิ่ง/ตัวเลขคิว/สถานะอีเมลในไทม์ไลน์ |
+| 1.6     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 7): ค่าตั้งค่าเพิ่ม SLA/แถวแบบชุดต่อวัน/จำนวนครั้งล็อกบัญชี/ระยะเก็บ Audit Log/อายุ permalink (env เป็นค่าเริ่มต้น), `VerificationRequest.anonymizedAt`, retention = anonymise คำขอ + ลบ Audit Log ที่พ้นกำหนดผ่าน `/api/cron/retention`, CSP แบบ `'unsafe-inline'` (ไม่ใช้ nonce), สร้างบัญชีเฉพาะ ADMIN/REGISTRAR ด้วยอีเมลเชิญ, route `/privacy` + `/terms`, ตัวกรองผู้ใช้เป็นช่องค้นหา + เลื่อนหน้า Email Log ไป Phase 9, ข้อความนโยบายเป็นร่างรอฝ่ายกฎหมาย, `pnpm build` ต้องเชื่อมต่อฐานข้อมูล |

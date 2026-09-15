@@ -34,6 +34,16 @@ export const AuditAction = {
   ORG_REJECTED: "organization.rejected",
   ORG_SUSPENDED: "organization.suspended",
   ORG_RESTORED: "organization.restored",
+  SETTINGS_CHANGED: "settings.changed",
+  RETENTION_RUN: "retention.run",
+  AUDIT_EXPORTED: "audit.exported",
+  USER_CREATED: "user.created",
+  USER_UPDATED: "user.updated",
+  USER_ROLE_CHANGED: "user.role_changed",
+  USER_SUSPENDED: "user.suspended",
+  USER_ACTIVATED: "user.activated",
+  USER_UNLOCKED: "user.unlocked",
+  USER_RESET_SENT: "user.password_reset_sent",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];

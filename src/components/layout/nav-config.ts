@@ -83,15 +83,15 @@ export const NAV_ITEMS: readonly NavItem[] = [
     labelKey: "auditLogs",
     icon: "history",
     roles: ["ADMIN"],
-    available: false,
+    available: true,
   },
-  { href: "/staff/users", labelKey: "users", icon: "users", roles: ["ADMIN"], available: false },
+  { href: "/staff/users", labelKey: "users", icon: "users", roles: ["ADMIN"], available: true },
   {
     href: "/staff/settings",
     labelKey: "settings",
     icon: "settings",
     roles: ["ADMIN"],
-    available: false,
+    available: true,
   },
   { href: "/profile", labelKey: "profile", icon: "userCircle", roles: ROLES, available: true },
 ];

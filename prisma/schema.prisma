@@ -293,12 +293,15 @@ model VerificationRequest {
   accessTokenHash    String?         @unique
   accessTokenEnc     String?
   expiresAt          DateTime?
+  // F-AUD-08 — เวลาที่งาน retention ลบข้อมูลส่วนบุคคลของคำขอนี้ (null = ยังไม่ถึงกำหนด)
+  anonymizedAt       DateTime?
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
 
   result VerificationResult?
   notes  RequestNote[]
 
+  @@index([anonymizedAt, decidedAt])
   @@index([requesterId, createdAt])
   @@index([organizationId, createdAt])
   @@index([status, createdAt])
