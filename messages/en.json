@@ -1093,7 +1093,11 @@
       "report_exported": "Request report exported",
       "report_monthly_sent": "Monthly summary report sent",
       "notification_digest_sent": "Daily queue summary sent",
-      "email_resent": "Email resent"
+      "email_resent": "Email resent",
+      "batch_uploaded": "Batch file uploaded",
+      "batch_processed": "Batch processed",
+      "batch_exported": "Batch results exported",
+      "batch_rate_limited": "Batch upload over quota"
     }
   },
   "users": {
@@ -1570,5 +1574,86 @@
       "30d": "Last 30 days",
       "all": "All time"
     }
+  },
+  "batch": {
+    "title": "Batch verification",
+    "subtitle": "Upload a CSV or Excel file to submit many requests at once",
+    "template": "Download template",
+    "templateCsv": "CSV template",
+    "templateXlsx": "Excel template",
+    "dropTitle": "Drag a file here",
+    "dropSub": ".csv and .xlsx · up to {max} rows per file · must include search_type and search_value columns",
+    "chooseFile": "Choose a file",
+    "fileFormat": "File format",
+    "purpose": "Purpose of verification",
+    "upload": "Upload and check the file",
+    "uploading": "Checking the file…",
+    "confirm": "Confirm and start",
+    "confirmNote": "This submits {count} requests and uses {count} rows of the batch quota",
+    "cancel": "Cancel this job",
+    "processing": "Processing row {done} of {total}…",
+    "done": "Processed all {total} rows",
+    "rows": "Row results",
+    "summary": "Batch summary",
+    "exportExcel": "Export Excel",
+    "quotaNote": "Batch quota {used} of {limit} rows per day · uploads stop at the limit",
+    "quotaWarn": "{percent}% of today’s batch quota used",
+    "history": "Batch history",
+    "empty": "No files uploaded yet",
+    "truncated": "The file has more than {max} rows — only the first {max} were used",
+    "openJob": "View results",
+    "columns": {
+      "row": "Row",
+      "key": "Search key",
+      "ref": "Reference",
+      "status": "Status",
+      "file": "File",
+      "uploaded": "Uploaded"
+    },
+    "statuses": {
+      "PENDING": "Queued",
+      "INVALID": "Invalid row",
+      "APPROVED": "Approved",
+      "PENDING_REVIEW": "In review",
+      "NOT_FOUND": "Not found",
+      "REJECTED": "Rejected",
+      "ERROR": "Error"
+    },
+    "jobStatuses": {
+      "DRAFT": "Awaiting confirmation",
+      "PROCESSING": "Processing",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed",
+      "CANCELLED": "Cancelled"
+    },
+    "summaryLabels": {
+      "approved": "Approved",
+      "pending": "In review",
+      "notFound": "Not found / rejected",
+      "invalid": "Invalid rows"
+    },
+    "rowErrors": {
+      "missingValue": "Missing search value",
+      "unknownType": "Unknown search type",
+      "invalidCitizenId": "Invalid citizen ID",
+      "invalidPassport": "Invalid passport number",
+      "duplicate": "Duplicate of an earlier row in the file",
+      "internal": "The system failed while submitting",
+      "forbidden": "This account cannot submit requests",
+      "rateLimited": "Quota exceeded",
+      "noLinkedRecord": "No linked record"
+    },
+    "errors": {
+      "tooLarge": "The file is larger than 2 MB",
+      "unsupportedType": "Only .csv and .xlsx files are supported",
+      "missingColumns": "The file needs search_type and search_value columns",
+      "empty": "No data rows found in the file",
+      "unreadable": "Could not read the file · check that it is not corrupted",
+      "noValidRows": "No usable rows · fix the file and upload again",
+      "quotaExceeded": "Today’s batch quota is used up",
+      "notFound": "Batch job not found",
+      "alreadyStarted": "This job has already started"
+    },
+    "pageInfo": "Showing {from}–{to} of {total}"
   }
 }

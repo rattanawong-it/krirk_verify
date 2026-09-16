@@ -6,8 +6,10 @@ import { getSettings } from "./settings.service";
 // F-VER-10 — rate limit เก็บใน PostgreSQL (ตาราง rate_limits สร้างผ่าน Prisma migration จึงตั้ง tableCreated)
 // ใช้ connection pool แยกขนาดเล็ก เพราะไลบรารีต้องการ pg.Pool ไม่ใช่ Prisma client
 // โควตามาจากหน้าตั้งค่าระบบ (F-AUD-06) — ผู้ดูแลเปลี่ยนค่าแล้วสร้าง limiter ชุดใหม่ แต้มที่ใช้ไปแล้วยังนับต่อ (key เดิม)
+// F-BAT-07 — โควตาแบบชุดนับเป็น "แถวต่อวัน" แยกจากคำขอเดี่ยวโดยสิ้นเชิง
 
 const HOUR_SECONDS = 60 * 60;
+const DAY_SECONDS = 24 * HOUR_SECONDS;
 // ครั้งที่เปิด permalink ด้วยรหัสผิดต่อ IP ต่อชั่วโมง
 const PERMALINK_FAILURES_PER_HOUR = 20;
 
@@ -15,17 +17,27 @@ type Limiters = {
   user: RateLimiterPostgres;
   ip: RateLimiterPostgres;
   permalink: RateLimiterPostgres;
+  batch: RateLimiterPostgres;
 };
 
 const globalForLimiter = globalThis as unknown as {
   rateLimitPool?: Pool;
-  rateLimiters?: { signature: string; limiters: Limiters; userPerHour: number };
+  rateLimiters?: {
+    signature: string;
+    limiters: Limiters;
+    userPerHour: number;
+    batchRowsPerDay: number;
+  };
   rateLimitCleanupStarted?: boolean;
 };
 
-async function limiters(): Promise<{ limiters: Limiters; userPerHour: number }> {
-  const { userPerHour, ipPerHour } = await getSettings();
-  const signature = `${userPerHour}:${ipPerHour}`;
+async function limiters(): Promise<{
+  limiters: Limiters;
+  userPerHour: number;
+  batchRowsPerDay: number;
+}> {
+  const { userPerHour, ipPerHour, batchRowsPerDay } = await getSettings();
+  const signature = `${userPerHour}:${ipPerHour}:${batchRowsPerDay}`;
   const cached = globalForLimiter.rateLimiters;
   if (cached?.signature === signature) return cached;
 
@@ -36,7 +48,7 @@ async function limiters(): Promise<{ limiters: Limiters; userPerHour: number }> 
   // งานลบแถวหมดอายุตั้งครั้งเดียวต่อโปรเซส ไม่ต้องสร้างซ้ำทุกครั้งที่เปลี่ยนโควตา
   const clearExpiredByTimeout = !globalForLimiter.rateLimitCleanupStarted;
   globalForLimiter.rateLimitCleanupStarted = true;
-  const create = (keyPrefix: string, points: number, cleanup: boolean) =>
+  const create = (keyPrefix: string, points: number, cleanup: boolean, duration = HOUR_SECONDS) =>
     new RateLimiterPostgres({
       storeClient: pool,
       storeType: "pool",
@@ -45,16 +57,18 @@ async function limiters(): Promise<{ limiters: Limiters; userPerHour: number }> 
       clearExpiredByTimeout: cleanup,
       keyPrefix,
       points,
-      duration: HOUR_SECONDS,
+      duration,
     });
 
   globalForLimiter.rateLimiters = {
     signature,
     userPerHour,
+    batchRowsPerDay,
     limiters: {
       user: create("verify_user", userPerHour, clearExpiredByTimeout),
       ip: create("verify_ip", ipPerHour, false),
       permalink: create("permalink_fail", PERMALINK_FAILURES_PER_HOUR, false),
+      batch: create("batch_rows", batchRowsPerDay, false, DAY_SECONDS),
     },
   };
   return globalForLimiter.rateLimiters;
@@ -102,6 +116,26 @@ export async function getVerificationQuota(userId: string): Promise<QuotaStatus>
   const res = await set.user.get(userId);
   const used = Math.min(res?.consumedPoints ?? 0, userPerHour);
   return { limit: userPerHour, used, remaining: userPerHour - used };
+}
+
+// F-BAT-07 — หักโควตาทีเดียวตามจำนวนแถวที่ยื่นจริง (แถวที่ไม่ผ่าน validate ไม่นับ)
+// เกินโควตา = ไม่หักแต้มเลย ผู้ขอจึงแก้ไฟล์ให้เล็กลงแล้วอัปโหลดใหม่ได้ทันที
+export async function consumeBatchQuota(userId: string, rows: number): Promise<ConsumeResult> {
+  const { batch } = (await limiters()).limiters;
+  try {
+    const res = await batch.consume(userId, rows);
+    return { ok: true, remaining: res.remainingPoints };
+  } catch (error) {
+    if (error instanceof RateLimiterRes) return { ok: false, retryAfterSec: secondsUntil(error) };
+    throw error;
+  }
+}
+
+export async function getBatchQuota(userId: string): Promise<QuotaStatus> {
+  const { limiters: set, batchRowsPerDay } = await limiters();
+  const res = await set.batch.get(userId);
+  const used = Math.min(res?.consumedPoints ?? 0, batchRowsPerDay);
+  return { limit: batchRowsPerDay, used, remaining: batchRowsPerDay - used };
 }
 
 export async function isPermalinkBlocked(ipAddress: string | null): Promise<boolean> {

@@ -142,6 +142,7 @@ model User {
   requestNotes    RequestNote[]
   emailLogs       EmailLog[]
   notifications   Notification[]
+  batchJobs       BatchJob[]
 
   @@index([organizationId])
   @@index([role, status])
@@ -300,8 +301,9 @@ model VerificationRequest {
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
 
-  result VerificationResult?
-  notes  RequestNote[]
+  result    VerificationResult?
+  notes     RequestNote[]
+  batchItem BatchItem?
 
   @@index([anonymizedAt, decidedAt])
   @@index([requesterId, createdAt])
@@ -470,4 +472,76 @@ model Notification {
   @@unique([userId, dedupeKey])
   @@index([userId, readAt, createdAt])
   @@map("notifications")
+}
+
+// ============================================================
+// Phase 5 — Batch Verification
+// ============================================================
+
+enum BatchStatus {
+  // อัปโหลดและตรวจแถวแล้ว รอผู้ขอยืนยัน (F-BAT-03 ต้องแสดงตัวอย่างก่อนยืนยัน)
+  DRAFT
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// สถานะรายแถว — สะท้อนผลของคำขอที่สร้างจากแถวนั้น หรือเหตุที่ไม่ได้สร้างคำขอ
+enum BatchItemStatus {
+  PENDING
+  INVALID
+  APPROVED
+  PENDING_REVIEW
+  NOT_FOUND
+  REJECTED
+  ERROR
+}
+
+model BatchJob {
+  id            String         @id @default(cuid())
+  requesterId   String
+  requester     User           @relation(fields: [requesterId], references: [id], onDelete: Cascade)
+  fileName      String
+  purpose       RequestPurpose
+  totalRows     Int            @default(0)
+  processedRows Int            @default(0)
+  validRows     Int            @default(0)
+  invalidRows   Int            @default(0)
+  status        BatchStatus    @default(DRAFT)
+  errorMessage  String?
+  consentAt     DateTime
+  ipAddress     String?
+  userAgent     String?
+  startedAt     DateTime?
+  finishedAt    DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  items BatchItem[]
+
+  @@index([requesterId, createdAt])
+  @@index([status, createdAt])
+  @@map("batch_jobs")
+}
+
+model BatchItem {
+  id         String   @id @default(cuid())
+  batchJobId String
+  batchJob   BatchJob @relation(fields: [batchJobId], references: [id], onDelete: Cascade)
+  rowNo      Int
+  searchType SearchType?
+  // เก็บแบบเดียวกับคำขอเดี่ยว: ciphertext ไว้ประมวลผล + ค่า mask ไว้แสดงผล (ไม่เก็บเลขเต็มเป็น plaintext)
+  searchValueEnc    String?
+  searchValueMasked String
+  resultStatus      BatchItemStatus @default(PENDING)
+  // รหัสเหตุผลของแถวที่ไม่ถูกต้อง — แปลสองภาษาตอนแสดงผล
+  errorCode         String?
+  requestId         String?              @unique
+  request           VerificationRequest? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  refNo             String?
+  createdAt         DateTime             @default(now())
+
+  @@unique([batchJobId, rowNo])
+  @@map("batch_items")
 }

@@ -335,13 +335,15 @@ submitRequest(input, actor)
 > บันทึกสรุป Phase 4: [`docs/phases/phase-4-registrar.md`](phases/phase-4-registrar.md) · ทำครบ F-DATA-09 (ปุ่มดึงข้อมูลรายคนในหน้าพิจารณาและหน้าระเบียนนักศึกษา) · ทำเพิ่มบางส่วน `[~]`: F-NOT-02 (อีเมลแจ้งปฏิเสธ + หน่วยงานได้รับอนุมัติ)
 
 ### Phase 5 — Batch Verification
-- [ ] **F-BAT-01** Prisma schema: `BatchJob`, `BatchItem` + migration
-- [ ] **F-BAT-02** ดาวน์โหลดเทมเพลต CSV/Excel + หน้าอธิบายรูปแบบไฟล์
-- [ ] **F-BAT-03** อัปโหลดไฟล์ + parse + validate ทีละแถว + แสดงตัวอย่างก่อนยืนยัน (จำกัดจำนวนแถวสูงสุด)
-- [ ] **F-BAT-04** ประมวลผลแบบ background พร้อมแถบแสดงความคืบหน้า
-- [ ] **F-BAT-05** หน้าผลลัพธ์ batch — สรุปจำนวน อนุมัติ/รอพิจารณา/ไม่พบ + ลิงก์ไปแต่ละคำขอ
-- [ ] **F-BAT-06** Export ผลลัพธ์ batch เป็น Excel
-- [ ] **F-BAT-07** Audit + rate limit เฉพาะสำหรับ batch (โควตาแยกจากคำขอเดี่ยว)
+- [x] **F-BAT-01** Prisma schema: `BatchJob`, `BatchItem` + migration
+- [x] **F-BAT-02** ดาวน์โหลดเทมเพลต CSV/Excel + หน้าอธิบายรูปแบบไฟล์
+- [x] **F-BAT-03** อัปโหลดไฟล์ + parse + validate ทีละแถว + แสดงตัวอย่างก่อนยืนยัน (จำกัดจำนวนแถวสูงสุด)
+- [x] **F-BAT-04** ประมวลผลแบบ background พร้อมแถบแสดงความคืบหน้า
+- [x] **F-BAT-05** หน้าผลลัพธ์ batch — สรุปจำนวน อนุมัติ/รอพิจารณา/ไม่พบ + ลิงก์ไปแต่ละคำขอ
+- [x] **F-BAT-06** Export ผลลัพธ์ batch เป็น Excel
+- [x] **F-BAT-07** Audit + rate limit เฉพาะสำหรับ batch (โควตาแยกจากคำขอเดี่ยว)
+
+> บันทึกสรุป Phase 5: [`docs/phases/phase-5-batch.md`](phases/phase-5-batch.md)
 
 ### Phase 6 — Dashboard & Reports
 - [x] **F-RPT-01** Dashboard ผู้ขอ — สรุปคำขอของตนเอง + สถานะล่าสุด
@@ -487,3 +489,4 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3  ← MVP ใช้งานได้
 | 1.7     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 8): bottom nav แสดง 3 เมนูแรก + drawer "เมนู" เมื่อมีเมนูมากกว่า 4, ช่อง `input type="date"` แสดงตามปฏิทินของเบราว์เซอร์, skeleton โครงกลางเดียว + `global-error` ข้อความสองภาษาแบบคงที่, เลื่อนการตรวจ contrast ด้วย axe ไป Phase 10, แก้ shadcn `dialog.tsx`/`form.tsx` |
 | 1.8     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 6): KPI แดชบอร์ดเจ้าหน้าที่ตามดีไซน์ (ช่วง 7 วัน/30 วัน/1 ปี + อัตราอนุมัติอัตโนมัติ), route `/staff/dashboard` + `/staff/reports`, แนวโน้มจัดกลุ่มตามวันที่ยื่นและสถานะปัจจุบัน, Export = Excel/CSV รายการคำขอ (จำกัด 100,000 แถว / 366 วัน), อีเมลสรุปรายเดือนแบบตัวเลข + ลิงก์ผ่าน `/api/cron/monthly-report` + ค่าตั้งค่า `report.monthlyEmailEnabled`/`report.monthlyLastSent`, ซ่อนทางลัดตรวจสอบแบบชุดจนถึง Phase 5, เพิ่ม `recharts` + `exceljs` |
 | 1.9 | 2026-09-16 | ทีมพัฒนา | อนุมัติแล้ว (Phase 9): `EmailLog` เพิ่ม `subject`/`locale`/`payload`/`attempts`/`lastError`/`nextRetryAt`/`userId`/`entityType`/`entityId` + enum `EmailStatus` (เก็บ payload ของเทมเพลตแทน HTML เพื่อ render ใหม่ตอน retry), เพิ่ม model `Notification` + enum `NotificationType` 6 ค่า, ค่าตั้งค่า `notify.queueDigestEnabled` (เปิดเป็นค่าเริ่มต้น) + `notify.queueDigestLastSent` + กลุ่ม "การแจ้งเตือน" ในหน้าตั้งค่า, retry ผ่าน system cron `/api/cron/email-retry` 4 ครั้ง (5/30/120/360 นาที) แล้วรอผู้ดูแลกดส่งซ้ำ, `/api/cron/queue-digest` ส่งสรุปคิววันละครั้ง, หน้าใหม่ `/notifications` และ `/staff/email-logs`, แจ้งเตือนฝั่งผู้ขอเพิ่ม 2 ชนิด (คำขออนุมัติ/ปฏิเสธ), audit action ใหม่ `notification.digest_sent` + `email.resent` |
+| 2.0 | 2026-09-16 | ทีมพัฒนา | อนุมัติแล้ว (Phase 5): `BatchItem` เก็บ `searchValueEnc` + `searchValueMasked` แทนค่า plaintext ตาม PDPA, `BatchJob` เพิ่ม `purpose`/`validRows`/`invalidRows`/`consentAt`/`ipAddress`/`userAgent`/`startedAt`/`finishedAt`/`errorMessage` + enum `BatchStatus`/`BatchItemStatus`, อัปโหลดแล้วสร้างงานสถานะ DRAFT ให้กดยืนยันเป็นขั้นที่สอง, ประมวลผลเบื้องหลังด้วย `after()` + ตอบ 202 และแถบความคืบหน้ารีเฟรชทุก 2.5 วินาที (ไม่ใช้ WebSocket), โควตาแบบชุดหักทีเดียวตามจำนวนแถวที่ผ่าน validate ผ่าน limiter `batch_rows` รายวัน + เพิ่มฟิลด์ `source` ใน `SubmitInput` เพื่อไม่หักโควตารายชั่วโมงซ้ำ, คำขอจากไฟล์แบบชุดไม่ส่งอีเมลรายแถว, จำกัด 500 แถว / 2 MB ต่อไฟล์, แถวที่ซ้ำกันในไฟล์เดียวกันถือว่าไม่ถูกต้อง, audit action ใหม่ `batch.uploaded`/`batch.processed`/`batch.exported`/`batch.rate_limited` |

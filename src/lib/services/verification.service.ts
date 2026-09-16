@@ -94,8 +94,13 @@ async function nextRefNo(tx: Prisma.TransactionClient, now: Date): Promise<strin
   return formatRefNo(year, Number(rows[0]!.lastValue));
 }
 
-export type SubmitInput =
-  { kind: "search"; data: SubmitRequestData } | { kind: "own"; data: SubmitOwnRequestData };
+export type SubmitInput = (
+  { kind: "search"; data: SubmitRequestData } | { kind: "own"; data: SubmitOwnRequestData }
+) & {
+  // F-BAT-07 — แถวที่มาจากไฟล์แบบชุดหักโควตา "แถวต่อวัน" ไปแล้วตอนสร้างงาน
+  // จึงไม่หักโควตาคำขอเดี่ยวรายชั่วโมงซ้ำ และไม่ส่งอีเมลรายแถวให้ผู้ขอ
+  source?: "single" | "batch";
+};
 
 export type SubmitResult =
   | { ok: true; refNo: string; status: "APPROVED" | "PENDING_REVIEW" }
@@ -139,8 +144,11 @@ export async function submitRequest(
     return { ok: false, code: "noLinkedRecord" };
   }
 
-  // 2. rate limit ต่อผู้ใช้และต่อ IP
-  const quota = await consumeVerificationQuota(user.id, context.ipAddress);
+  // 2. rate limit ต่อผู้ใช้และต่อ IP (แถวแบบชุดหักโควตารายวันไปแล้ว — F-BAT-07)
+  const quota =
+    input.source === "batch"
+      ? ({ ok: true, remaining: 0 } as const)
+      : await consumeVerificationQuota(user.id, context.ipAddress);
   if (!quota.ok) {
     writeAuditLog({
       action: AuditAction.VERIFICATION_RATE_LIMITED,
@@ -225,41 +233,45 @@ export async function submitRequest(
   });
 
   const locale = localeOf(user.locale);
+  // F-BAT-07 — ไฟล์แบบชุด 500 แถวต้องไม่กลายเป็นอีเมล 500 ฉบับ · ผู้ขอดูผลรวมที่หน้าผลลัพธ์ของชุด
+  const emailRequester = input.source !== "batch";
   if (approvedStudent && token) {
-    void sendTemplateMail({
-      template: "resultApproved",
-      to: user.email,
-      userId: user.id,
-      entityType: "VerificationRequest",
-      entityId: request.id,
-      payload: {
-        locale,
-        refNo: request.refNo,
-        fullName: displayName(approvedStudent, locale),
-        degree: degreeLabel(approvedStudent, locale),
-        graduationDate: approvedStudent.graduationDate,
-        decision: "AUTO",
-        url: appUrl(`/verify/result/${request.refNo}?t=${token.token}`, locale),
-        expiresDays: settings.linkExpiresDays,
-      },
-    });
+    if (emailRequester)
+      void sendTemplateMail({
+        template: "resultApproved",
+        to: user.email,
+        userId: user.id,
+        entityType: "VerificationRequest",
+        entityId: request.id,
+        payload: {
+          locale,
+          refNo: request.refNo,
+          fullName: displayName(approvedStudent, locale),
+          degree: degreeLabel(approvedStudent, locale),
+          graduationDate: approvedStudent.graduationDate,
+          decision: "AUTO",
+          url: appUrl(`/verify/result/${request.refNo}?t=${token.token}`, locale),
+          expiresDays: settings.linkExpiresDays,
+        },
+      });
   } else {
-    void sendTemplateMail({
-      template: "requestReceived",
-      to: user.email,
-      userId: user.id,
-      entityType: "VerificationRequest",
-      entityId: request.id,
-      payload: {
-        locale,
-        refNo: request.refNo,
-        searchKey:
-          searchType === "CITIZEN_ID" ? maskCitizenId(searchValue) : maskPassportNo(searchValue),
-        purpose: input.data.purpose,
-        submittedAt: now,
-        url: appUrl(`/requests/${request.refNo}`, locale),
-      },
-    });
+    if (emailRequester)
+      void sendTemplateMail({
+        template: "requestReceived",
+        to: user.email,
+        userId: user.id,
+        entityType: "VerificationRequest",
+        entityId: request.id,
+        payload: {
+          locale,
+          refNo: request.refNo,
+          searchKey:
+            searchType === "CITIZEN_ID" ? maskCitizenId(searchValue) : maskPassportNo(searchValue),
+          purpose: input.data.purpose,
+          submittedAt: now,
+          url: appUrl(`/requests/${request.refNo}`, locale),
+        },
+      });
     // F-NOT-03 / F-NOT-05 — เจ้าหน้าที่เห็นในกระดิ่งทันที ส่วนอีเมลเป็นสรุปรายวันเพื่อไม่ให้อีเมลท่วม
     void notifyQueueEntry(request.refNo);
   }

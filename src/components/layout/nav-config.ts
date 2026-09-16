@@ -48,7 +48,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     roles: REQUESTER_ROLES,
     available: true,
   },
-  { href: "/batch", labelKey: "batch", icon: "upload", roles: ["EXTERNAL"], available: false },
+  { href: "/batch", labelKey: "batch", icon: "upload", roles: ["EXTERNAL"], available: true },
   {
     href: "/staff/dashboard",
     labelKey: "dashboard",

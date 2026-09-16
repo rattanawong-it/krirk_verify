@@ -1093,7 +1093,11 @@
       "report_exported": "Export รายงานคำขอ",
       "report_monthly_sent": "ส่งรายงานสรุปประจำเดือน",
       "notification_digest_sent": "ส่งสรุปคิวคำขอรายวัน",
-      "email_resent": "ส่งอีเมลซ้ำ"
+      "email_resent": "ส่งอีเมลซ้ำ",
+      "batch_uploaded": "อัปโหลดไฟล์ตรวจสอบแบบชุด",
+      "batch_processed": "ประมวลผลตรวจสอบแบบชุด",
+      "batch_exported": "Export ผลลัพธ์แบบชุด",
+      "batch_rate_limited": "อัปโหลดแบบชุดเกินโควตา"
     }
   },
   "users": {
@@ -1570,5 +1574,86 @@
       "30d": "30 วันล่าสุด",
       "all": "ทั้งหมด"
     }
+  },
+  "batch": {
+    "title": "ตรวจสอบแบบชุด",
+    "subtitle": "อัปโหลดไฟล์ CSV หรือ Excel เพื่อยื่นคำขอหลายรายการพร้อมกัน",
+    "template": "ดาวน์โหลดเทมเพลต",
+    "templateCsv": "เทมเพลต CSV",
+    "templateXlsx": "เทมเพลต Excel",
+    "dropTitle": "ลากไฟล์มาวางที่นี่",
+    "dropSub": "รองรับ .csv และ .xlsx · สูงสุด {max} แถวต่อไฟล์ · ต้องมีคอลัมน์ search_type และ search_value",
+    "chooseFile": "เลือกไฟล์จากเครื่อง",
+    "fileFormat": "รูปแบบไฟล์",
+    "purpose": "วัตถุประสงค์ของการตรวจสอบ",
+    "upload": "อัปโหลดและตรวจไฟล์",
+    "uploading": "กำลังตรวจไฟล์…",
+    "confirm": "ยืนยันและเริ่มตรวจสอบ",
+    "confirmNote": "ระบบจะยื่นคำขอ {count} รายการ และหักโควตาแบบชุด {count} แถว",
+    "cancel": "ยกเลิกงานนี้",
+    "processing": "กำลังประมวลผลแถวที่ {done} จาก {total}…",
+    "done": "ประมวลผลครบ {total} แถวแล้ว",
+    "rows": "ผลลัพธ์รายแถว",
+    "summary": "สรุปผลแบบชุด",
+    "exportExcel": "Export Excel",
+    "quotaNote": "โควตาแบบชุด {used} จาก {limit} แถวต่อวัน · ระบบหยุดรับไฟล์เมื่อครบโควตา",
+    "quotaWarn": "ใช้โควตาแบบชุดไปแล้ว {percent}% ของวันนี้",
+    "history": "ประวัติการตรวจสอบแบบชุด",
+    "empty": "ยังไม่เคยอัปโหลดไฟล์",
+    "truncated": "ไฟล์มีมากกว่า {max} แถว — ระบบใช้ {max} แถวแรกเท่านั้น",
+    "openJob": "ดูผลลัพธ์",
+    "columns": {
+      "row": "แถว",
+      "key": "คีย์ค้นหา",
+      "ref": "เลขอ้างอิง",
+      "status": "สถานะ",
+      "file": "ไฟล์",
+      "uploaded": "อัปโหลดเมื่อ"
+    },
+    "statuses": {
+      "PENDING": "รอประมวลผล",
+      "INVALID": "แถวไม่ถูกต้อง",
+      "APPROVED": "อนุมัติแล้ว",
+      "PENDING_REVIEW": "รอพิจารณา",
+      "NOT_FOUND": "ไม่พบข้อมูล",
+      "REJECTED": "ปฏิเสธ",
+      "ERROR": "ผิดพลาด"
+    },
+    "jobStatuses": {
+      "DRAFT": "รอยืนยัน",
+      "PROCESSING": "กำลังประมวลผล",
+      "COMPLETED": "เสร็จสิ้น",
+      "FAILED": "ล้มเหลว",
+      "CANCELLED": "ยกเลิกแล้ว"
+    },
+    "summaryLabels": {
+      "approved": "อนุมัติแล้ว",
+      "pending": "รอพิจารณา",
+      "notFound": "ไม่พบ/ปฏิเสธ",
+      "invalid": "แถวไม่ถูกต้อง"
+    },
+    "rowErrors": {
+      "missingValue": "ไม่มีค่าคีย์ค้นหา",
+      "unknownType": "ประเภทคีย์ไม่ถูกต้อง",
+      "invalidCitizenId": "เลขบัตรประชาชนไม่ถูกต้อง",
+      "invalidPassport": "เลขหนังสือเดินทางไม่ถูกต้อง",
+      "duplicate": "ซ้ำกับแถวก่อนหน้าในไฟล์เดียวกัน",
+      "internal": "ระบบผิดพลาดระหว่างยื่นคำขอ",
+      "forbidden": "บัญชีนี้ไม่มีสิทธิ์ยื่นคำขอ",
+      "rateLimited": "เกินโควตา",
+      "noLinkedRecord": "ไม่มีระเบียนที่ผูกไว้"
+    },
+    "errors": {
+      "tooLarge": "ไฟล์ใหญ่เกิน 2 MB",
+      "unsupportedType": "รองรับเฉพาะไฟล์ .csv และ .xlsx",
+      "missingColumns": "ไฟล์ต้องมีคอลัมน์ search_type และ search_value",
+      "empty": "ไม่พบข้อมูลในไฟล์",
+      "unreadable": "อ่านไฟล์ไม่สำเร็จ · ตรวจว่าไฟล์ไม่เสียหาย",
+      "noValidRows": "ไม่มีแถวที่ใช้ได้เลย · แก้ไขไฟล์แล้วอัปโหลดใหม่",
+      "quotaExceeded": "เกินโควตาแบบชุดของวันนี้",
+      "notFound": "ไม่พบงานตรวจสอบแบบชุดนี้",
+      "alreadyStarted": "งานนี้เริ่มประมวลผลไปแล้ว"
+    },
+    "pageInfo": "แสดง {from}–{to} จาก {total} รายการ"
   }
 }

@@ -48,6 +48,10 @@ export const AuditAction = {
   REPORT_MONTHLY_SENT: "report.monthly_sent",
   QUEUE_DIGEST_SENT: "notification.digest_sent",
   EMAIL_RESENT: "email.resent",
+  BATCH_UPLOADED: "batch.uploaded",
+  BATCH_PROCESSED: "batch.processed",
+  BATCH_EXPORTED: "batch.exported",
+  BATCH_RATE_LIMITED: "batch.rate_limited",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
