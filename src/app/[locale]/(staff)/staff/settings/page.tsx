@@ -64,7 +64,7 @@ export default async function SettingsPage({ params }: PageProps<"/[locale]/staf
             <Icon name="alert" size={18} className="mt-px shrink-0 text-status-rejected" />
             <div>
               <h2 className="mb-1 text-[12.5px] font-bold">{t("dangerTitle")}</h2>
-              <p className="text-[11.5px] leading-relaxed opacity-90">{t("dangerBody")}</p>
+              <p className="text-[11.5px] leading-relaxed">{t("dangerBody")}</p>
             </div>
           </section>
 

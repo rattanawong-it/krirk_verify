@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { displayName } from "@/lib/verification/display";
 
 // F-RPT-01 — แดชบอร์ดผู้ขอ (ตาม project-ui/2 · แดชบอร์ดผู้ขอ)
-// ปุ่ม "ตรวจสอบแบบชุด" ของดีไซน์ยังไม่แสดงจนกว่าจะทำ Phase 5
+// ปุ่ม/ทางลัดแบบชุดแสดงเฉพาะหน่วยงานภายนอก (F-BAT — ศิษย์เก่าตรวจได้เฉพาะวุฒิตนเอง)
 
 const STATUS_ICON: Record<RequestStatus, { icon: IconName; tone: string }> = {
   PENDING_REVIEW: { icon: "clock", tone: "bg-status-pending-bg text-status-pending" },
@@ -100,11 +100,26 @@ export default async function PortalDashboardPage({ params }: PageProps<"/[local
     },
   ];
 
-  const shortcuts: { href: string; icon: IconName; label: string }[] = [
+  const canBatch = user.role === "EXTERNAL";
+  // download = ลิงก์ API (ไม่ผ่าน router ของ locale)
+  const shortcuts: { href: string; icon: IconName; label: string; download?: boolean }[] = [
     { href: "/requests/new", icon: "fileAdd", label: t("shortcutNew") },
+    ...(canBatch
+      ? [
+          { href: "/batch", icon: "upload" as const, label: t("shortcutBatch") },
+          {
+            href: "/api/batch/template?format=csv",
+            icon: "download" as const,
+            label: t("shortcutTemplate"),
+            download: true,
+          },
+        ]
+      : []),
     { href: "/requests", icon: "fileSearch", label: t("shortcutList") },
     { href: "/profile", icon: "userCircle", label: t("shortcutProfile") },
   ];
+  const shortcutClass =
+    "flex min-h-11 items-center gap-2.5 rounded-[10px] border bg-surface px-3 py-2 text-[12.5px] font-semibold hover:border-primary/40";
   const org = user.organization;
 
   return (
@@ -118,12 +133,22 @@ export default async function PortalDashboardPage({ params }: PageProps<"/[local
             {data.scope === "organization" ? t("subOrganization") : t("subOwn")}
           </p>
         </div>
-        <Button asChild className="h-11 px-5 font-semibold sm:h-10">
-          <Link href="/requests/new">
-            <Icon name="fileAdd" size={18} />
-            {t("newRequest")}
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          {canBatch && (
+            <Button asChild variant="outline" className="h-11 flex-1 px-4 font-semibold sm:h-10">
+              <Link href="/batch">
+                <Icon name="upload" size={18} />
+                {t("batchCta")}
+              </Link>
+            </Button>
+          )}
+          <Button asChild className="h-11 flex-1 px-5 font-semibold sm:h-10">
+            <Link href="/requests/new">
+              <Icon name="fileAdd" size={18} />
+              {t("newRequest")}
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -235,7 +260,7 @@ export default async function PortalDashboardPage({ params }: PageProps<"/[local
                 <h2 className="mb-1 text-[13px] font-bold">
                   {t("pendingTitle", { count: data.pendingAll })}
                 </h2>
-                <p className="text-[11.5px] leading-relaxed opacity-90">{t("pendingBody")}</p>
+                <p className="text-[11.5px] leading-relaxed">{t("pendingBody")}</p>
               </div>
             </section>
           )}
@@ -245,14 +270,19 @@ export default async function PortalDashboardPage({ params }: PageProps<"/[local
             <ul className="flex flex-col gap-2">
               {shortcuts.map((shortcut) => (
                 <li key={shortcut.href}>
-                  <Link
-                    href={shortcut.href}
-                    className="flex min-h-11 items-center gap-2.5 rounded-[10px] border bg-surface px-3 py-2 text-[12.5px] font-semibold hover:border-primary/40"
-                  >
-                    <Icon name={shortcut.icon} size={18} className="text-primary" />
-                    <span className="flex-1">{shortcut.label}</span>
-                    <Icon name="chevronRight" size={14} className="text-muted-foreground" />
-                  </Link>
+                  {shortcut.download ? (
+                    <a href={shortcut.href} download className={shortcutClass}>
+                      <Icon name={shortcut.icon} size={18} className="text-primary" />
+                      <span className="flex-1">{shortcut.label}</span>
+                      <Icon name="chevronRight" size={14} className="text-muted-foreground" />
+                    </a>
+                  ) : (
+                    <Link href={shortcut.href} className={shortcutClass}>
+                      <Icon name={shortcut.icon} size={18} className="text-primary" />
+                      <span className="flex-1">{shortcut.label}</span>
+                      <Icon name="chevronRight" size={14} className="text-muted-foreground" />
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

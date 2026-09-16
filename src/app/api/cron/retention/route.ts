@@ -4,7 +4,7 @@ import { runRetention } from "@/lib/services/retention.service";
 import { getRequestContext } from "@/lib/utils/request-context";
 
 // F-AUD-08 — เรียกจาก system cron วันละครั้ง
-//   curl -X POST -H "x-cron-secret: $CRON_SECRET" "https://verify.krirk.ac.th/api/cron/retention"
+//   production: scripts/cron-run.sh retention — nginx ปิด /api/cron จากภายนอก (docs/operations/deployment.md)
 // ทำงานเสร็จก่อนตอบกลับ (ปริมาณต่อวันไม่มาก) เพื่อให้ cron บันทึกผลลัพธ์ได้
 
 export async function POST(request: NextRequest) {

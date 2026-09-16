@@ -21,6 +21,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
+    "admin:create": "tsx prisma/create-admin.ts",
     "check": "pnpm db:generate && pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build",
     "postinstall": "prisma generate",
     "prepare": "husky"
@@ -56,6 +57,7 @@
   },
   "devDependencies": {
     "@auth/core": "0.41.3",
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.1",

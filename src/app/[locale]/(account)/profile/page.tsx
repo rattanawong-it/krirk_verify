@@ -82,7 +82,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/profi
                   {fact.value}
                 </dd>
                 {"note" in fact && fact.note && (
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">{fact.note}</p>
+                  <dd className="mt-0.5 text-[11px] text-muted-foreground">{fact.note}</dd>
                 )}
               </div>
             ))}

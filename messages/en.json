@@ -796,6 +796,7 @@
     "subOrganization": "A summary of your organisation's verification requests",
     "subOwn": "A summary of your verification requests",
     "newRequest": "New request",
+    "batchCta": "Batch check",
     "stats": {
       "total": "total requests",
       "pending": "awaiting review",
@@ -811,6 +812,8 @@
     "pendingBody": "Records the system cannot match with confidence go to the registrar's queue for review, usually within one working day.",
     "shortcuts": "Shortcuts",
     "shortcutNew": "Submit a single request",
+    "shortcutBatch": "Upload a batch file",
+    "shortcutTemplate": "Download the CSV template",
     "shortcutList": "View all requests",
     "shortcutProfile": "Edit profile",
     "orgTitle": "Your organisation",

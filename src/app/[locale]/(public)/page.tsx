@@ -164,9 +164,12 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                   <span className="flex size-10 items-center justify-center rounded-xl bg-primary-soft text-primary">
                     <Icon name={step.icon} size={20} />
                   </span>
-                  <span className="font-mono text-[22px] font-medium text-border" aria-hidden>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                  {/* เลขลำดับเป็นของตกแต่ง (ลำดับอยู่ใน <ol> แล้ว) — วาดด้วย ::before เพื่อไม่ให้นับเป็นข้อความที่ต้องผ่าน contrast (WCAG 1.4.3 ยกเว้นส่วนตกแต่ง) */}
+                  <span
+                    aria-hidden
+                    data-step={String(i + 1).padStart(2, "0")}
+                    className="font-mono text-[22px] font-medium text-border before:content-[attr(data-step)]"
+                  />
                 </div>
                 <h3 className="text-[15px] font-bold">{step.title}</h3>
                 <p className="mt-1 text-[12.5px] leading-relaxed text-text-2">{step.sub}</p>
@@ -233,7 +236,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               <Icon name="shield" size={14} />
               {t("home.footerBadge")}
             </span>
-            <p className="mt-3 font-mono text-[11px] text-white/40">
+            <p className="mt-3 font-mono text-[11px] text-white/70">
               v1.0 · {t("home.footerRegistrar")}
             </p>
           </div>

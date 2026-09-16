@@ -1,0 +1,90 @@
+# =============================================================
+# Krirk Verify — nginx reverse proxy (F-OPS-02)
+# ${NGINX_SERVER_NAME} ถูกแทนค่าตอนเริ่ม container · ตัวแปรของ nginx เอง ($host ฯลฯ) ไม่ถูกแตะ
+# ใบรับรอง: docker/nginx/certs/fullchain.pem + privkey.pem (ดู docs/operations/deployment.md)
+# =============================================================
+
+upstream krirk_app {
+    server app:3000;
+    keepalive 16;
+}
+
+server_tokens off;
+
+# คำขอที่ Host ไม่ตรงกับโดเมนของระบบ ปฏิเสธทันที — กัน Host header ปลอมเข้าถึงแอป
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    return 444;
+}
+
+server {
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+    ssl_reject_handshake on;
+}
+
+# HTTP → HTTPS
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${NGINX_SERVER_NAME};
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name ${NGINX_SERVER_NAME};
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    # HSTS ตั้งที่ nginx เพราะเป็นจุดที่ทำ TLS — ค่าใน next.config.ts ถูกคำนวณตอน build (image ไม่รู้ APP_URL)
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+
+    # ไฟล์ตรวจสอบแบบชุดจำกัด 2 MB (F-BAT-03) + ส่วนหัว multipart
+    client_max_body_size 3m;
+
+    gzip on;
+    gzip_comp_level 5;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    # $http_host เก็บพอร์ตไว้ด้วย — Server Actions เทียบ X-Forwarded-Host กับ Origin ของเบราว์เซอร์ ถ้าไม่ตรงจะปฏิเสธ
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    # เขียนทับ (ไม่ต่อท้าย) — แอปใช้ค่าแรกของ X-Forwarded-For เป็น IP ใน Audit Log และ rate limit
+    # ถ้าต่อท้ายด้วย $proxy_add_x_forwarded_for ผู้ใช้จะปลอม IP ได้
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $http_host;
+    proxy_read_timeout 120s;
+
+    # งาน cron เรียกจากภายใน container ผ่าน scripts/cron-run.sh เท่านั้น — ปิดจากภายนอกทั้งหมด
+    location /api/cron/ {
+        return 404;
+    }
+
+    # Mock API ระบบทะเบียนไม่ให้บริการผ่านอินเทอร์เน็ต (แอปปิดด้วย MOCK_REGISTRY_ENABLED=false อีกชั้น)
+    location /api/mock/ {
+        return 404;
+    }
+
+    location / {
+        # ให้ streaming ของ App Router (Suspense) ส่งถึงเบราว์เซอร์ทันที
+        proxy_buffering off;
+        proxy_pass http://krirk_app;
+    }
+}

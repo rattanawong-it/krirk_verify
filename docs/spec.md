@@ -380,9 +380,9 @@ submitRequest(input, actor)
 - [x] **F-UX-07** ฟอร์มทุกหน้าใช้งานบนมือถือได้สะดวก (touch target ≥ 44px)
 - [x] **F-UX-08** หน้าผลตรวจสอบอ่านง่ายบนมือถือ + พิมพ์จากเบราว์เซอร์ได้สวยงาม (print stylesheet)
 - [x] **F-UX-09** Loading / Empty / Error state ครบทุกหน้า (skeleton + error boundary)
-- [~] **F-UX-10** Accessibility — keyboard navigation, ARIA labels, contrast ผ่าน WCAG AA
+- [x] **F-UX-10** Accessibility — keyboard navigation, ARIA labels, contrast ผ่าน WCAG AA
 
-> บันทึกสรุป Phase 8: [`docs/phases/phase-8-ux.md`](phases/phase-8-ux.md) · F-UX-10 `[~]` — keyboard/ARIA/heading ทำแล้ว แต่ยังไม่ได้ตรวจ contrast ด้วยเครื่องมืออัตโนมัติ (axe) · หน้าที่ยังไม่มี (Phase 5, 6, 9) ต้องทำตามข้อกำหนดนี้เมื่อสร้าง
+> บันทึกสรุป Phase 8: [`docs/phases/phase-8-ux.md`](phases/phase-8-ux.md) · F-UX-10 `[~]` — keyboard/ARIA/heading ทำแล้ว แต่ยังไม่ได้ตรวจ contrast ด้วยเครื่องมืออัตโนมัติ (axe) · หน้าที่ยังไม่มี (Phase 5, 6, 9) ต้องทำตามข้อกำหนดนี้เมื่อสร้าง · **Phase 10:** ตรวจด้วย axe (WCAG 2.1 A/AA รวม contrast) ครบทุกหน้าหลักทั้งโหมดสว่างและมืด → `[x]`
 - [x] **F-UX-11** โหลดฟอนต์ไทยที่อ่านง่าย (เช่น Noto Sans Thai / Sarabun) แบบ self-host
 
 ### Phase 9 — Notifications
@@ -395,15 +395,17 @@ submitRequest(input, actor)
 > บันทึกสรุป Phase 9: [`docs/phases/phase-9-notifications.md`](phases/phase-9-notifications.md)
 
 ### Phase 10 — Deployment & Documentation
-- [ ] **F-OPS-01** `Dockerfile` multi-stage ใช้ `output: 'standalone'`
-- [ ] **F-OPS-02** `docker-compose.yml` production (app + postgres + nginx reverse proxy)
-- [ ] **F-OPS-03** Health check endpoint `/api/health` (ตรวจ DB + registry API)
-- [ ] **F-OPS-04** สคริปต์สำรอง/กู้คืนฐานข้อมูล + คู่มือ
-- [ ] **F-OPS-05** ตัวอย่างการตั้ง system cron สำหรับ sync + retention job
-- [ ] **F-OPS-06** `README.md` — วิธีติดตั้ง/พัฒนา/deploy + ตาราง env vars
-- [ ] **F-OPS-07** คู่มือผู้ใช้ (เจ้าหน้าที่ / หน่วยงานภายนอก) ภาษาไทย
-- [ ] **F-OPS-08** เอกสาร API spec ที่ต้องขอจากฝ่ายทะเบียน (ส่งให้ IT มหาวิทยาลัย)
-- [ ] **F-OPS-09** E2E test ครอบคลุม flow หลัก (ยื่นคำขอ → auto-approve, ยื่นคำขอ → เข้าคิว → อนุมัติ)
+- [x] **F-OPS-01** `Dockerfile` multi-stage ใช้ `output: 'standalone'`
+- [x] **F-OPS-02** `docker-compose.yml` production (app + postgres + nginx reverse proxy)
+- [x] **F-OPS-03** Health check endpoint `/api/health` (ตรวจ DB + registry API)
+- [x] **F-OPS-04** สคริปต์สำรอง/กู้คืนฐานข้อมูล + คู่มือ
+- [x] **F-OPS-05** ตัวอย่างการตั้ง system cron สำหรับ sync + retention job
+- [x] **F-OPS-06** `README.md` — วิธีติดตั้ง/พัฒนา/deploy + ตาราง env vars
+- [x] **F-OPS-07** คู่มือผู้ใช้ (เจ้าหน้าที่ / หน่วยงานภายนอก) ภาษาไทย
+- [x] **F-OPS-08** เอกสาร API spec ที่ต้องขอจากฝ่ายทะเบียน (ส่งให้ IT มหาวิทยาลัย)
+- [x] **F-OPS-09** E2E test ครอบคลุม flow หลัก (ยื่นคำขอ → auto-approve, ยื่นคำขอ → เข้าคิว → อนุมัติ)
+
+> บันทึกสรุป Phase 10: [`docs/phases/phase-10-deployment.md`](phases/phase-10-deployment.md) · ปิด F-UX-10 (axe)
 
 **รวมทั้งสิ้น 78 รายการ ใน 11 เฟส**
 
@@ -490,3 +492,4 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3  ← MVP ใช้งานได้
 | 1.8     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 6): KPI แดชบอร์ดเจ้าหน้าที่ตามดีไซน์ (ช่วง 7 วัน/30 วัน/1 ปี + อัตราอนุมัติอัตโนมัติ), route `/staff/dashboard` + `/staff/reports`, แนวโน้มจัดกลุ่มตามวันที่ยื่นและสถานะปัจจุบัน, Export = Excel/CSV รายการคำขอ (จำกัด 100,000 แถว / 366 วัน), อีเมลสรุปรายเดือนแบบตัวเลข + ลิงก์ผ่าน `/api/cron/monthly-report` + ค่าตั้งค่า `report.monthlyEmailEnabled`/`report.monthlyLastSent`, ซ่อนทางลัดตรวจสอบแบบชุดจนถึง Phase 5, เพิ่ม `recharts` + `exceljs` |
 | 1.9 | 2026-09-16 | ทีมพัฒนา | อนุมัติแล้ว (Phase 9): `EmailLog` เพิ่ม `subject`/`locale`/`payload`/`attempts`/`lastError`/`nextRetryAt`/`userId`/`entityType`/`entityId` + enum `EmailStatus` (เก็บ payload ของเทมเพลตแทน HTML เพื่อ render ใหม่ตอน retry), เพิ่ม model `Notification` + enum `NotificationType` 6 ค่า, ค่าตั้งค่า `notify.queueDigestEnabled` (เปิดเป็นค่าเริ่มต้น) + `notify.queueDigestLastSent` + กลุ่ม "การแจ้งเตือน" ในหน้าตั้งค่า, retry ผ่าน system cron `/api/cron/email-retry` 4 ครั้ง (5/30/120/360 นาที) แล้วรอผู้ดูแลกดส่งซ้ำ, `/api/cron/queue-digest` ส่งสรุปคิววันละครั้ง, หน้าใหม่ `/notifications` และ `/staff/email-logs`, แจ้งเตือนฝั่งผู้ขอเพิ่ม 2 ชนิด (คำขออนุมัติ/ปฏิเสธ), audit action ใหม่ `notification.digest_sent` + `email.resent` |
 | 2.0 | 2026-09-16 | ทีมพัฒนา | อนุมัติแล้ว (Phase 5): `BatchItem` เก็บ `searchValueEnc` + `searchValueMasked` แทนค่า plaintext ตาม PDPA, `BatchJob` เพิ่ม `purpose`/`validRows`/`invalidRows`/`consentAt`/`ipAddress`/`userAgent`/`startedAt`/`finishedAt`/`errorMessage` + enum `BatchStatus`/`BatchItemStatus`, อัปโหลดแล้วสร้างงานสถานะ DRAFT ให้กดยืนยันเป็นขั้นที่สอง, ประมวลผลเบื้องหลังด้วย `after()` + ตอบ 202 และแถบความคืบหน้ารีเฟรชทุก 2.5 วินาที (ไม่ใช้ WebSocket), โควตาแบบชุดหักทีเดียวตามจำนวนแถวที่ผ่าน validate ผ่าน limiter `batch_rows` รายวัน + เพิ่มฟิลด์ `source` ใน `SubmitInput` เพื่อไม่หักโควตารายชั่วโมงซ้ำ, คำขอจากไฟล์แบบชุดไม่ส่งอีเมลรายแถว, จำกัด 500 แถว / 2 MB ต่อไฟล์, แถวที่ซ้ำกันในไฟล์เดียวกันถือว่าไม่ถูกต้อง, audit action ใหม่ `batch.uploaded`/`batch.processed`/`batch.exported`/`batch.rate_limited` |
+| 2.1 | 2026-09-16 | ทีมพัฒนา | อนุมัติแล้ว (Phase 10): compose production ชื่อ `docker/docker-compose.prod.yml` (nginx + app + postgres + service `migrate`, ไม่มี adminer), ไฟล์ env production ชื่อ `.env.prod` + ห้ามตั้ง `AUTH_URL` หลัง nginx + `DATABASE_URL` ประกอบจาก `POSTGRES_*`, cron เรียกผ่าน `scripts/cron-run.sh` ภายใน container และ nginx ปิด `/api/cron/*` `/api/mock/*` จากภายนอก, `/api/health` ระบบทะเบียนล่ม = `degraded` (200) / DB ล่ม = `down` (503) + `?registry=skip`, ยกเลิกข้อจำกัด build ต้องต่อฐานข้อมูล (ใช้ค่าตั้งค่าเริ่มต้นระหว่าง build), HSTS บน Docker ตั้งที่ nginx, CLI `prisma/create-admin.ts` (`pnpm admin:create`), เพิ่ม `@axe-core/playwright` + ปรับสี token มืด `--status-rejected` และ footer หน้าแรก, F-OPS-09 ใช้ E2E เดิม (`verification.spec` + `review.spec`) |

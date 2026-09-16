@@ -303,7 +303,7 @@ export default async function StudentsPage({
             <Icon name="alert" size={18} className="mt-px shrink-0 text-status-rejected" />
             <div>
               <p className="mb-1 text-[12.5px] font-bold">{t("manualFlagTitle")}</p>
-              <p className="text-[11.5px] leading-relaxed opacity-90">{t("manualFlagBody")}</p>
+              <p className="text-[11.5px] leading-relaxed">{t("manualFlagBody")}</p>
               <Link
                 href={buildHref("/staff/students", { flagged: "1" }, 1)}
                 className="mt-2 inline-flex min-h-11 items-center text-[12px] font-bold underline-offset-2 hover:underline sm:min-h-0"

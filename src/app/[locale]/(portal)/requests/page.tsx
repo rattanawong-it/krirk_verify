@@ -124,7 +124,7 @@ export default async function RequestsPage({
                   )}
                 >
                   {status ? t(`statuses.${status}`) : t("list.all")}
-                  {!!count && <span className="font-mono text-[11px] opacity-80">{count}</span>}
+                  {!!count && <span className="font-mono text-[11px]">{count}</span>}
                 </Link>
               );
             })}

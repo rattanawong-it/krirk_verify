@@ -291,9 +291,7 @@ export function ReviewWorkspace({
                   <p className="text-[13px] font-bold">
                     {labels.willApprove.replace("{code}", selected.studentCode)}
                   </p>
-                  <p className="mt-0.5 text-[11.5px] leading-relaxed opacity-90">
-                    {labels.willApproveBody}
-                  </p>
+                  <p className="mt-0.5 text-[11.5px] leading-relaxed">{labels.willApproveBody}</p>
                 </div>
               </div>
             ) : (

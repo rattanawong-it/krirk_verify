@@ -97,8 +97,8 @@ export async function SyncStatusBanner({ running, latest, lastSuccess, studentCo
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-[13.5px] font-bold sm:text-[14.5px]">{title}</p>
-        <p className="mt-0.5 text-[11px] leading-relaxed opacity-90 sm:text-xs">{body}</p>
-        {note && <p className="mt-0.5 text-[11px] opacity-80 sm:text-xs">{note}</p>}
+        <p className="mt-0.5 text-[11px] leading-relaxed sm:text-xs">{body}</p>
+        {note && <p className="mt-0.5 text-[11px] sm:text-xs">{note}</p>}
       </div>
     </section>
   );

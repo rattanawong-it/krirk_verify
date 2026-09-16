@@ -4,7 +4,7 @@ import { sendMonthlyReport } from "@/lib/services/report.service";
 import { getRequestContext } from "@/lib/utils/request-context";
 
 // F-RPT-08 — เรียกจาก system cron ต้นเดือน (ส่งสรุปของเดือนก่อนหน้า · เรียกซ้ำในเดือนเดียวกันจะไม่ส่งซ้ำ)
-//   curl -X POST -H "x-cron-secret: $CRON_SECRET" "https://verify.krirk.ac.th/api/cron/monthly-report"
+//   production: scripts/cron-run.sh monthly-report — nginx ปิด /api/cron จากภายนอก (docs/operations/deployment.md)
 
 export async function POST(request: NextRequest) {
   if (!isValidCronSecret(request.headers.get(CRON_SECRET_HEADER), process.env.CRON_SECRET)) {

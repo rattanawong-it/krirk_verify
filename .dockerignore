@@ -1,0 +1,25 @@
+# F-OPS-01 — ไม่ส่งไฟล์เหล่านี้เข้า build context (เร็วขึ้น และกันความลับหลุดเข้า image)
+.git
+.github
+.husky
+.next
+node_modules
+src/generated
+coverage
+test-results
+playwright-report
+blob-report
+tests
+docs
+project-ui
+backups
+*.tsbuildinfo
+next-env.d.ts
+.env
+.env.*
+!.env.example
+docker/nginx/certs
+Dockerfile*
+docker-compose*.yml
+npm-debug.log*
+.pnpm-debug.log*

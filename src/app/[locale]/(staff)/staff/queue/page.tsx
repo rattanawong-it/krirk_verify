@@ -146,7 +146,7 @@ export default async function QueuePage({
             <p className="text-2xl font-bold tracking-tight tabular-nums sm:text-[25px]">
               {stat.value}
             </p>
-            <p className="mt-0.5 text-[11px] opacity-80">{stat.note}</p>
+            <p className="mt-0.5 text-[11px]">{stat.note}</p>
           </section>
         ))}
       </div>
@@ -159,14 +159,14 @@ export default async function QueuePage({
           >
             <Link href={chipHref({})} className={chipClass(!query.reason && !query.sla)}>
               {t("all")}
-              <span className="font-mono text-[11px] opacity-80">{queue.stats.inQueue}</span>
+              <span className="font-mono text-[11px]">{queue.stats.inQueue}</span>
             </Link>
             <Link
               href={chipHref({ sla: "over" })}
               className={chipClass(query.sla === "over", queue.stats.overSla > 0)}
             >
               {t("overSlaChip")}
-              <span className="font-mono text-[11px] opacity-80">{queue.stats.overSla}</span>
+              <span className="font-mono text-[11px]">{queue.stats.overSla}</span>
             </Link>
             {REASONS.filter((reason) => queue.reasonCounts[reason]).map((reason) => (
               <Link
@@ -175,9 +175,7 @@ export default async function QueuePage({
                 className={chipClass(query.reason === reason)}
               >
                 {t(`reasonShort.${reason}`)}
-                <span className="font-mono text-[11px] opacity-80">
-                  {queue.reasonCounts[reason]}
-                </span>
+                <span className="font-mono text-[11px]">{queue.reasonCounts[reason]}</span>
               </Link>
             ))}
           </nav>

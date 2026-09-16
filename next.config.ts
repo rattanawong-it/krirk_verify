@@ -37,6 +37,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // F-OPS-01 — สร้าง .next/standalone (server.js + node_modules ที่จำเป็นเท่านั้น) สำหรับ Docker image
+  output: "standalone",
   poweredByHeader: false,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

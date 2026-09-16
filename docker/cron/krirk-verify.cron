@@ -1,0 +1,33 @@
+# =============================================================
+# Krirk Verify — ตัวอย่าง system cron (F-OPS-05)
+# ติดตั้ง:  sudo cp docker/cron/krirk-verify.cron /etc/cron.d/krirk-verify
+#          แก้ APP_DIR และผู้ใช้ (คอลัมน์ที่ 6 — ต้องอยู่ในกลุ่ม docker) ตามเครื่องจริง
+# รูปแบบ /etc/cron.d: นาที ชั่วโมง วัน เดือน วันในสัปดาห์ ผู้ใช้ คำสั่ง
+# เวลาอิงตาม timezone ของเครื่อง host — ตั้งเป็น Asia/Bangkok (timedatectl set-timezone Asia/Bangkok)
+# ผลการทำงาน: /var/log/krirk-verify/cron.log (ดูการสร้างโฟลเดอร์และ logrotate ใน docs/operations/deployment.md)
+# =============================================================
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+APP_DIR=/opt/krirk-verify
+LOG=/var/log/krirk-verify/cron.log
+
+# สำรองฐานข้อมูลทุกวัน 01:30 (ก่อน retention และ sync)
+30 1 * * *    krirk  $APP_DIR/scripts/backup-db.sh >> $LOG 2>&1
+
+# retention: anonymise คำขอ / ลบ Audit Log ที่พ้นกำหนด ทุกวัน 01:45
+45 1 * * *    krirk  $APP_DIR/scripts/cron-run.sh retention >> $LOG 2>&1
+
+# sync ข้อมูลทะเบียนเต็มรูปแบบทุกวัน 02:00 — ต้องตรงกับ SYNC_CRON_SCHEDULE ใน .env.prod
+0 2 * * *     krirk  $APP_DIR/scripts/cron-run.sh sync-full >> $LOG 2>&1
+
+# sync เฉพาะที่เปลี่ยน ทุกชั่วโมงในเวลาทำการ (ไม่บังคับ — เปิดเมื่อ API ทะเบียนรองรับ updatedSince)
+# 0 9-18 * * 1-5  krirk  $APP_DIR/scripts/cron-run.sh sync-incremental >> $LOG 2>&1
+
+# ส่งอีเมลที่ล้มเหลวซ้ำ ทุก 15 นาที
+*/15 * * * *  krirk  $APP_DIR/scripts/cron-run.sh email-retry >> $LOG 2>&1
+
+# สรุปคิวรอพิจารณาถึงเจ้าหน้าที่ 08:30 วันจันทร์–ศุกร์
+30 8 * * 1-5  krirk  $APP_DIR/scripts/cron-run.sh queue-digest >> $LOG 2>&1
+
+# สรุปรายเดือน 06:00 วันที่ 1 ของเดือน (ส่งจริงเมื่อเปิดในหน้าตั้งค่า)
+0 6 1 * *     krirk  $APP_DIR/scripts/cron-run.sh monthly-report >> $LOG 2>&1

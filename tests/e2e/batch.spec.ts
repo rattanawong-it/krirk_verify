@@ -56,7 +56,8 @@ test("อัปโหลดไฟล์ → ตัวอย่างก่อน
     mimeType: "text/csv",
     buffer: Buffer.from(csv, "utf8"),
   });
-  await expect(page.getByText("batch-e2e.csv")).toBeVisible();
+  // ประวัติด้านล่างอาจมีไฟล์ชื่อเดียวกันจากการรันครั้งก่อน — ตรวจเฉพาะไฟล์ที่เลือก (อยู่ก่อนรายการประวัติ)
+  await expect(page.getByText("batch-e2e.csv").first()).toBeVisible();
 
   await page.getByRole("combobox").first().click();
   await page.getByRole("option", { name: "สมัครงาน" }).click();

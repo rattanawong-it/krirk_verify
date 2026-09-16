@@ -132,7 +132,7 @@ export default async function OrganizationsPage({
               )}
             >
               {t(`statuses.${status}`)}
-              <span className="font-mono text-[11px] opacity-80">{data.counts[status]}</span>
+              <span className="font-mono text-[11px]">{data.counts[status]}</span>
             </Link>
           ))}
         </nav>

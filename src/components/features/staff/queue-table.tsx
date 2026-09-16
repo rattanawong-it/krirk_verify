@@ -97,7 +97,7 @@ export function QueueTable({ rows, labels }: { rows: QueueTableRow[]; labels: La
         cell: ({ row }) => (
           <div className={SLA_TEXT[row.original.sla]}>
             <p className="font-mono text-[11.5px] font-medium">{row.original.wait}</p>
-            <p className="text-[9.5px] opacity-80">{row.original.slaLabel}</p>
+            <p className="text-[9.5px]">{row.original.slaLabel}</p>
           </div>
         ),
       },

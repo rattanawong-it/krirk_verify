@@ -96,6 +96,9 @@ export function BatchUploadForm({ maxRows, purposes, quota }: Props) {
             ref={inputRef}
             type="file"
             accept=".csv,.xlsx"
+            aria-label={t("batch.chooseFile")}
+            // เลือกไฟล์ผ่านปุ่มด้านล่าง — ไม่ให้ Tab หยุดที่ input ที่มองไม่เห็นซ้ำอีกจุด
+            tabIndex={-1}
             className="sr-only"
             onChange={(event) => pick(event.target.files?.[0])}
           />

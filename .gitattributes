@@ -1,0 +1,4 @@
+# ไฟล์สคริปต์และ config ที่รันบน Linux ต้องเป็น LF เสมอ แม้ checkout บน Windows
+*.sh text eol=lf
+docker/** text eol=lf
+*.cron text eol=lf

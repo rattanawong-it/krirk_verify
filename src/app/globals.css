@@ -123,7 +123,7 @@
   --status-pending: #e0a53a;
   --status-pending-bg: #33280f;
   --status-pending-tx: #f0c878;
-  --status-rejected: #e0574f;
+  --status-rejected: #ea7069; /* F-UX-10 — เดิม #e0574f ได้ contrast 4.2:1 บนการ์ด ไม่ผ่าน AA */
   --status-rejected-bg: #3a1a17;
   --status-rejected-tx: #f3a39d;
   --status-notfound: #8a9cc0;

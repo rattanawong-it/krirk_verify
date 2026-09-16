@@ -51,6 +51,9 @@ export function defaultSettings(): AppSettings {
 }
 
 async function loadSettings(): Promise<AppSettings> {
+  // F-OPS-01 — ระหว่าง next build (เช่นใน Docker) ไม่มีฐานข้อมูล: หน้า ISR ที่ prerender ใช้ค่าเริ่มต้นไปก่อน
+  // แล้วสร้างใหม่ด้วยค่าจริงเมื่อมีผู้เปิดหน้าแรกหลัง deploy (revalidate)
+  if (process.env.NEXT_PHASE === "phase-production-build") return defaultSettings();
   const rows = await prisma.appSetting.findMany({
     where: { key: { in: Object.values(SETTING_KEYS) } },
   });
