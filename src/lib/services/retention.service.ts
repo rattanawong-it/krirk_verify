@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import {
   ANONYMIZED_MARKER,
   auditRetentionCutoff,
+  emailLogRetentionCutoff,
   requestRetentionCutoff,
 } from "@/lib/retention/cutoffs";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
@@ -13,6 +14,7 @@ import { RETENTION_LAST_RUN_KEY, getSettings } from "./settings.service";
 // - คำขอที่พ้นระยะเก็บ: ลบข้อมูลส่วนบุคคล (คีย์ค้นหา IP เบราว์เซอร์ หมายเหตุ ลิงก์ผล) + ลบ snapshot และโน้ตภายใน
 //   แต่คงแถวคำขอไว้ (เลขอ้างอิง สถานะ วันที่ หน่วยงาน) เพื่อให้รายงานสถิติย้อนหลังยังถูกต้อง
 // - audit log ที่พ้นระยะเก็บ: ลบทิ้ง
+// - ประวัติอีเมลที่พ้นระยะเก็บ: ลบทิ้ง (payload มีชื่อและวุฒิของผู้ถูกตรวจสอบ)
 
 const BATCH_SIZE = 500;
 const MAX_BATCHES = 200;
@@ -21,6 +23,7 @@ export type RetentionRun = {
   at: string;
   anonymized: number;
   auditDeleted: number;
+  emailDeleted: number;
   trigger: "cron" | "manual";
 };
 
@@ -38,7 +41,7 @@ function parseLastRun(value: unknown): RetentionRun | null {
 
 export async function getRetentionOverview(now: Date = new Date()) {
   const settings = await getSettings();
-  const [due, anonymizedTotal, auditDue, lastRun] = await Promise.all([
+  const [due, anonymizedTotal, auditDue, emailDue, lastRun] = await Promise.all([
     prisma.verificationRequest.count({
       where: dueRequests(requestRetentionCutoff(now, settings.retentionDays)),
     }),
@@ -46,9 +49,18 @@ export async function getRetentionOverview(now: Date = new Date()) {
     prisma.auditLog.count({
       where: { createdAt: { lt: auditRetentionCutoff(now, settings.auditRetentionYears) } },
     }),
+    prisma.emailLog.count({
+      where: { createdAt: { lt: emailLogRetentionCutoff(now, settings.emailLogRetentionDays) } },
+    }),
     prisma.appSetting.findUnique({ where: { key: RETENTION_LAST_RUN_KEY } }),
   ]);
-  return { due, anonymizedTotal, auditDue, lastRun: parseLastRun(lastRun?.value ?? null) };
+  return {
+    due,
+    anonymizedTotal,
+    auditDue,
+    emailDue,
+    lastRun: parseLastRun(lastRun?.value ?? null),
+  };
 }
 
 export async function runRetention(
@@ -97,10 +109,15 @@ export async function runRetention(
     where: { createdAt: { lt: auditRetentionCutoff(now, settings.auditRetentionYears) } },
   });
 
+  const { count: emailDeleted } = await prisma.emailLog.deleteMany({
+    where: { createdAt: { lt: emailLogRetentionCutoff(now, settings.emailLogRetentionDays) } },
+  });
+
   const run: RetentionRun = {
     at: now.toISOString(),
     anonymized,
     auditDeleted,
+    emailDeleted,
     trigger: actorId ? "manual" : "cron",
   };
   await prisma.appSetting.upsert({
@@ -116,6 +133,7 @@ export async function runRetention(
       ...run,
       retentionDays: settings.retentionDays,
       auditYears: settings.auditRetentionYears,
+      emailLogDays: settings.emailLogRetentionDays,
     },
     context,
   });

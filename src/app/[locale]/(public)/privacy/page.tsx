@@ -60,6 +60,7 @@ export default async function PrivacyPage({ params }: PageProps<"/[locale]/priva
               requestYears: Math.round(settings.retentionDays / 365),
               auditYears: settings.auditRetentionYears,
               linkDays: settings.linkExpiresDays,
+              emailDays: settings.emailLogRetentionDays,
             }),
           ],
         },

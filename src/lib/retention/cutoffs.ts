@@ -14,4 +14,9 @@ export function auditRetentionCutoff(now: Date, years: number): Date {
   return cutoff;
 }
 
+// ประวัติอีเมลที่สร้างก่อนเวลานี้ลบได้ (ไม่แยกสถานะ — อีเมลที่ล้มเหลวเกินกำหนดแล้วไม่มีประโยชน์ที่จะส่งซ้ำ)
+export function emailLogRetentionCutoff(now: Date, days: number): Date {
+  return new Date(now.getTime() - days * DAY_MS);
+}
+
 export const ANONYMIZED_MARKER = "ANONYMIZED";

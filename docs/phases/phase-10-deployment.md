@@ -104,11 +104,7 @@
 ## ข้อจำกัดที่ทราบ / ส่งต่อ
 
 - **ยังไม่ได้ทดสอบบนเซิร์ฟเวอร์จริงของมหาวิทยาลัย** — รอข้อกำหนดเซิร์ฟเวอร์, โดเมน/ใบรับรอง, SMTP และ API ทะเบียนจริง (spec ข้อ 10 รายการ 1, 3, 6) · ทดสอบบน Docker Desktop ซึ่ง IP ใน Audit Log เป็น gateway ของ Docker (บน Linux ได้ IP จริง)
-- **งานเบื้องหลังที่ค้างเมื่อ container รีสตาร์ต ยังไม่มีตัวกู้คืน** (ส่งต่อจาก Phase 5 และ 9 — ยังไม่ได้ทำในเฟสนี้ รอการตัดสินใจ):
-  - งานแบบชุดสถานะ PROCESSING จะค้าง
-  - แถว `EmailLog` สถานะ PENDING ที่เก่า ไม่ถูก retry
-  - sync ที่ค้างจะปลดล็อกเองหลัง 1 ชั่วโมงอยู่แล้ว
-- **`email_logs` / `batch_jobs` / `batch_items` ยังไม่อยู่ในนโยบาย retention** (ส่งต่อจาก Phase 5, 9) — ต้องกำหนดระยะเก็บก่อน
+- ~~งานเบื้องหลังที่ค้างเมื่อ container รีสตาร์ต และ retention ของ `email_logs`~~ → ทำแล้วใน [งานต่อเนื่อง](phase-10-followup-recovery-retention.md) · **`batch_jobs` / `batch_items` ยังไม่อยู่ในนโยบาย retention**
 - **ยังไม่มี CI pipeline** (GitHub Actions) — ตอนนี้ตรวจด้วย `pnpm check` + E2E บนเครื่อง
 - **image `migrate` ใหญ่ (~1.7 GB)** เพราะใช้ node_modules ทั้งชุด (prisma CLI + tsx เป็น devDependencies) — ใช้เฉพาะตอน migrate/สร้างผู้ดูแล ไม่ได้รันค้าง · ลดขนาดได้ภายหลังด้วย `pnpm deploy --prod` + ติดตั้ง prisma/tsx แยก
 - **`pnpm start` เตือน** `"next start" does not work with "output: standalone"` แต่ยังทำงานได้ (Playwright ใช้ตอน `CI=1`) · production ใช้ `node server.js` ใน image

@@ -18,6 +18,7 @@ export const SETTING_KEYS: Record<keyof AppSettings, string> = {
   maxFailedLogins: "auth.maxFailedLogins",
   retentionDays: "retention.days",
   auditRetentionYears: "retention.auditYears",
+  emailLogRetentionDays: "retention.emailLogDays",
   linkExpiresDays: "result.linkExpiresDays",
   announcementTh: "announcement.th",
   announcementEn: "announcement.en",
@@ -44,6 +45,8 @@ export function defaultSettings(): AppSettings {
     maxFailedLogins: envInt("AUTH_MAX_FAILED_LOGINS", 5),
     retentionDays: envInt("DATA_RETENTION_DAYS", 1825),
     auditRetentionYears: 10,
+    // ประวัติอีเมลใช้ตรวจปัญหาการส่งและส่งซ้ำ — 6 เดือนพอสำหรับข้อร้องเรียน โดยไม่เก็บ payload ที่ระบุตัวบุคคลนานเกินจำเป็น
+    emailLogRetentionDays: 180,
     linkExpiresDays: envInt("RESULT_LINK_EXPIRES_DAYS", 90),
     announcementTh: "",
     announcementEn: "",

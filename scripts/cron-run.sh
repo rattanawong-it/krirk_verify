@@ -6,8 +6,9 @@
 # ใช้งาน:  scripts/cron-run.sh <งาน>
 #   sync-full         ดึงข้อมูลผู้สำเร็จการศึกษาทั้งหมดจากระบบทะเบียน (ตอบ 202 แล้วทำต่อเบื้องหลัง)
 #   sync-incremental  ดึงเฉพาะระเบียนที่เปลี่ยนตั้งแต่ครั้งล่าสุด
-#   retention         anonymise คำขอ + ลบ Audit Log ที่พ้นระยะเก็บรักษา
-#   email-retry       ส่งอีเมลที่ล้มเหลวซ้ำตามรอบ backoff
+#   retention         anonymise คำขอ + ลบ Audit Log และประวัติอีเมลที่พ้นระยะเก็บรักษา
+#   email-retry       ส่งอีเมลที่ล้มเหลวซ้ำตามรอบ backoff (และเก็บกวาดอีเมลที่ค้างสถานะรอส่ง)
+#   batch-recovery    ทำงานแบบชุดที่ค้าง (process ถูกรีสตาร์ตระหว่างประมวลผล) ต่อจนจบ
 #   queue-digest      อีเมลสรุปคิวรอพิจารณาถึงเจ้าหน้าที่ (วันละครั้ง)
 #   monthly-report    อีเมลสรุปรายเดือน (ส่งจริงเมื่อเปิดในหน้าตั้งค่า)
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
@@ -18,10 +19,11 @@ case "$job" in
   sync-incremental) path="/api/cron/sync?type=incremental" ;;
   retention) path="/api/cron/retention" ;;
   email-retry) path="/api/cron/email-retry" ;;
+  batch-recovery) path="/api/cron/batch-recovery" ;;
   queue-digest) path="/api/cron/queue-digest" ;;
   monthly-report) path="/api/cron/monthly-report" ;;
   *)
-    echo "ใช้งาน: $0 {sync-full|sync-incremental|retention|email-retry|queue-digest|monthly-report}" >&2
+    echo "ใช้งาน: $0 {sync-full|sync-incremental|retention|email-retry|batch-recovery|queue-digest|monthly-report}" >&2
     exit 2
     ;;
 esac

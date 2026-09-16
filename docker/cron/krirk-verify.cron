@@ -14,7 +14,7 @@ LOG=/var/log/krirk-verify/cron.log
 # สำรองฐานข้อมูลทุกวัน 01:30 (ก่อน retention และ sync)
 30 1 * * *    krirk  $APP_DIR/scripts/backup-db.sh >> $LOG 2>&1
 
-# retention: anonymise คำขอ / ลบ Audit Log ที่พ้นกำหนด ทุกวัน 01:45
+# retention: anonymise คำขอ / ลบ Audit Log และประวัติอีเมลที่พ้นกำหนด ทุกวัน 01:45
 45 1 * * *    krirk  $APP_DIR/scripts/cron-run.sh retention >> $LOG 2>&1
 
 # sync ข้อมูลทะเบียนเต็มรูปแบบทุกวัน 02:00 — ต้องตรงกับ SYNC_CRON_SCHEDULE ใน .env.prod
@@ -23,8 +23,11 @@ LOG=/var/log/krirk-verify/cron.log
 # sync เฉพาะที่เปลี่ยน ทุกชั่วโมงในเวลาทำการ (ไม่บังคับ — เปิดเมื่อ API ทะเบียนรองรับ updatedSince)
 # 0 9-18 * * 1-5  krirk  $APP_DIR/scripts/cron-run.sh sync-incremental >> $LOG 2>&1
 
-# ส่งอีเมลที่ล้มเหลวซ้ำ ทุก 15 นาที
+# ส่งอีเมลที่ล้มเหลวซ้ำ (รวมอีเมลที่ค้างสถานะรอส่งเกิน 30 นาที) ทุก 15 นาที
 */15 * * * *  krirk  $APP_DIR/scripts/cron-run.sh email-retry >> $LOG 2>&1
+
+# ทำงานแบบชุดที่ค้างเกิน 10 นาทีต่อ (เช่น หลัง deploy/รีสตาร์ต container) ทุก 15 นาที
+7-59/15 * * * *  krirk  $APP_DIR/scripts/cron-run.sh batch-recovery >> $LOG 2>&1
 
 # สรุปคิวรอพิจารณาถึงเจ้าหน้าที่ 08:30 วันจันทร์–ศุกร์
 30 8 * * 1-5  krirk  $APP_DIR/scripts/cron-run.sh queue-digest >> $LOG 2>&1

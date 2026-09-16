@@ -52,6 +52,7 @@ export const AuditAction = {
   BATCH_PROCESSED: "batch.processed",
   BATCH_EXPORTED: "batch.exported",
   BATCH_RATE_LIMITED: "batch.rate_limited",
+  BATCH_RECOVERED: "batch.recovered",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];

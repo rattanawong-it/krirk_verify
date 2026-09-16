@@ -34,6 +34,7 @@ export default async function SettingsPage({ params }: PageProps<"/[locale]/staf
   const rows = [
     { label: t("retention.due"), value: format.number(retention.due) },
     { label: t("retention.auditDue"), value: format.number(retention.auditDue) },
+    { label: t("retention.emailDue"), value: format.number(retention.emailDue) },
     { label: t("retention.anonymizedTotal"), value: format.number(retention.anonymizedTotal) },
     {
       label: t("retention.lastRun"),

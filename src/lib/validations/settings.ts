@@ -13,6 +13,7 @@ export const appSettingsSchema = z.object({
   maxFailedLogins: z.number().int().min(3).max(20),
   retentionDays: z.number().int().min(365).max(7300),
   auditRetentionYears: z.number().int().min(1).max(30),
+  emailLogRetentionDays: z.number().int().min(30).max(7300),
   linkExpiresDays: z.number().int().min(1).max(3650),
   announcementTh: z.string().max(300),
   announcementEn: z.string().max(300),
@@ -41,6 +42,7 @@ export const settingsFormSchema = z
     maxFailedLogins: int(3, 20),
     retentionYears: int(1, 20),
     auditRetentionYears: int(1, 30),
+    emailLogRetentionDays: int(30, 3650),
     linkExpiresDays: int(1, 3650),
     announcementTh: z.string().trim().max(300, "validation.tooLong"),
     announcementEn: z.string().trim().max(300, "validation.tooLong"),
@@ -52,6 +54,14 @@ export const settingsFormSchema = z
         code: "custom",
         path: ["auditRetentionYears"],
         message: "settings.errors.auditShorter",
+      });
+    }
+    // ประวัติอีเมลมี payload ที่ระบุตัวบุคคล (ชื่อ วุฒิ) — ห้ามเก็บนานกว่าคำขอที่ถูก anonymise ไปแล้ว
+    if (data.emailLogRetentionDays > data.retentionYears * DAYS_PER_YEAR) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["emailLogRetentionDays"],
+        message: "settings.errors.emailLogLonger",
       });
     }
   })

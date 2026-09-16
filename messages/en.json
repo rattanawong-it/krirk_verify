@@ -966,6 +966,10 @@
         "label": "Retain audit log for",
         "sub": "Audit entries are never deleted before this"
       },
+      "emailLogRetentionDays": {
+        "label": "Retain email history for",
+        "sub": "Email delivery records (which include graduate names and degrees) older than this are deleted · must not exceed request retention"
+      },
       "linkExpiresDays": {
         "label": "Result permalink lifetime",
         "sub": "Access code expiry after approval (applies to results approved after saving)"
@@ -1004,18 +1008,20 @@
       "title": "Retention policy effect",
       "due": "Requests due for anonymisation",
       "auditDue": "Audit entries due for deletion",
+      "emailDue": "Email records due for deletion",
       "anonymizedTotal": "Anonymised to date",
       "lastRun": "Last run",
       "never": "Never run",
       "runNow": "Run retention now",
       "running": "Running…",
-      "ran": "Retention finished · {anonymized} requests anonymised · {auditDeleted} audit entries deleted",
+      "ran": "Retention finished · {anonymized} requests anonymised · {auditDeleted} audit entries deleted · {emailDeleted} email records deleted",
       "schedule": "Schedule system cron to call /api/cron/retention once a day"
     },
     "errors": {
       "integer": "Must be a whole number",
       "range": "Value is outside the allowed range",
-      "auditShorter": "Keep the audit log at least as long as requests"
+      "auditShorter": "Keep the audit log at least as long as requests",
+      "emailLogLonger": "Keep email history no longer than requests"
     }
   },
   "audit": {
@@ -1100,7 +1106,8 @@
       "batch_uploaded": "Batch file uploaded",
       "batch_processed": "Batch processed",
       "batch_exported": "Batch results exported",
-      "batch_rate_limited": "Batch upload over quota"
+      "batch_rate_limited": "Batch upload over quota",
+      "batch_recovered": "Stalled batch resumed"
     }
   },
   "users": {
@@ -1214,7 +1221,7 @@
       "s4Title": "Protection measures",
       "s4Body": "Identifiers are hashed with a server-side pepper and encrypted at rest. Screens always show masked values; revealing a full number requires a staff role and writes an audit entry. Requests are rate limited per user and per IP, and results are only reachable with an individual access code.",
       "s5Title": "Retention",
-      "s5Body": "Verification requests are anonymised {requestYears} years after the decision. Audit log entries are retained for {auditYears} years to support external inspection. Result access codes expire {linkDays} days after approval; the result snapshot itself is retained for the request retention period.",
+      "s5Body": "Verification requests are anonymised {requestYears} years after the decision. Audit log entries are retained for {auditYears} years to support external inspection. Email delivery records are kept for {emailDays} days. Result access codes expire {linkDays} days after approval; the result snapshot itself is retained for the request retention period.",
       "s6Title": "Your rights",
       "s6Body": "Data subjects may request access, correction, erasure, restriction or objection, and may withdraw consent at any time.",
       "s6Box": "Withdrawing consent does not invalidate results already issued, because those records must remain verifiable. It does stop any further processing.",

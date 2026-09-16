@@ -41,7 +41,11 @@ export async function runRetentionAction(): Promise<ActionState> {
   return {
     ok: true,
     message: "settings.retention.ran",
-    messageValues: { anonymized: run.anonymized, auditDeleted: run.auditDeleted },
+    messageValues: {
+      anonymized: run.anonymized,
+      auditDeleted: run.auditDeleted,
+      emailDeleted: run.emailDeleted,
+    },
   };
 }
 

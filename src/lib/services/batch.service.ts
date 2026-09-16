@@ -1,8 +1,9 @@
 import "server-only";
 import type { BatchItemStatus, Prisma } from "@/generated/prisma/client";
 import type { ParsedBatchRow } from "@/lib/batch/rows";
-import { decrypt, encrypt } from "@/lib/crypto";
+import { decrypt, encrypt, hashIdentifier } from "@/lib/crypto";
 import { prisma } from "@/lib/db/prisma";
+import { BATCH_STALE_MINUTES, staleBefore } from "@/lib/recovery/stale";
 import type { BatchUploadData } from "@/lib/validations/batch";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
 import { consumeBatchQuota } from "./rate-limit.service";
@@ -106,7 +107,12 @@ export async function createBatchJob(input: {
   };
 }
 
-export type RunnableBatch = { id: string; requesterId: string };
+export type RunnableBatch = {
+  id: string;
+  requesterId: string;
+  // มีค่าเมื่อเป็นการทำต่อจากงานที่ค้าง — ใช้หาคำขอที่ยื่นไปแล้วก่อน process หยุด
+  resumedFrom?: Date;
+};
 
 // DRAFT → PROCESSING แบบ optimistic — กดยืนยันซ้ำหรือสองแท็บพร้อมกัน จะมีเพียงครั้งเดียวที่ได้ทำงาน
 export async function startBatchProcessing(
@@ -124,6 +130,25 @@ export async function startBatchProcessing(
     data: { status: "PROCESSING", startedAt: new Date() },
   });
   return claimed.count === 1 ? job : null;
+}
+
+// แถวที่ยื่นคำขอสำเร็จแล้วแต่ process หยุดก่อนบันทึกผลลงแถว — ผูกกับคำขอเดิมแทนการยื่นซ้ำ
+// (ไฟล์เดียวกันห้ามมีคีย์ซ้ำ จึงมีคำขอจากคีย์นี้ได้ไม่เกินหนึ่งรายการหลังเวลาเริ่มงาน)
+async function findSubmittedRequest(
+  requesterId: string,
+  searchValue: string,
+  since: Date,
+): Promise<{ status: BatchItemStatus; refNo: string } | null> {
+  const existing = await prisma.verificationRequest.findFirst({
+    where: { requesterId, searchValueHash: hashIdentifier(searchValue), createdAt: { gte: since } },
+    orderBy: { createdAt: "desc" },
+    select: { refNo: true, status: true },
+  });
+  if (!existing) return null;
+  return {
+    status: existing.status === "APPROVED" ? "APPROVED" : "PENDING_REVIEW",
+    refNo: existing.refNo,
+  };
 }
 
 function statusOf(result: Awaited<ReturnType<typeof submitRequest>>): {
@@ -162,24 +187,31 @@ export async function executeBatch(job: RunnableBatch, context: RequestContext):
         if (!item.searchType || !item.searchValueEnc) {
           outcome = { status: "ERROR", refNo: null, errorCode: "missingValue" };
         } else {
-          const result = await submitRequest(
-            job.requesterId,
-            {
-              kind: "search",
-              source: "batch",
-              data: {
-                searchType: item.searchType,
-                searchValue: decrypt(item.searchValueEnc),
-                purpose,
-                // อ้างอิงและหมายเหตุเป็นของคำขอเดี่ยว — ไฟล์แบบชุดมีเพียงคีย์ค้นหาต่อแถว
-                requesterReference: undefined,
-                note: undefined,
-                consent: true,
-              },
-            },
-            context,
-          );
-          outcome = statusOf(result);
+          const searchValue = decrypt(item.searchValueEnc);
+          const submitted = job.resumedFrom
+            ? await findSubmittedRequest(job.requesterId, searchValue, job.resumedFrom)
+            : null;
+          outcome = submitted
+            ? { ...submitted, errorCode: null }
+            : statusOf(
+                await submitRequest(
+                  job.requesterId,
+                  {
+                    kind: "search",
+                    source: "batch",
+                    data: {
+                      searchType: item.searchType,
+                      searchValue,
+                      purpose,
+                      // อ้างอิงและหมายเหตุเป็นของคำขอเดี่ยว — ไฟล์แบบชุดมีเพียงคีย์ค้นหาต่อแถว
+                      requesterReference: undefined,
+                      note: undefined,
+                      consent: true,
+                    },
+                  },
+                  context,
+                ),
+              );
         }
       } catch (error) {
         console.error("[batch] ยื่นคำขอจากแถวไม่สำเร็จ", job.id, item.id, error);
@@ -214,7 +246,7 @@ export async function executeBatch(job: RunnableBatch, context: RequestContext):
       actorId: job.requesterId,
       entityType: "BatchJob",
       entityId: job.id,
-      metadata: { ...finished },
+      metadata: { ...finished, resumed: !!job.resumedFrom },
       context,
     });
   } catch (error) {
@@ -230,6 +262,58 @@ export async function executeBatch(job: RunnableBatch, context: RequestContext):
       })
       .catch(() => undefined);
   }
+}
+
+// งานที่ค้างสถานะ PROCESSING (process ถูกรีสตาร์ตระหว่าง after() ทำงาน) — เรียกจาก /api/cron/batch-recovery
+// จองงานด้วยการแตะ updatedAt แบบมีเงื่อนไข เพื่อไม่ให้ cron สองรอบหรือสอง instance ทำงานเดียวกันซ้ำ
+export async function claimStaleBatches(
+  now: Date = new Date(),
+): Promise<(RunnableBatch & { context: RequestContext })[]> {
+  const stale = await prisma.batchJob.findMany({
+    where: { status: "PROCESSING", updatedAt: { lt: staleBefore(now, BATCH_STALE_MINUTES) } },
+    orderBy: { updatedAt: "asc" },
+    take: 20,
+    select: {
+      id: true,
+      requesterId: true,
+      startedAt: true,
+      createdAt: true,
+      updatedAt: true,
+      processedRows: true,
+      validRows: true,
+      ipAddress: true,
+      userAgent: true,
+    },
+  });
+
+  const claimed: (RunnableBatch & { context: RequestContext })[] = [];
+  for (const job of stale) {
+    const { count } = await prisma.batchJob.updateMany({
+      where: { id: job.id, status: "PROCESSING", updatedAt: job.updatedAt },
+      data: { updatedAt: now },
+    });
+    if (count !== 1) continue;
+
+    writeAuditLog({
+      action: AuditAction.BATCH_RECOVERED,
+      actorId: null,
+      entityType: "BatchJob",
+      entityId: job.id,
+      metadata: {
+        processedRows: job.processedRows,
+        validRows: job.validRows,
+        idleSince: job.updatedAt.toISOString(),
+      },
+    });
+    claimed.push({
+      id: job.id,
+      requesterId: job.requesterId,
+      resumedFrom: job.startedAt ?? job.createdAt,
+      // คำขอที่ยื่นต่อให้บันทึก IP/เบราว์เซอร์ของผู้อัปโหลด ไม่ใช่ของ cron
+      context: { ipAddress: job.ipAddress, userAgent: job.userAgent },
+    });
+  }
+  return claimed;
 }
 
 const itemSelect = {

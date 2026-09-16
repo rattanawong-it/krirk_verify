@@ -68,6 +68,7 @@ const GROUPS: {
     rows: [
       { kind: "number", name: "retentionYears", unit: "years", max: 20 },
       { kind: "number", name: "auditRetentionYears", unit: "years", max: 30 },
+      { kind: "number", name: "emailLogRetentionDays", unit: "days", max: 3650 },
       { kind: "number", name: "linkExpiresDays", unit: "days", max: 3650 },
       { kind: "text", name: "announcementTh" },
       { kind: "text", name: "announcementEn" },

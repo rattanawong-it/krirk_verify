@@ -1,6 +1,7 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 import { prisma } from "@/lib/db/prisma";
+import { EMAIL_PENDING_STALE_MINUTES, STALE_EMAIL_ERROR, staleBefore } from "@/lib/recovery/stale";
 import {
   type EmailPayload,
   type EmailTemplateName,
@@ -115,6 +116,20 @@ export async function sendTemplateMail<K extends EmailTemplateName>(
 }
 
 type RetryOutcome = { attempted: number; sent: number; failed: number };
+
+// แถวที่ค้าง PENDING = process หยุดระหว่างสร้าง log กับอัปเดตผลการส่ง
+// เปลี่ยนเป็น FAILED ที่ถึงกำหนดลองใหม่ทันที ให้ retryEmails รอบเดียวกันส่งต่อ
+// (ถ้า SMTP รับไปแล้วก่อน process หยุด ผู้รับอาจได้อีเมลซ้ำหนึ่งฉบับ — ดีกว่าอีเมลหาย)
+export async function recoverStalePendingEmails(now: Date = new Date()): Promise<number> {
+  const { count } = await prisma.emailLog.updateMany({
+    where: {
+      status: "PENDING",
+      createdAt: { lt: staleBefore(now, EMAIL_PENDING_STALE_MINUTES) },
+    },
+    data: { status: "FAILED", attempts: 1, lastError: STALE_EMAIL_ERROR, nextRetryAt: now },
+  });
+  return count;
+}
 
 // ส่งซ้ำแถวที่ถึงกำหนด — เรียกจาก /api/cron/email-retry และจากปุ่มของผู้ดูแลในหน้าประวัติอีเมล
 export async function retryEmails(
