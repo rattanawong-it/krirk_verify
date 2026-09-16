@@ -11,7 +11,12 @@ export type RouteAccess =
 
 export type AccessDecision = "allow" | "login" | "forbidden" | "home";
 
-const ADMIN_ONLY_PREFIXES = ["/staff/audit-logs", "/staff/users", "/staff/settings"];
+const ADMIN_ONLY_PREFIXES = [
+  "/staff/audit-logs",
+  "/staff/email-logs",
+  "/staff/users",
+  "/staff/settings",
+];
 const STAFF_PREFIXES = ["/staff"];
 const EXTERNAL_ONLY_PREFIXES = ["/batch"];
 const REQUESTER_PREFIXES = ["/dashboard", "/requests"];

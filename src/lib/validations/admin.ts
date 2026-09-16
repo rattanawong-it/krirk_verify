@@ -23,6 +23,25 @@ export const auditQuerySchema = z.object({
 
 export type AuditQuery = z.output<typeof auditQuerySchema>;
 
+// F-NOT-04 — ตัวกรองหน้าประวัติการส่งอีเมล (ADMIN)
+export const EMAIL_STATUSES = ["PENDING", "SENT", "FAILED"] as const;
+
+export const emailLogQuerySchema = z.object({
+  q: z.string().trim().max(100).optional().catch(undefined),
+  status: z.enum(EMAIL_STATUSES).optional().catch(undefined),
+  template: z
+    .string()
+    .regex(/^[A-Za-z]{3,40}$/)
+    .optional()
+    .catch(undefined),
+  range: z.enum(AUDIT_RANGES).catch("7d"),
+  page,
+});
+
+export type EmailLogQuery = z.output<typeof emailLogQuerySchema>;
+
+export const resendEmailSchema = z.object({ id: z.string().trim().min(1).max(40) });
+
 export const USER_ROLES = ["ADMIN", "REGISTRAR", "EXTERNAL", "ALUMNI"] as const;
 export const STAFF_USER_ROLES = ["ADMIN", "REGISTRAR"] as const;
 export const USER_STATUSES = ["PENDING_VERIFICATION", "ACTIVE", "SUSPENDED"] as const;

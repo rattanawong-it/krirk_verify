@@ -12,18 +12,14 @@ import { hashPassword, verifyAgainstDummy, verifyPassword } from "@/lib/auth/pas
 import type { AppRole } from "@/lib/auth/rbac";
 import { generateToken, hashIdentifier, hashToken } from "@/lib/crypto";
 import { prisma } from "@/lib/db/prisma";
-import { sendMail } from "@/lib/email/mailer";
-import {
-  accountInviteTemplate,
-  resetPasswordTemplate,
-  verifyEmailTemplate,
-} from "@/lib/email/templates";
+import { sendTemplateMail } from "@/lib/email/mailer";
 import type {
   profileSchema,
   registerAlumniSchema,
   registerOrganizationSchema,
 } from "@/lib/validations/auth";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
+import { notifyOrganizationPending } from "./notification.service";
 import { getSettings } from "./settings.service";
 
 const EMAIL_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
@@ -277,13 +273,22 @@ export async function registerOrganization(
       context,
     });
 
-    const mail = verifyEmailTemplate({
-      locale,
-      kind: "organization",
-      orgName: locale === "en" ? (organization.nameEn ?? organization.nameTh) : organization.nameTh,
-      url: appUrl(`/verify-email?token=${token}`, locale),
+    await sendTemplateMail({
+      template: "verifyEmail",
+      to: user.email,
+      userId: user.id,
+      entityType: "User",
+      entityId: user.id,
+      payload: {
+        locale,
+        kind: "organization",
+        orgName:
+          locale === "en" ? (organization.nameEn ?? organization.nameTh) : organization.nameTh,
+        url: appUrl(`/verify-email?token=${token}`, locale),
+      },
     });
-    await sendMail({ to: user.email, ...mail });
+    // F-NOT-05 — เจ้าหน้าที่เห็นหน่วยงานที่รออนุมัติในกระดิ่งทันที
+    void notifyOrganizationPending(organization.id, organization.nameTh);
 
     return { ok: true, email: user.email };
   } catch (error) {
@@ -350,12 +355,18 @@ export async function registerAlumni(
       context,
     });
 
-    const mail = verifyEmailTemplate({
-      locale,
-      kind: "alumni",
-      url: appUrl(`/verify-email?token=${token}`, locale),
+    await sendTemplateMail({
+      template: "verifyEmail",
+      to: user.email,
+      userId: user.id,
+      entityType: "User",
+      entityId: user.id,
+      payload: {
+        locale,
+        kind: "alumni",
+        url: appUrl(`/verify-email?token=${token}`, locale),
+      },
     });
-    await sendMail({ to: user.email, ...mail });
 
     return { ok: true, email: user.email };
   } catch (error) {
@@ -447,16 +458,22 @@ export async function resendVerificationEmail(email: string): Promise<void> {
   const token = await prisma.$transaction((tx) =>
     issueToken(tx, user.id, "EMAIL_VERIFICATION", EMAIL_TOKEN_TTL_MS),
   );
-  const mail = verifyEmailTemplate({
-    locale,
-    kind: user.role === "ALUMNI" ? "alumni" : "organization",
-    orgName:
-      locale === "en"
-        ? (user.organization?.nameEn ?? user.organization?.nameTh)
-        : user.organization?.nameTh,
-    url: appUrl(`/verify-email?token=${token}`, locale),
+  await sendTemplateMail({
+    template: "verifyEmail",
+    to: user.email,
+    userId: user.id,
+    entityType: "User",
+    entityId: user.id,
+    payload: {
+      locale,
+      kind: user.role === "ALUMNI" ? "alumni" : "organization",
+      orgName:
+        locale === "en"
+          ? (user.organization?.nameEn ?? user.organization?.nameTh)
+          : user.organization?.nameTh,
+      url: appUrl(`/verify-email?token=${token}`, locale),
+    },
   });
-  await sendMail({ to: user.email, ...mail });
 }
 
 // ------------------------------------------------------------
@@ -491,13 +508,19 @@ export async function requestPasswordReset(email: string, context: RequestContex
   const token = await prisma.$transaction((tx) =>
     issueToken(tx, user.id, "PASSWORD_RESET", RESET_TOKEN_TTL_MS),
   );
-  const mail = resetPasswordTemplate({
-    locale,
-    url: appUrl(`/reset-password?token=${token}`, locale),
-    ipAddress: context.ipAddress,
-    requestedAt,
+  await sendTemplateMail({
+    template: "resetPassword",
+    to: user.email,
+    userId: user.id,
+    entityType: "User",
+    entityId: user.id,
+    payload: {
+      locale,
+      url: appUrl(`/reset-password?token=${token}`, locale),
+      ipAddress: context.ipAddress,
+      requestedAt,
+    },
   });
-  await sendMail({ to: user.email, ...mail });
 }
 
 const INVITE_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
@@ -511,14 +534,20 @@ export async function sendAccountInvite(
   const token = await prisma.$transaction((tx) =>
     issueToken(tx, user.id, "PASSWORD_RESET", INVITE_TOKEN_TTL_MS),
   );
-  const mail = accountInviteTemplate({
-    locale,
-    name: user.name,
-    inviterName,
-    role: user.role,
-    url: appUrl(`/reset-password?token=${token}`, locale),
+  return sendTemplateMail({
+    template: "accountInvite",
+    to: user.email,
+    userId: user.id,
+    entityType: "User",
+    entityId: user.id,
+    payload: {
+      locale,
+      name: user.name,
+      inviterName,
+      role: user.role,
+      url: appUrl(`/reset-password?token=${token}`, locale),
+    },
   });
-  return sendMail({ to: user.email, ...mail });
 }
 
 export async function getPasswordResetInfo(token: string) {

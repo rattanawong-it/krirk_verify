@@ -384,11 +384,13 @@ submitRequest(input, actor)
 - [x] **F-UX-11** โหลดฟอนต์ไทยที่อ่านง่าย (เช่น Noto Sans Thai / Sarabun) แบบ self-host
 
 ### Phase 9 — Notifications
-- [~] **F-NOT-01** ตั้งค่า Nodemailer + SMTP มหาวิทยาลัย + `EmailLog`
-- [~] **F-NOT-02** เทมเพลตอีเมลสองภาษา: ยืนยันอีเมล, รีเซ็ตรหัสผ่าน, รับคำขอแล้ว, อนุมัติ, ปฏิเสธ, หน่วยงานได้รับอนุมัติ
-- [ ] **F-NOT-03** แจ้งเตือนเจ้าหน้าที่เมื่อมีคำขอเข้าคิว (สรุปรวมรายวัน เพื่อไม่ให้อีเมลท่วม)
-- [ ] **F-NOT-04** ระบบ retry เมื่อส่งอีเมลล้มเหลว + หน้าดูสถานะการส่ง (ADMIN)
-- [ ] **F-NOT-05** การแจ้งเตือนในระบบ (in-app notification bell)
+- [x] **F-NOT-01** ตั้งค่า Nodemailer + SMTP มหาวิทยาลัย + `EmailLog`
+- [x] **F-NOT-02** เทมเพลตอีเมลสองภาษา: ยืนยันอีเมล, รีเซ็ตรหัสผ่าน, รับคำขอแล้ว, อนุมัติ, ปฏิเสธ, หน่วยงานได้รับอนุมัติ
+- [x] **F-NOT-03** แจ้งเตือนเจ้าหน้าที่เมื่อมีคำขอเข้าคิว (สรุปรวมรายวัน เพื่อไม่ให้อีเมลท่วม)
+- [x] **F-NOT-04** ระบบ retry เมื่อส่งอีเมลล้มเหลว + หน้าดูสถานะการส่ง (ADMIN)
+- [x] **F-NOT-05** การแจ้งเตือนในระบบ (in-app notification bell)
+
+> บันทึกสรุป Phase 9: [`docs/phases/phase-9-notifications.md`](phases/phase-9-notifications.md)
 
 ### Phase 10 — Deployment & Documentation
 - [ ] **F-OPS-01** `Dockerfile` multi-stage ใช้ `output: 'standalone'`
@@ -484,3 +486,4 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3  ← MVP ใช้งานได้
 | 1.6     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 7): ค่าตั้งค่าเพิ่ม SLA/แถวแบบชุดต่อวัน/จำนวนครั้งล็อกบัญชี/ระยะเก็บ Audit Log/อายุ permalink (env เป็นค่าเริ่มต้น), `VerificationRequest.anonymizedAt`, retention = anonymise คำขอ + ลบ Audit Log ที่พ้นกำหนดผ่าน `/api/cron/retention`, CSP แบบ `'unsafe-inline'` (ไม่ใช้ nonce), สร้างบัญชีเฉพาะ ADMIN/REGISTRAR ด้วยอีเมลเชิญ, route `/privacy` + `/terms`, ตัวกรองผู้ใช้เป็นช่องค้นหา + เลื่อนหน้า Email Log ไป Phase 9, ข้อความนโยบายเป็นร่างรอฝ่ายกฎหมาย, `pnpm build` ต้องเชื่อมต่อฐานข้อมูล |
 | 1.7     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 8): bottom nav แสดง 3 เมนูแรก + drawer "เมนู" เมื่อมีเมนูมากกว่า 4, ช่อง `input type="date"` แสดงตามปฏิทินของเบราว์เซอร์, skeleton โครงกลางเดียว + `global-error` ข้อความสองภาษาแบบคงที่, เลื่อนการตรวจ contrast ด้วย axe ไป Phase 10, แก้ shadcn `dialog.tsx`/`form.tsx` |
 | 1.8     | 2026-09-15 | ทีมพัฒนา            | อนุมัติแล้ว (Phase 6): KPI แดชบอร์ดเจ้าหน้าที่ตามดีไซน์ (ช่วง 7 วัน/30 วัน/1 ปี + อัตราอนุมัติอัตโนมัติ), route `/staff/dashboard` + `/staff/reports`, แนวโน้มจัดกลุ่มตามวันที่ยื่นและสถานะปัจจุบัน, Export = Excel/CSV รายการคำขอ (จำกัด 100,000 แถว / 366 วัน), อีเมลสรุปรายเดือนแบบตัวเลข + ลิงก์ผ่าน `/api/cron/monthly-report` + ค่าตั้งค่า `report.monthlyEmailEnabled`/`report.monthlyLastSent`, ซ่อนทางลัดตรวจสอบแบบชุดจนถึง Phase 5, เพิ่ม `recharts` + `exceljs` |
+| 1.9 | 2026-09-16 | ทีมพัฒนา | อนุมัติแล้ว (Phase 9): `EmailLog` เพิ่ม `subject`/`locale`/`payload`/`attempts`/`lastError`/`nextRetryAt`/`userId`/`entityType`/`entityId` + enum `EmailStatus` (เก็บ payload ของเทมเพลตแทน HTML เพื่อ render ใหม่ตอน retry), เพิ่ม model `Notification` + enum `NotificationType` 6 ค่า, ค่าตั้งค่า `notify.queueDigestEnabled` (เปิดเป็นค่าเริ่มต้น) + `notify.queueDigestLastSent` + กลุ่ม "การแจ้งเตือน" ในหน้าตั้งค่า, retry ผ่าน system cron `/api/cron/email-retry` 4 ครั้ง (5/30/120/360 นาที) แล้วรอผู้ดูแลกดส่งซ้ำ, `/api/cron/queue-digest` ส่งสรุปคิววันละครั้ง, หน้าใหม่ `/notifications` และ `/staff/email-logs`, แจ้งเตือนฝั่งผู้ขอเพิ่ม 2 ชนิด (คำขออนุมัติ/ปฏิเสธ), audit action ใหม่ `notification.digest_sent` + `email.resent` |

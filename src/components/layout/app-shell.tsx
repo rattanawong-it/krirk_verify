@@ -1,12 +1,19 @@
 import Image from "next/image";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { isStaffRole } from "@/lib/auth/rbac";
+import {
+  NOTIFICATION_FALLBACK_HREF,
+  NOTIFICATION_STYLE,
+  notificationValues,
+} from "@/lib/notifications/display";
+import { getBellState } from "@/lib/services/notification.service";
 import { getVerificationQuota } from "@/lib/services/rate-limit.service";
 import type { SessionUser } from "@/lib/services/auth.service";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "./locale-switcher";
 import { navItemsFor } from "./nav-config";
+import { NotificationBell } from "./notification-bell";
 import { MobileBottomNav, type ShellNavItem, SidebarNav } from "./shell-nav";
 import { UserMenu } from "./user-menu";
 
@@ -19,6 +26,22 @@ export async function AppShell({ user, children }: { user: SessionUser; children
   // ตัวบอกโควตาในเมนูข้างของผู้ขอ — ถ้าอ่านไม่ได้ก็ซ่อน ไม่ให้ทั้งหน้าล้ม
   const quota = staff ? null : await getVerificationQuota(user.id).catch(() => null);
   const quotaPercent = quota ? Math.round((quota.used / quota.limit) * 100) : 0;
+
+  // F-NOT-05 — กระดิ่งแจ้งเตือน · อ่านไม่ได้ก็แสดงกระดิ่งเปล่า ไม่ให้ทั้งหน้าล้ม
+  const format = await getFormatter();
+  const bell = await getBellState(user.id).catch(() => ({ rows: [], unread: 0 }));
+  const bellItems = bell.rows.map((row) => {
+    const values = notificationValues(row.params);
+    return {
+      id: row.id,
+      href: row.href ?? NOTIFICATION_FALLBACK_HREF,
+      title: t(`notifications.types.${row.type}.title` as never, values as never),
+      body: t(`notifications.types.${row.type}.body` as never, values as never),
+      time: format.dateTime(row.createdAt, { dateStyle: "short", timeStyle: "short" }),
+      unread: row.readAt === null,
+      ...NOTIFICATION_STYLE[row.type],
+    };
+  });
 
   const items: ShellNavItem[] = navItemsFor(user.role).map((item) => ({
     href: item.href,
@@ -110,6 +133,18 @@ export async function AppShell({ user, children }: { user: SessionUser; children
           <span className="hidden text-xs text-muted-foreground lg:inline">{areaLabel}</span>
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <LocaleSwitcher />
+            <NotificationBell
+              items={bellItems}
+              unread={bell.unread}
+              labels={{
+                title: t("notifications.title"),
+                unreadCount: t("notifications.unreadCount", { count: bell.unread }),
+                markAll: t("notifications.markAll"),
+                seeAll: t("notifications.seeAll"),
+                empty: t("notifications.empty"),
+                bell: t("notifications.bell"),
+              }}
+            />
             <UserMenu
               name={user.name}
               email={user.email}

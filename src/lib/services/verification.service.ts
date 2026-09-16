@@ -11,8 +11,7 @@ import {
   maskPassportNo,
 } from "@/lib/crypto";
 import { prisma } from "@/lib/db/prisma";
-import { sendMail } from "@/lib/email/mailer";
-import { requestReceivedTemplate, resultApprovedTemplate } from "@/lib/email/templates";
+import { sendTemplateMail } from "@/lib/email/mailer";
 import { appUrl } from "@/lib/utils/app-url";
 import {
   isValidPassportNo,
@@ -29,6 +28,7 @@ import { decideVerification } from "@/lib/verification/auto-approve";
 import { degreeLabel, displayName } from "@/lib/verification/display";
 import { buddhistYear, formatRefNo, normalizeRefNo } from "@/lib/verification/ref-no";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
+import { notifyQueueEntry } from "./notification.service";
 import {
   consumeVerificationQuota,
   isPermalinkBlocked,
@@ -226,9 +226,13 @@ export async function submitRequest(
 
   const locale = localeOf(user.locale);
   if (approvedStudent && token) {
-    void sendMail({
+    void sendTemplateMail({
+      template: "resultApproved",
       to: user.email,
-      ...resultApprovedTemplate({
+      userId: user.id,
+      entityType: "VerificationRequest",
+      entityId: request.id,
+      payload: {
         locale,
         refNo: request.refNo,
         fullName: displayName(approvedStudent, locale),
@@ -237,13 +241,16 @@ export async function submitRequest(
         decision: "AUTO",
         url: appUrl(`/verify/result/${request.refNo}?t=${token.token}`, locale),
         expiresDays: settings.linkExpiresDays,
-      }),
+      },
     });
   } else {
-    // การแจ้งเจ้าหน้าที่แบบสรุปรายวันอยู่ใน F-NOT-03 (Phase 9)
-    void sendMail({
+    void sendTemplateMail({
+      template: "requestReceived",
       to: user.email,
-      ...requestReceivedTemplate({
+      userId: user.id,
+      entityType: "VerificationRequest",
+      entityId: request.id,
+      payload: {
         locale,
         refNo: request.refNo,
         searchKey:
@@ -251,8 +258,10 @@ export async function submitRequest(
         purpose: input.data.purpose,
         submittedAt: now,
         url: appUrl(`/requests/${request.refNo}`, locale),
-      }),
+      },
     });
+    // F-NOT-03 / F-NOT-05 — เจ้าหน้าที่เห็นในกระดิ่งทันที ส่วนอีเมลเป็นสรุปรายวันเพื่อไม่ให้อีเมลท่วม
+    void notifyQueueEntry(request.refNo);
   }
 
   return {

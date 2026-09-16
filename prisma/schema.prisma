@@ -140,6 +140,8 @@ model User {
   requests        VerificationRequest[] @relation("RequestRequester")
   decidedRequests VerificationRequest[] @relation("RequestDecider")
   requestNotes    RequestNote[]
+  emailLogs       EmailLog[]
+  notifications   Notification[]
 
   @@index([organizationId])
   @@index([role, status])
@@ -401,4 +403,71 @@ model AppSetting {
   updatedAt DateTime @updatedAt
 
   @@map("app_settings")
+}
+
+// ============================================================
+// Phase 9 — Notifications
+// ============================================================
+
+enum EmailStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum NotificationType {
+  QUEUE_NEW
+  SLA_BREACH
+  ORG_PENDING
+  SYNC_FAILED
+  REQUEST_APPROVED
+  REQUEST_REJECTED
+}
+
+// F-NOT-01 / F-NOT-04 — ประวัติอีเมลทุกฉบับ + คิว retry
+// payload คือ input ของเทมเพลต (ไม่ใช่ HTML ที่ render แล้ว) — retry จึง render ใหม่ด้วยโค้ดล่าสุด
+// และไม่เก็บเนื้อหาอีเมลซ้ำในฐานข้อมูล
+model EmailLog {
+  id          String      @id @default(cuid())
+  to          String
+  template    String
+  subject     String
+  locale      String      @default("th")
+  status      EmailStatus @default(PENDING)
+  attempts    Int         @default(0)
+  lastError   String?
+  nextRetryAt DateTime?
+  sentAt      DateTime?
+  payload     Json
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  entityType  String?
+  entityId    String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([status, nextRetryAt])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@map("email_logs")
+}
+
+// F-NOT-05 — การแจ้งเตือนในระบบ (กระดิ่ง)
+// เก็บเป็น type + params แล้วแปลตอนแสดงผล เพื่อให้ผู้ใช้เห็นข้อความตามภาษาที่เลือกอยู่
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  params    Json?
+  href      String?
+  // กันสร้างซ้ำสำหรับการแจ้งเตือนแบบสรุป (เช่น SLA ของวันเดียวกัน)
+  dedupeKey String?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, readAt, createdAt])
+  @@map("notifications")
 }

@@ -12,6 +12,7 @@ export type NavLabelKey =
   | "organizations"
   | "reports"
   | "auditLogs"
+  | "emailLogs"
   | "users"
   | "sync"
   | "settings";
@@ -82,6 +83,13 @@ export const NAV_ITEMS: readonly NavItem[] = [
     href: "/staff/audit-logs",
     labelKey: "auditLogs",
     icon: "history",
+    roles: ["ADMIN"],
+    available: true,
+  },
+  {
+    href: "/staff/email-logs",
+    labelKey: "emailLogs",
+    icon: "mail",
     roles: ["ADMIN"],
     available: true,
   },

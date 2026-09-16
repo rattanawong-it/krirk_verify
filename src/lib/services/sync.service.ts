@@ -11,6 +11,7 @@ import { REGISTRY_ERROR_CODES } from "@/lib/integrations/registry/errors";
 import { hasSourceChanged, toStudentRow } from "@/lib/integrations/registry/mapper";
 import type { RegistryStudent } from "@/lib/integrations/registry/types";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
+import { notifySyncFailed } from "./notification.service";
 
 // F-DATA-06 / F-DATA-09 — sync ข้อมูลระบบทะเบียนลงตาราง Student (spec ข้อ 4.6)
 // FULL = ทุกระเบียน · INCREMENTAL = เฉพาะที่เปลี่ยนหลัง sync สำเร็จครั้งก่อน · SINGLE = รายคนตามที่เจ้าหน้าที่กด
@@ -196,6 +197,8 @@ export async function executeBulkSync(
       entityId: job.id,
       metadata: { type: job.type, ...counts, errorCode: failure.errorCode },
     });
+    // F-NOT-05 — ผู้ดูแลระบบเห็นการซิงก์ที่ล้มเหลวในกระดิ่ง (ข้อมูลทะเบียนค้างกระทบทุกคำขอ)
+    void notifySyncFailed(job.id, failure.errorCode);
   }
 }
 

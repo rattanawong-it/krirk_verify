@@ -1,8 +1,7 @@
 import "server-only";
 import type { OrgStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
-import { sendMail } from "@/lib/email/mailer";
-import { organizationApprovedTemplate } from "@/lib/email/templates";
+import { sendTemplateMail } from "@/lib/email/mailer";
 import { appUrl } from "@/lib/utils/app-url";
 import { getSettings } from "./settings.service";
 import {
@@ -165,20 +164,24 @@ export async function changeOrganizationStatus(
   if (input.action === "approve") {
     const users = await prisma.user.findMany({
       where: { organizationId: org.id, emailVerifiedAt: { not: null }, status: "ACTIVE" },
-      select: { email: true, locale: true },
+      select: { id: true, email: true, locale: true },
     });
     const quotaPerHour = (await getSettings()).userPerHour;
     for (const user of users) {
       const locale = user.locale === "en" ? "en" : "th";
-      void sendMail({
+      void sendTemplateMail({
+        template: "organizationApproved",
         to: user.email,
-        ...organizationApprovedTemplate({
+        userId: user.id,
+        entityType: "Organization",
+        entityId: org.id,
+        payload: {
           locale,
           orgName: locale === "en" ? (org.nameEn ?? org.nameTh) : org.nameTh,
           approvedAt: now,
           quotaPerHour,
           url: appUrl("/requests/new", locale),
-        }),
+        },
       });
     }
   }

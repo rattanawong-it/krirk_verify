@@ -22,17 +22,24 @@ import {
 
 type NumberField = Exclude<
   keyof SettingsFormInput,
-  "autoApproveEnabled" | "monthlyReportEnabled" | "announcementTh" | "announcementEn"
+  | "autoApproveEnabled"
+  | "monthlyReportEnabled"
+  | "queueDigestEnabled"
+  | "announcementTh"
+  | "announcementEn"
 >;
 
 type Row =
-  | { kind: "switch"; name: "autoApproveEnabled" | "monthlyReportEnabled" }
+  | {
+      kind: "switch";
+      name: "autoApproveEnabled" | "monthlyReportEnabled" | "queueDigestEnabled";
+    }
   | { kind: "locked"; label: "alwaysQueueNotFound" }
   | { kind: "number"; name: NumberField; unit?: "hours" | "times" | "years" | "days"; max: number }
   | { kind: "text"; name: "announcementTh" | "announcementEn" };
 
 const GROUPS: {
-  key: "verification" | "quotas" | "pdpa" | "reports";
+  key: "verification" | "quotas" | "pdpa" | "reports" | "notifications";
   icon: IconName;
   rows: Row[];
 }[] = [
@@ -70,6 +77,11 @@ const GROUPS: {
     key: "reports",
     icon: "chart",
     rows: [{ kind: "switch", name: "monthlyReportEnabled" }],
+  },
+  {
+    key: "notifications",
+    icon: "bell",
+    rows: [{ kind: "switch", name: "queueDigestEnabled" }],
   },
 ];
 

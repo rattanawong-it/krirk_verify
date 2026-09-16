@@ -2,8 +2,7 @@ import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
 import { decrypt, encrypt, generateToken } from "@/lib/crypto";
 import { prisma } from "@/lib/db/prisma";
-import { sendMail } from "@/lib/email/mailer";
-import { resultApprovedTemplate, resultRejectedTemplate } from "@/lib/email/templates";
+import { sendTemplateMail } from "@/lib/email/mailer";
 import { appUrl } from "@/lib/utils/app-url";
 import { formatCitizenId } from "@/lib/validations/identifiers";
 import type { QueueQuery, RejectRequestData } from "@/lib/validations/review";
@@ -13,6 +12,7 @@ import { normalizeRefNo } from "@/lib/verification/ref-no";
 import { statusForRejectReason } from "@/lib/verification/reject-reasons";
 import { slaCutoff } from "@/lib/verification/sla";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
+import { notifyRequestDecided } from "./notification.service";
 import { getSettings } from "./settings.service";
 import { maskSearchValue, toResultSnapshot } from "./verification.service";
 
@@ -239,7 +239,11 @@ export async function approveRequest(
   const [request, student] = await Promise.all([
     prisma.verificationRequest.findUnique({
       where: { refNo },
-      select: { id: true, status: true, requester: { select: { email: true, locale: true } } },
+      select: {
+        id: true,
+        status: true,
+        requester: { select: { id: true, email: true, locale: true } },
+      },
     }),
     prisma.student.findUnique({ where: { id: input.studentId } }),
   ]);
@@ -283,9 +287,12 @@ export async function approveRequest(
   });
 
   const locale = localeOf(request.requester.locale);
-  void sendMail({
+  void sendTemplateMail({
+    template: "resultApproved",
     to: request.requester.email,
-    ...resultApprovedTemplate({
+    entityType: "VerificationRequest",
+    entityId: request.id,
+    payload: {
       locale,
       refNo,
       fullName: displayName(student, locale),
@@ -294,8 +301,9 @@ export async function approveRequest(
       decision: "MANUAL",
       url: appUrl(`/verify/result/${refNo}?t=${token.token}`, locale),
       expiresDays: linkExpiresDays,
-    }),
+    },
   });
+  notifyRequestDecided({ userId: request.requester.id, refNo, approved: true });
   return { ok: true };
 }
 
@@ -323,7 +331,7 @@ export async function rejectRequest(
 
   const request = await prisma.verificationRequest.findUnique({
     where: { refNo },
-    select: { id: true, requester: { select: { email: true, locale: true } } },
+    select: { id: true, requester: { select: { id: true, email: true, locale: true } } },
   });
   if (!request) return { ok: false, code: "notFound" };
   if (updated.count === 0) return { ok: false, code: "alreadyDecided" };
@@ -338,17 +346,21 @@ export async function rejectRequest(
   });
 
   const locale = localeOf(request.requester.locale);
-  void sendMail({
+  void sendTemplateMail({
+    template: "resultRejected",
     to: request.requester.email,
-    ...resultRejectedTemplate({
+    entityType: "VerificationRequest",
+    entityId: request.id,
+    payload: {
       locale,
       refNo,
       reason: input.reason,
       detail: input.detail ?? null,
       decidedAt: now,
       url: appUrl(`/requests/${refNo}`, locale),
-    }),
+    },
   });
+  notifyRequestDecided({ userId: request.requester.id, refNo, approved: false });
   return { ok: true };
 }
 

@@ -1,8 +1,7 @@
 import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
-import { sendMail } from "@/lib/email/mailer";
-import { monthlyReportTemplate } from "@/lib/email/report-templates";
+import { sendTemplateMail } from "@/lib/email/mailer";
 import {
   type DashboardRange,
   type Period,
@@ -450,7 +449,7 @@ export async function sendMonthlyReport(context: RequestContext, now: Date = new
     topOrganizations(month, 5),
     prisma.user.findMany({
       where: { role: "ADMIN", status: "ACTIVE" },
-      select: { email: true, name: true, locale: true },
+      select: { id: true, email: true, name: true, locale: true },
     }),
   ]);
 
@@ -459,16 +458,20 @@ export async function sendMonthlyReport(context: RequestContext, now: Date = new
   let sent = 0;
   for (const admin of admins) {
     const locale = admin.locale === "en" ? "en" : "th";
-    const ok = await sendMail({
+    const ok = await sendTemplateMail({
+      template: "monthlyReport",
       to: admin.email,
-      ...monthlyReportTemplate({
+      userId: admin.id,
+      entityType: "Report",
+      entityId: month.key,
+      payload: {
         locale,
         name: admin.name,
         month: month.from,
         summary,
         topOrganizations: organizations,
         url: appUrl(`/staff/reports?from=${fromKey}&to=${toKey}`, locale),
-      }),
+      },
     });
     if (ok) sent++;
   }

@@ -46,6 +46,8 @@ export const AuditAction = {
   USER_RESET_SENT: "user.password_reset_sent",
   REPORT_EXPORTED: "report.exported",
   REPORT_MONTHLY_SENT: "report.monthly_sent",
+  QUEUE_DIGEST_SENT: "notification.digest_sent",
+  EMAIL_RESENT: "email.resent",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];

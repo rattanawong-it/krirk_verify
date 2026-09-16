@@ -10,6 +10,7 @@ import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service
 export const SETTING_KEYS: Record<keyof AppSettings, string> = {
   autoApproveEnabled: "verification.autoApproveEnabled",
   monthlyReportEnabled: "report.monthlyEmailEnabled",
+  queueDigestEnabled: "notify.queueDigestEnabled",
   slaHours: "review.slaHours",
   userPerHour: "rateLimit.userPerHour",
   ipPerHour: "rateLimit.ipPerHour",
@@ -34,6 +35,8 @@ export function defaultSettings(): AppSettings {
     autoApproveEnabled: true,
     // F-RPT-08 — ปิดไว้จนกว่าผู้ดูแลจะเปิดเอง
     monthlyReportEnabled: false,
+    // F-NOT-03 — เปิดไว้ แต่จะส่งก็ต่อเมื่อ system cron เรียก /api/cron/queue-digest
+    queueDigestEnabled: true,
     slaHours: envInt("REVIEW_SLA_HOURS", 24),
     userPerHour: envInt("RATE_LIMIT_USER_PER_HOUR", 30),
     ipPerHour: envInt("RATE_LIMIT_IP_PER_HOUR", 60),
@@ -104,3 +107,5 @@ export async function updateSettings(
 export const RETENTION_LAST_RUN_KEY = "retention.lastRun";
 // เดือนล่าสุดที่ส่งรายงานสรุปแล้ว (YYYY-MM) — กัน cron ส่งซ้ำ
 export const MONTHLY_REPORT_LAST_SENT_KEY = "report.monthlyLastSent";
+// วันล่าสุด (เวลาไทย YYYY-MM-DD) ที่ส่งสรุปคิวรายวันแล้ว — กัน cron ส่งซ้ำในวันเดียวกัน
+export const QUEUE_DIGEST_LAST_SENT_KEY = "notify.queueDigestLastSent";

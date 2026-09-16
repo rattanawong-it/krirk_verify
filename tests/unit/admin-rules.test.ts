@@ -6,6 +6,7 @@ import { settingsFormSchema, toSettingsForm } from "@/lib/validations/settings";
 const validForm = {
   autoApproveEnabled: true,
   monthlyReportEnabled: false,
+  queueDigestEnabled: true,
   slaHours: "24",
   userPerHour: "30",
   ipPerHour: "60",
