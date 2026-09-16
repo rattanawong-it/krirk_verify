@@ -30,7 +30,7 @@
 | F-OPS-07 | คู่มือหน่วยงาน/ศิษย์เก่า 13 หัวข้อ · คู่มือเจ้าหน้าที่/ผู้ดูแล 16 หัวข้อ (รวมข้อปฏิบัติ PDPA และสิ่งที่ควรเฝ้าดูใน Audit Log) · ชื่อปุ่ม/เมนูตรงกับ `messages/th.json` | `docs/manual/requester-guide.md`, `docs/manual/staff-guide.md` |
 | F-OPS-08 | สเปก API ที่ขอจากฝ่ายทะเบียน: การยืนยันตัวตน, 3 endpoints, แบ่งหน้า + `updatedSince`, HTTP status ที่รองรับ, Student object 25 ฟิลด์, คำถามเรื่องข้อมูล 5 ข้อ, ข้อมูลตัวอย่างที่ขอ, แผนทดสอบร่วม · ยึดตาม Zod schema จริงใน `types.ts` | `docs/registry-api-spec.md` |
 | F-OPS-09 | flow หลักทั้งสองมีอยู่แล้วและผ่านบน production build: **auto-approve** (`verification.spec` — ยื่น → ได้ผลทันที → เปิด permalink) · **เข้าคิว → อนุมัติ** (`review.spec` — ยื่น → เจ้าหน้าที่ค้นหา → อนุมัติ → ผู้ขอเห็นผล) · เพิ่ม `health.spec` (2) + `a11y.spec` (4) | `tests/e2e/*.spec.ts` |
-| F-UX-10 | `@axe-core/playwright` ตรวจ WCAG 2.1 A/AA ทุกหน้าหลัก 23 หน้า (สาธารณะ ไทย/อังกฤษ, ผู้ขอ, เจ้าหน้าที่/ผู้ดูแล) + โหมดมืด 5 หน้า · แก้ที่พบ 7 จุด (ดูการตัดสินใจด้านล่าง) | `tests/e2e/a11y.spec.ts` |
+| F-UX-10 | `@axe-core/playwright` ตรวจ WCAG 2.1 A/AA ทุกหน้าหลัก 24 หน้า (สาธารณะ ไทย/อังกฤษ, ผู้ขอ, เจ้าหน้าที่/ผู้ดูแล) + โหมดมืด 5 หน้า · แก้ที่พบ 7 จุด (ดูการตัดสินใจด้านล่าง) | `tests/e2e/a11y.spec.ts` |
 
 ## ปัญหาที่พบระหว่างทดสอบ stack จริง และวิธีแก้
 
@@ -79,7 +79,7 @@
 |------|----|
 | `tsc` / `pnpm lint` / `format:check` | ✅ ผ่าน |
 | Unit test (Vitest) | ✅ 172/172 (+4) — สรุป health: ok / degraded ยังได้ 200 / DB ล่มได้ 503 เสมอ / ข้ามการตรวจทะเบียน |
-| E2E (Playwright บน production build) | ✅ ทั้งชุด 50 passed · 44 skipped · 1 failed → แก้แล้ว: `batch.spec` หาชื่อไฟล์ซ้ำกับรายการประวัติจากการรันครั้งก่อน (test รันซ้ำบนฐานข้อมูลเดิมไม่ได้ — ไม่ได้เกิดจากโค้ดเฟสนี้) · รัน `batch.spec` ใหม่ผ่าน 3/3 · ใหม่: `a11y.spec` 4/4 (23 หน้า + โหมดมืด), `health.spec` ผ่านทั้ง desktop/mobile |
+| E2E (Playwright บน production build) | ✅ ทั้งชุด 50 passed · 44 skipped · 1 failed → แก้แล้ว: `batch.spec` หาชื่อไฟล์ซ้ำกับรายการประวัติจากการรันครั้งก่อน (test รันซ้ำบนฐานข้อมูลเดิมไม่ได้ — ไม่ได้เกิดจากโค้ดเฟสนี้) · รัน `batch.spec` ใหม่ผ่าน 3/3 · ใหม่: `a11y.spec` 4/4 (24 หน้า + โหมดมืด), `health.spec` ผ่านทั้ง desktop/mobile |
 | `pnpm build` | ✅ ผ่าน · route ใหม่ `/api/health` |
 | Docker build | ✅ image runner 330 MB · build โดยไม่มีฐานข้อมูล |
 | Docker stack (ทดสอบจริงบนเครื่อง dev ด้วย self-signed cert) | ✅ migrate ครบ 8 migration + seed ข้าม demo · app healthy · `/api/health` ok · DB หยุด → 503 `TIMEOUT` ภายใน 3.1 วินาที → เปิดคืนเป็น ok · HTTP→HTTPS 301 · HSTS/CSP/X-Frame-Options · `/api/cron/*` `/api/mock/*` จากภายนอก = 404 · Host แปลกปลอมถูกตัดการเชื่อมต่อ · ล็อกอินผู้ดูแลผ่าน nginx + cookie `__Secure-` · หน้าเจ้าหน้าที่/ผู้ดูแล 200 · Audit Log บันทึก IP |
