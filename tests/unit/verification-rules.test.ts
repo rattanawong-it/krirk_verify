@@ -14,9 +14,19 @@ const graduated: MatchCandidate = {
   status: "GRADUATED",
   graduationDate: new Date("2022-05-31"),
   councilApprovalDate: new Date("2022-06-28"),
+  graduationTerm: null,
+  detailSyncedAt: new Date("2026-09-15"),
   requiresManualReview: false,
 };
-const on = { autoApproveEnabled: true };
+const on = { autoApproveEnabled: true, requireCouncilApproval: true };
+// Keystone: ไม่มีวันสำเร็จการศึกษา/วันสภาอนุมัติ มีภาคที่สำเร็จ
+const keystone = { autoApproveEnabled: true, requireCouncilApproval: false };
+const keystoneGraduate: MatchCandidate = {
+  ...graduated,
+  graduationDate: null,
+  councilApprovalDate: null,
+  graduationTerm: "2/2023",
+};
 
 describe("decideVerification (spec ข้อ 4.2 / 9.1)", () => {
   it("พบ 1 ราย + GRADUATED + วันที่ครบ → AUTO", () => {
@@ -72,8 +82,28 @@ describe("decideVerification (spec ข้อ 4.2 / 9.1)", () => {
     });
   });
 
+  it("ต้นทางไม่มีวันสภาอนุมัติ (Keystone): สำเร็จการศึกษา + ภาคที่จบ + รายละเอียดครบ → AUTO", () => {
+    expect(decideVerification([keystoneGraduate], keystone)).toEqual({
+      outcome: "AUTO_APPROVE",
+      studentId: "s1",
+    });
+    // กฎเดิมยังบังคับวันที่ครบ เมื่อต้นทางส่งวันสภาอนุมัติแล้ว
+    expect(decideVerification([keystoneGraduate], on)).toMatchObject({
+      reason: "INCOMPLETE_RECORD",
+    });
+  });
+
+  it("ต้นทางไม่มีวันสภาอนุมัติ: ไม่มีภาคที่จบหรือยังดึงรายละเอียดไม่ครบ → PENDING (INCOMPLETE_RECORD)", () => {
+    expect(
+      decideVerification([{ ...keystoneGraduate, graduationTerm: null }], keystone),
+    ).toMatchObject({ reason: "INCOMPLETE_RECORD" });
+    expect(
+      decideVerification([{ ...keystoneGraduate, detailSyncedAt: null }], keystone),
+    ).toMatchObject({ reason: "INCOMPLETE_RECORD" });
+  });
+
   it("ปิด auto-approve ในตั้งค่าระบบ → PENDING (AUTO_APPROVE_DISABLED)", () => {
-    expect(decideVerification([graduated], { autoApproveEnabled: false })).toMatchObject({
+    expect(decideVerification([graduated], { ...on, autoApproveEnabled: false })).toMatchObject({
       outcome: "REVIEW",
       reason: "AUTO_APPROVE_DISABLED",
       studentId: "s1",

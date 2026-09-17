@@ -17,8 +17,30 @@ export type MatchCandidate = {
   status: "GRADUATED" | "STUDYING" | "WITHDRAWN" | "REVOKED";
   graduationDate: Date | null;
   councilApprovalDate: Date | null;
+  graduationTerm: string | null;
+  // null = ยังดึงรายละเอียด (ชื่อไทย/GPAX) จากต้นทางไม่ครบ
+  detailSyncedAt: Date | null;
   requiresManualReview: boolean;
 };
+
+export type DecisionOptions = {
+  autoApproveEnabled: boolean;
+  // ต้นทางส่งวันสภาอนุมัติปริญญา (RegistryClient.capabilities.councilApprovalDate)
+  // true = กฎเดิมตาม spec ข้อ 4.2 · false (Keystone ปัจจุบัน) = ใช้ภาคที่สำเร็จแทนวันที่ และต้องมีรายละเอียดครบ
+  requireCouncilApproval: boolean;
+};
+
+export function hasCompleteRecord(
+  candidate: MatchCandidate,
+  { requireCouncilApproval }: Pick<DecisionOptions, "requireCouncilApproval">,
+): boolean {
+  if (requireCouncilApproval) {
+    return Boolean(candidate.graduationDate && candidate.councilApprovalDate);
+  }
+  return Boolean(
+    (candidate.graduationDate || candidate.graduationTerm) && candidate.detailSyncedAt,
+  );
+}
 
 export type VerificationDecision =
   | { outcome: "AUTO_APPROVE"; studentId: string }
@@ -27,7 +49,7 @@ export type VerificationDecision =
 
 export function decideVerification(
   candidates: readonly MatchCandidate[],
-  { autoApproveEnabled }: { autoApproveEnabled: boolean },
+  options: DecisionOptions,
 ): VerificationDecision {
   // ข้อ 1 (exact match) รับประกันโดยการค้นด้วย HMAC ของคีย์ — ฟังก์ชันนี้ได้เฉพาะรายการที่ตรงทุกตัวอักษร
   const [only, ...rest] = candidates;
@@ -40,8 +62,8 @@ export function decideVerification(
   // ข้อ 4 ก่อนข้อ 3 — ระเบียนที่ถูกตั้งธง (เพิกถอน/ข้อพิพาท/ข้อมูลเก่า) ต้องแสดงเหตุผลนี้ให้เจ้าหน้าที่เห็นก่อน
   if (only.requiresManualReview) return review("MANUAL_FLAG");
   if (only.status !== "GRADUATED") return review("NOT_GRADUATED");
-  if (!only.graduationDate || !only.councilApprovalDate) return review("INCOMPLETE_RECORD");
-  if (!autoApproveEnabled) return review("AUTO_APPROVE_DISABLED");
+  if (!hasCompleteRecord(only, options)) return review("INCOMPLETE_RECORD");
+  if (!options.autoApproveEnabled) return review("AUTO_APPROVE_DISABLED");
 
   return { outcome: "AUTO_APPROVE", studentId: only.id };
 }

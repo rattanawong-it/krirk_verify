@@ -14,7 +14,12 @@ import { STAFF_ROLES } from "@/lib/auth/rbac";
 import { getStudentDetail } from "@/lib/services/student.service";
 import { getRequestContext } from "@/lib/utils/request-context";
 import { cn } from "@/lib/utils";
-import { degreeLabel, fullNameEn, fullNameTh } from "@/lib/verification/display";
+import {
+  degreeLabel,
+  fullNameEn,
+  fullNameTh,
+  graduationTermLabel,
+} from "@/lib/verification/display";
 
 // F-REG-07 — รายละเอียดระเบียนผู้สำเร็จการศึกษา + ดึงข้อมูลรายคน (F-DATA-09)
 
@@ -33,8 +38,15 @@ type Row = { label: string; value: ReactNode; mono?: boolean };
 function InfoGrid({ rows }: { rows: Row[] }) {
   return (
     <dl className="grid gap-px overflow-hidden rounded-[13px] border bg-border sm:grid-cols-2">
-      {rows.map((row) => (
-        <div key={row.label} className="bg-card px-3.5 py-3">
+      {rows.map((row, index) => (
+        <div
+          key={row.label}
+          // จำนวนช่องคี่ → ช่องสุดท้ายเต็มแถว ไม่เหลือช่องว่าง
+          className={cn(
+            "bg-card px-3.5 py-3",
+            rows.length % 2 === 1 && index === rows.length - 1 && "sm:col-span-2",
+          )}
+        >
           <dt className="mb-0.5 text-[11px] text-muted-foreground">{row.label}</dt>
           <dd className={cn("text-[13.5px] font-semibold break-words", row.mono && "font-mono")}>
             {row.value}
@@ -104,10 +116,18 @@ export default async function StudentDetailPage({
       label: tv("result.faculty"),
       value: currentLocale === "en" ? (student.facultyEn ?? student.facultyTh) : student.facultyTh,
     },
-    { label: tv("result.graduationDate"), value: dateLong(student.graduationDate) },
+    student.graduationDate || !student.graduationTerm
+      ? { label: tv("result.graduationDate"), value: dateLong(student.graduationDate) }
+      : {
+          label: tv("result.graduationTerm"),
+          value: graduationTermLabel(student.graduationTerm, currentLocale) ?? "—",
+        },
     { label: tv("result.councilApprovalDate"), value: dateLong(student.councilApprovalDate) },
     { label: tv("result.gpa"), value: student.gpa ? student.gpa.toFixed(2) : "—", mono: true },
     { label: tv("result.honors"), value: student.honors ? tv(`honors.${student.honors}`) : "—" },
+    ...(student.registryStatus
+      ? [{ label: tv("result.registryStatus"), value: student.registryStatus }]
+      : []),
   ];
 
   return (

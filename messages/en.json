@@ -38,7 +38,7 @@
     "email": "Invalid email address",
     "citizenId": "Citizen ID fails the checksum",
     "citizenIdValid": "Checksum valid",
-    "studentCode": "Student code must be 10 digits",
+    "studentCode": "Student code must be 8–12 digits",
     "taxId": "Tax ID must be 13 digits",
     "phone": "Invalid phone number",
     "passwordMismatch": "Passwords do not match",
@@ -152,7 +152,7 @@
       "subtitle": "Confirm your identity with the student code and citizen ID that match the registry records.",
       "verifyNote": "We check that the student code and citizen ID match before creating the account. If they do not match, call the registrar on 02-970-5820.",
       "studentCode": "Student code",
-      "studentCodeHint": "10 digits as printed on your student card",
+      "studentCodeHint": "8–12 digits as printed on your student card",
       "citizenId": "Citizen ID",
       "email": "Email",
       "emailHint": "Used for sign-in and notifications",
@@ -437,6 +437,8 @@
       "status": "Status",
       "graduationDate": "Graduation date",
       "councilApprovalDate": "University council approval",
+      "graduationTerm": "Graduation term",
+      "registryStatus": "Registry status",
       "gpa": "GPA",
       "honors": "Honours",
       "none": "—"
@@ -543,8 +545,8 @@
         "sub": "Check the latest status; refresh the record from the registry before deciding."
       },
       "INCOMPLETE_RECORD": {
-        "title": "Graduation or council approval date is missing",
-        "sub": "Confirm against registry documents before approving."
+        "title": "Graduation details are incomplete",
+        "sub": "The graduation date or term, council approval date, or Thai degree name is missing. Confirm against registry documents before approving."
       },
       "AUTO_APPROVE_DISABLED": {
         "title": "Auto-approve is switched off",
@@ -601,6 +603,7 @@
       "faculty": "Faculty",
       "graduated": "Graduated",
       "council": "Council approval",
+      "graduatedTerm": "Graduation term",
       "gpa": "GPA",
       "honors": "Honours"
     },

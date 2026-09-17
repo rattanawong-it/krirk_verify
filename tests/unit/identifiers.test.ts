@@ -43,8 +43,11 @@ describe("formatCitizenId / isValidStudentCode", () => {
     expect(formatCitizenId("11017")).toBe("1-1017");
   });
 
-  it("รหัสนักศึกษาต้องเป็นตัวเลข 10 หลัก", () => {
+  it("รหัสนักศึกษาที่ผู้ใช้กรอกเป็นตัวเลข 8–12 หลัก (รูปแบบ Keystone)", () => {
     expect(isValidStudentCode("6012345678")).toBe(true);
-    expect(isValidStudentCode("601234567")).toBe(false);
+    expect(isValidStudentCode("64010001")).toBe(true);
+    expect(isValidStudentCode("641110103001")).toBe(true);
+    expect(isValidStudentCode("6401000")).toBe(false);
+    expect(isValidStudentCode("6411101030011")).toBe(false);
   });
 });

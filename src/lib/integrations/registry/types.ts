@@ -48,6 +48,29 @@ export const registryStudentSchema = z
 
 export type RegistryStudent = z.infer<typeof registryStudentSchema>;
 
+// ระเบียนที่ client ทุกตัวส่งให้ sync — สัญญา HTTP เดิม (RegistryStudent) เป็นกรณีเฉพาะที่ข้อมูลครบ
+// Keystone ไม่มีเวลาแก้ไขล่าสุดและวันสำเร็จการศึกษา จึงมีฟิลด์เสริมด้านล่าง
+export type SyncStudent = Omit<RegistryStudent, "updatedAt" | "studentCode"> & {
+  studentCode: string;
+  updatedAt: string | null;
+  graduationTerm?: string | null;
+  registryStatus?: string | null;
+  sourceLevel?: number | null;
+  sourceBatch?: number | null;
+  // false = ยังขาดข้อมูลรายละเอียด (ชื่อไทย/GPAX) ต้องเรียก enrichStudent ก่อนอนุมัติอัตโนมัติได้
+  detailComplete?: boolean;
+};
+
+// ตำแหน่งของระเบียนในต้นทาง — Keystone ค้นรายคนด้วยรหัสอย่างเดียวไม่ได้
+export type StudentLocator = { sourceLevel: number | null; sourceBatch: number | null };
+
+export type RegistryCapabilities = {
+  // ต้นทางส่งวันสภาอนุมัติปริญญา → กฎ auto-approve บังคับวันสำเร็จการศึกษา + วันสภาอนุมัติ (spec ข้อ 4.2)
+  councilApprovalDate: boolean;
+  // รองรับ updatedSince (sync เฉพาะที่เปลี่ยน)
+  incrementalSync: boolean;
+};
+
 const pageEnvelopeSchema = z.object({
   items: z.array(z.unknown()),
   page: z.number().int().min(1),
@@ -59,7 +82,7 @@ const pageEnvelopeSchema = z.object({
 export type InvalidRegistryRecord = { studentCode: string | null; issues: string[] };
 
 export type RegistryStudentPage = {
-  students: RegistryStudent[];
+  students: SyncStudent[];
   // ระเบียนที่รูปแบบผิด — ข้ามไปทีละรายการ ไม่ทำให้ทั้งหน้าล้ม
   invalid: InvalidRegistryRecord[];
   page: number;
@@ -75,11 +98,14 @@ export type ListStudentsParams = {
 };
 
 export interface RegistryClient {
-  readonly name: "MockRegistryClient" | "HttpRegistryClient";
+  readonly name: "MockRegistryClient" | "HttpRegistryClient" | "KeystoneRegistryClient";
   readonly endpoint: string;
+  readonly capabilities: RegistryCapabilities;
   listStudents(params: ListStudentsParams): Promise<RegistryStudentPage>;
   // null = ไม่พบระเบียนในระบบทะเบียน
-  getStudent(studentCode: string): Promise<RegistryStudent | null>;
+  getStudent(studentCode: string, locator?: StudentLocator): Promise<SyncStudent | null>;
+  // เติมข้อมูลรายละเอียดที่รายการแบบชุดไม่มี (Keystone: ชื่อไทย + GPAX) — client ที่ข้อมูลครบไม่ต้องมี
+  enrichStudent?(student: SyncStudent): Promise<SyncStudent>;
   // throw RegistryError เมื่อเชื่อมต่อไม่ได้
   ping(): Promise<void>;
 }

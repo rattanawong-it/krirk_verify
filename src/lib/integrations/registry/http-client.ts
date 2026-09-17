@@ -1,4 +1,4 @@
-import { RegistryError, type RegistryErrorCode } from "./errors";
+import { defaultSleep, requestJson } from "./http-request";
 import {
   type ListStudentsParams,
   type RegistryClient,
@@ -8,8 +8,8 @@ import {
   parseStudentPage,
 } from "./types";
 
-// F-DATA-05: client ของ API ระบบทะเบียนจริง — timeout + retry แบบ exponential backoff + แปลง error เป็นรหัสกลาง
-// path และรูปแบบ response ยึดตาม Mock API (/api/mock/registry) จนกว่าจะได้ spec จริง
+// F-DATA-05: client ของ API ระบบทะเบียนตามสัญญาที่เราเสนอ (docs/registry-api-spec.md)
+// path และรูปแบบ response ยึดตาม Mock API (/api/mock/registry) · ระบบจริงของมหาวิทยาลัยใช้ keystone-client.ts
 
 export type HttpRegistryClientOptions = {
   baseUrl: string;
@@ -21,17 +21,9 @@ export type HttpRegistryClientOptions = {
   sleep?: (ms: number) => Promise<void>;
 };
 
-const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
-
-function codeForStatus(status: number): RegistryErrorCode {
-  if (status === 401 || status === 403) return "UNAUTHORIZED";
-  if (status === 429) return "RATE_LIMITED";
-  if (status >= 500) return "SERVER_ERROR";
-  return "BAD_RESPONSE";
-}
-
 export class HttpRegistryClient implements RegistryClient {
   readonly name = "HttpRegistryClient" as const;
+  readonly capabilities = { councilApprovalDate: true, incrementalSync: true };
   readonly endpoint: string;
   private readonly apiKey?: string;
   private readonly timeoutMs: number;
@@ -75,50 +67,15 @@ export class HttpRegistryClient implements RegistryClient {
     const headers: Record<string, string> = { Accept: "application/json" };
     if (this.apiKey) headers.Authorization = `Bearer ${this.apiKey}`;
 
-    for (let attempt = 1; ; attempt++) {
-      let error: RegistryError;
-      try {
-        const response = await this.fetchImpl(`${this.endpoint}${path}`, {
-          headers,
-          signal: AbortSignal.timeout(this.timeoutMs),
-        });
-
-        if (response.ok) {
-          try {
-            return await response.json();
-          } catch (cause) {
-            throw new RegistryError("BAD_RESPONSE", "response ไม่ใช่ JSON", {
-              status: response.status,
-              attempts: attempt,
-              cause,
-            });
-          }
-        }
-        if (response.status === 404 && notFoundAsNull) return null;
-
-        error = new RegistryError(
-          codeForStatus(response.status),
-          `ระบบทะเบียนตอบกลับ HTTP ${response.status}`,
-          { status: response.status, attempts: attempt },
-        );
-      } catch (cause) {
-        if (cause instanceof RegistryError) throw cause;
-        // AbortSignal.timeout โยน DOMException — บาง runtime ไม่ได้สืบทอด Error จึงดูจาก name
-        const name = (cause as { name?: unknown } | null)?.name;
-        const isTimeout = name === "TimeoutError" || name === "AbortError";
-        error = isTimeout
-          ? new RegistryError("TIMEOUT", `ระบบทะเบียนไม่ตอบกลับภายใน ${this.timeoutMs} ms`, {
-              attempts: attempt,
-              cause,
-            })
-          : new RegistryError("NETWORK", "เชื่อมต่อระบบทะเบียนไม่สำเร็จ", {
-              attempts: attempt,
-              cause,
-            });
-      }
-
-      if (!error.retryable || attempt > this.maxRetries) throw error;
-      await this.sleep(this.retryDelayMs * 2 ** (attempt - 1));
-    }
+    const { status, body } = await requestJson(`${this.endpoint}${path}`, {
+      headers,
+      timeoutMs: this.timeoutMs,
+      maxRetries: this.maxRetries,
+      retryDelayMs: this.retryDelayMs,
+      fetch: this.fetchImpl,
+      sleep: this.sleep,
+      accept: (code) => notFoundAsNull && code === 404,
+    });
+    return status === 404 ? null : body;
   }
 }

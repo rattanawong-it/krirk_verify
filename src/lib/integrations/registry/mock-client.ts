@@ -12,6 +12,7 @@ import type {
 
 export class MockRegistryClient implements RegistryClient {
   readonly name = "MockRegistryClient" as const;
+  readonly capabilities = { councilApprovalDate: true, incrementalSync: true };
   readonly endpoint = "/api/mock/registry";
   private readonly enabled: boolean;
   private readonly now: () => Date;

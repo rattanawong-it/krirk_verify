@@ -62,7 +62,7 @@ chmod 600 .env.prod
 - **`ENCRYPTION_KEY` และ `IDENTIFIER_PEPPER`** — จดเก็บไว้ในที่ปลอดภัยแยกจากเซิร์ฟเวอร์ (เช่น password manager ของหน่วยงาน) ทันที ถ้าหายจะอ่านเลขบัตรที่เข้ารหัสและค้นหาข้อมูลเดิมไม่ได้อีก และห้ามเปลี่ยนหลังเปิดใช้งาน
 - **ห้ามตั้ง `AUTH_URL`** — Auth.js จะแทน origin ของคำขอด้วยค่านี้ ทำให้ rewrite ภาษาของ `proxy.ts` กลายเป็นคำขอออกไปนอก container และหน้าแรกตอบ 500 · ใช้ `AUTH_TRUST_HOST=true` ซึ่งอ่าน `X-Forwarded-*` จาก nginx แทน
 - **`POSTGRES_PASSWORD`** ใช้เฉพาะ a-z A-Z 0-9 (ถูกประกอบเป็น URL) — `openssl rand -hex 24`
-- **`MOCK_REGISTRY_ENABLED=false`** และ `REGISTRY_CLIENT=http` บน production · เครื่อง UAT ที่ยังไม่มี API จริงใช้ `REGISTRY_CLIENT=mock` + `MOCK_REGISTRY_ENABLED=true` ได้
+- **`MOCK_REGISTRY_ENABLED=false`** และ `REGISTRY_CLIENT=keystone` บน production (ดู [registry-keystone-gap.md](../registry-keystone-gap.md)) · เครื่อง UAT ที่ยังไม่มี API จริงใช้ `REGISTRY_CLIENT=mock` + `MOCK_REGISTRY_ENABLED=true` ได้
 - ชื่อไฟล์ต้องเป็น `.env.prod` — ไม่ใช้ `.env.production` เพราะ `next build` บนเครื่อง dev จะอ่านไฟล์ชื่อนั้นเอง
 
 ### 3.3 ใบรับรอง TLS
@@ -140,7 +140,7 @@ kv run --rm migrate tsx prisma/create-admin.ts --email admin@krirk.ac.th --name 
 | สำรองฐานข้อมูล | `scripts/backup-db.sh` | ทุกวัน 01:30 | ดู [backup-restore.md](backup-restore.md) |
 | Retention | `scripts/cron-run.sh retention` | ทุกวัน 01:45 | anonymise คำขอ + ลบ Audit Log ประวัติอีเมล และงานแบบชุดที่พ้นกำหนด (งานที่ไม่ได้ยืนยันเกิน 7 วัน) · ทำเสร็จก่อนตอบกลับ |
 | Sync เต็ม | `scripts/cron-run.sh sync-full` | ทุกวัน 02:00 | ตอบ 202 แล้วทำต่อเบื้องหลัง · ดูผลที่หน้าซิงก์ข้อมูล · ต้องตรงกับ `SYNC_CRON_SCHEDULE` |
-| Sync เฉพาะที่เปลี่ยน | `scripts/cron-run.sh sync-incremental` | ทุกชั่วโมงในเวลาทำการ (ไม่บังคับ) | เปิดเมื่อ API ทะเบียนรองรับ `updatedSince` |
+| Sync เฉพาะที่เปลี่ยน | `scripts/cron-run.sh sync-incremental` | ทุกชั่วโมงในเวลาทำการ (ไม่บังคับ) | เปิดเมื่อ API ทะเบียนรองรับ `updatedSince` · **Keystone ไม่รองรับ — ห้ามเปิด** (จะทำงานแบบเต็มชุดทุกชั่วโมง) |
 | ส่งอีเมลซ้ำ | `scripts/cron-run.sh email-retry` | ทุก 15 นาที | retry 4 รอบ (5/30/120/360 นาที) แล้วรอผู้ดูแลกดส่งซ้ำ · อีเมลที่ค้างสถานะรอส่งเกิน 30 นาทีถูกส่งซ้ำในรอบนี้ |
 | กู้คืนงานแบบชุด | `scripts/cron-run.sh batch-recovery` | ทุก 15 นาที | งานที่ค้าง "กำลังประมวลผล" เกิน 10 นาที (เช่น หลังรีสตาร์ต) ถูกทำต่อ · แถวที่ยื่นไปแล้วไม่ถูกยื่นซ้ำ |
 | สรุปคิวรายวัน | `scripts/cron-run.sh queue-digest` | 08:30 จันทร์–ศุกร์ | ส่งเมื่อเปิดในตั้งค่าระบบ และมีคำขอรอพิจารณา |

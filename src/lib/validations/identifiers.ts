@@ -25,6 +25,12 @@ export function formatCitizenId(value: string): string {
   return parts.filter(Boolean).join("-");
 }
 
+// รหัสที่ผู้ใช้กรอก (ลงทะเบียนศิษย์เก่า) — Keystone ใช้ตัวเลข 8–12 หลัก (ข้อมูลจำลองเดิม 10 หลัก)
 export function isValidStudentCode(value: string): boolean {
-  return /^\d{10}$/.test(value.trim());
+  return /^\d{8,12}$/.test(value.trim());
+}
+
+// รหัสที่ระบบทะเบียนส่งมาได้ (มีตัวอักษรปนในข้อมูลเก่าไม่กี่ระเบียน) — ใช้กับ URL/การกระทำของเจ้าหน้าที่
+export function isRegistryStudentCode(value: string): boolean {
+  return /^[A-Za-z0-9-]{1,30}$/.test(value);
 }

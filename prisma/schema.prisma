@@ -222,8 +222,19 @@ model Student {
   status               StudentStatus
   graduationDate       DateTime?     @db.Date
   councilApprovalDate  DateTime?     @db.Date
+  // ภาคการศึกษาที่สำเร็จ "ภาค/ปี ค.ศ." เช่น "2/2023" — ใช้แทนวันสำเร็จการศึกษาเมื่อต้นทางไม่มีวันที่ (Keystone)
+  graduationTerm       String?
+  // สถานภาพตามข้อความของระบบทะเบียน (เช่น "พ้นสภาพกรณีขาดการติดต่อ") — แสดงฝั่งเจ้าหน้าที่
+  registryStatus       String?
   requiresManualReview Boolean       @default(false)
   sourceUpdatedAt      DateTime?
+  // ตำแหน่งของระเบียนในต้นทาง (Keystone: AcademicLevelId + รุ่น) — ใช้ดึงข้อมูลรายคนซ้ำ
+  sourceLevel          Int?
+  sourceBatch          Int?
+  // HMAC ของข้อมูลต้นทางที่แปลงแล้ว — ต้นทางไม่มีเวลาแก้ไขล่าสุด จึงเทียบเนื้อหาเพื่อข้ามระเบียนที่ไม่เปลี่ยน
+  sourceHash           String?
+  // เวลาที่ได้ข้อมูลรายละเอียดครบ (ชื่อไทย + GPAX) — null = ยังไม่ครบ ห้ามอนุมัติอัตโนมัติ
+  detailSyncedAt       DateTime?
   syncedAt             DateTime      @default(now())
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
@@ -252,6 +263,8 @@ model SyncJob {
   errorCode       String?
   errorMessage    String?
   startedAt       DateTime   @default(now())
+  // ขยับทุกครั้งที่บันทึกความคืบหน้า — ตรวจงานค้างจากเวลานี้ (sync ครั้งแรกของ Keystone อาจนานเกิน 1 ชั่วโมง)
+  updatedAt       DateTime   @default(now()) @updatedAt
   finishedAt      DateTime?
 
   @@index([startedAt])
@@ -340,6 +353,7 @@ model VerificationResult {
   status              StudentStatus
   graduationDate      DateTime?           @db.Date
   councilApprovalDate DateTime?           @db.Date
+  graduationTerm      String?
   sourceUpdatedAt     DateTime?
   createdAt           DateTime            @default(now())
 

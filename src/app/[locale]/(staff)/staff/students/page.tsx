@@ -15,7 +15,12 @@ import {
 } from "@/lib/services/student.service";
 import { getRequestContext } from "@/lib/utils/request-context";
 import { studentQuerySchema } from "@/lib/validations/review";
-import { degreeLabel, displayName, fullNameEn } from "@/lib/verification/display";
+import {
+  degreeLabel,
+  displayName,
+  fullNameEn,
+  graduationTermLabel,
+} from "@/lib/verification/display";
 
 // F-REG-07 — ค้นหาข้อมูลผู้สำเร็จการศึกษา (ตาม project-ui/3 · ผู้สำเร็จการศึกษา)
 
@@ -59,6 +64,10 @@ export default async function StudentsPage({
     value
       ? format.dateTime(value, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })
       : "—";
+  const graduated = (row: { graduationDate: Date | null; graduationTerm: string | null }) =>
+    row.graduationDate || !row.graduationTerm
+      ? date(row.graduationDate)
+      : (graduationTermLabel(row.graduationTerm, currentLocale) ?? "—");
   const fieldClass =
     "h-11 rounded-[9px] border bg-card px-2.5 text-[13px] outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 lg:h-9";
 
@@ -231,9 +240,7 @@ export default async function StudentsPage({
                             label={tv(`studentStatuses.${row.status}`)}
                           />
                         </td>
-                        <td className="px-3 py-3 text-[11.5px] text-text-2">
-                          {date(row.graduationDate)}
-                        </td>
+                        <td className="px-3 py-3 text-[11.5px] text-text-2">{graduated(row)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -261,7 +268,7 @@ export default async function StudentsPage({
                         {displayName(row, currentLocale)}
                       </span>
                       <span className="mt-0.5 block text-[11.5px] text-muted-foreground">
-                        {degreeLabel(row, currentLocale)} · {date(row.graduationDate)}
+                        {degreeLabel(row, currentLocale)} · {graduated(row)}
                       </span>
                     </Link>
                   </li>

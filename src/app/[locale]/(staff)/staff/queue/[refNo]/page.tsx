@@ -23,7 +23,13 @@ import { type ReviewDetail, getReviewDetail } from "@/lib/services/review.servic
 import { findStudentsForMatching } from "@/lib/services/student.service";
 import { getRequestContext } from "@/lib/utils/request-context";
 import { cn } from "@/lib/utils";
-import { degreeLabel, displayName, fullNameEn, fullNameTh } from "@/lib/verification/display";
+import {
+  degreeLabel,
+  displayName,
+  fullNameEn,
+  fullNameTh,
+  graduationTermLabel,
+} from "@/lib/verification/display";
 import { REJECT_REASONS, isRejectReason } from "@/lib/verification/reject-reasons";
 import { slaLevel, waitParts } from "@/lib/verification/sla";
 import { getSettings } from "@/lib/services/settings.service";
@@ -147,10 +153,18 @@ export default async function ReviewPage({
         label: t("field.faculty"),
         value: currentLocale === "en" ? (s.facultyEn ?? s.facultyTh) : s.facultyTh,
       },
-      { label: t("field.graduated"), value: dateLong(s.graduationDate) },
+      s.graduationDate || !s.graduationTerm
+        ? { label: t("field.graduated"), value: dateLong(s.graduationDate) }
+        : {
+            label: t("field.graduatedTerm"),
+            value: graduationTermLabel(s.graduationTerm, currentLocale) ?? "—",
+          },
       { label: t("field.council"), value: dateLong(s.councilApprovalDate) },
       { label: t("field.gpa"), value: s.gpa ? s.gpa.toFixed(2) : "—", mono: true },
       { label: t("field.honors"), value: s.honors ? tv(`honors.${s.honors}`) : "—" },
+      ...(s.registryStatus
+        ? [{ label: tv("result.registryStatus"), value: s.registryStatus }]
+        : []),
     ],
     sourceAt: s.sourceUpdatedAt ? t("sourceUpdated", { time: dateTime(s.sourceUpdatedAt) }) : "",
   });

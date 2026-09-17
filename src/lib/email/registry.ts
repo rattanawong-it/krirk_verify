@@ -78,6 +78,7 @@ export const EMAIL_TEMPLATES = {
       fullName: text,
       degree: text,
       graduationDate: date.nullable(),
+      graduationTerm: z.string().nullish(),
       decision: z.enum(["AUTO", "MANUAL"]),
       expiresDays: z.number().int().min(1).max(3650),
     }),

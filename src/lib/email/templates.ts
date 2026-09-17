@@ -2,6 +2,7 @@ import { createTranslator } from "next-intl";
 import en from "../../../messages/en.json";
 import th from "../../../messages/th.json";
 import type { AppLocale } from "@/i18n/routing";
+import { graduationTermLabel } from "@/lib/verification/display";
 import type { MailMessage } from "./mailer";
 
 // เทมเพลตอีเมลสองภาษา ตาม project-ui/5 Emails & Policy — ใช้ table + inline style เพื่อรองรับ mail client
@@ -308,24 +309,22 @@ export function resultApprovedTemplate(input: {
   fullName: string;
   degree: string;
   graduationDate: Date | null;
+  graduationTerm?: string | null;
   decision: "AUTO" | "MANUAL";
   url: string;
   expiresDays: number;
 }): Rendered {
   const t = translator(input.locale);
+  // Keystone ไม่มีวันสำเร็จการศึกษา → ใช้ภาคที่สำเร็จ
+  const graduated = input.graduationDate
+    ? formatDate(input.graduationDate, input.locale)
+    : graduationTermLabel(input.graduationTerm ?? null, input.locale);
   const facts = [
     { label: t("facts.refNo"), value: input.refNo, mono: true },
     { label: t("facts.name"), value: input.fullName },
     { label: t("facts.degree"), value: input.degree },
-    ...(input.graduationDate
-      ? [
-          {
-            label: t("facts.status"),
-            value: t("approved.statusGraduated", {
-              date: formatDate(input.graduationDate, input.locale),
-            }),
-          },
-        ]
+    ...(graduated
+      ? [{ label: t("facts.status"), value: t("approved.statusGraduated", { date: graduated }) }]
       : []),
     { label: t("facts.decision"), value: t(`decisions.${input.decision}`) },
   ];

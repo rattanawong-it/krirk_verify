@@ -1,4 +1,5 @@
 import "server-only";
+import { isRegistryStudentCode } from "@/lib/validations/identifiers";
 import type { Prisma } from "@/generated/prisma/client";
 import { decrypt, hashIdentifier, maskCitizenId, maskPassportNo } from "@/lib/crypto";
 import { prisma } from "@/lib/db/prisma";
@@ -82,6 +83,7 @@ export async function searchStudents(query: StudentQuery, staff: Staff, context:
         facultyEn: true,
         status: true,
         graduationDate: true,
+        graduationTerm: true,
         requiresManualReview: true,
       },
     }),
@@ -138,7 +140,7 @@ export async function getRegistrySummary() {
 }
 
 export async function getStudentDetail(studentCode: string, staff: Staff, context: RequestContext) {
-  if (!/^\d{10}$/.test(studentCode)) return null;
+  if (!isRegistryStudentCode(studentCode)) return null;
   const student = await prisma.student.findUnique({ where: { studentCode } });
   if (!student) return null;
 

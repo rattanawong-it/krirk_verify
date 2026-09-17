@@ -7,7 +7,7 @@ import { requireRole } from "@/lib/auth/guards";
 import { STAFF_ROLES } from "@/lib/auth/rbac";
 import * as syncService from "@/lib/services/sync.service";
 import { getRequestContext } from "@/lib/utils/request-context";
-import { isValidStudentCode } from "@/lib/validations/identifiers";
+import { isRegistryStudentCode } from "@/lib/validations/identifiers";
 
 // F-DATA-08: เจ้าหน้าที่สั่ง full sync — ตอบกลับทันที แล้วทำงานต่อหลังส่ง response
 export async function runFullSyncAction(): Promise<ActionState> {
@@ -26,7 +26,7 @@ export async function runFullSyncAction(): Promise<ActionState> {
 // F-DATA-09: ดึงข้อมูลรายคน — ปุ่มจะวางในหน้าพิจารณาคำขอ (F-REG-02, Phase 4)
 export async function refreshStudentAction(studentCode: unknown): Promise<ActionState> {
   const user = await requireRole(STAFF_ROLES);
-  if (typeof studentCode !== "string" || !isValidStudentCode(studentCode)) {
+  if (typeof studentCode !== "string" || !isRegistryStudentCode(studentCode.trim())) {
     return { ok: false, error: "sync.errors.invalidStudentCode" };
   }
 

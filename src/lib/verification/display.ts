@@ -30,6 +30,15 @@ export function displayName(n: NameFields, locale: string): string {
   return locale === "en" ? (fullNameEn(n) ?? fullNameTh(n)) : fullNameTh(n);
 }
 
+// "2/2023" (ภาค/ปี ค.ศ. จาก Keystone) → "ภาคการศึกษาที่ 2/2566" · "Semester 2/2023"
+export function graduationTermLabel(term: string | null, locale: string): string | null {
+  const match = term?.match(/^([1-3])\/(\d{4})$/);
+  if (!match) return null;
+  return locale === "en"
+    ? `Semester ${match[1]}/${match[2]}`
+    : `ภาคการศึกษาที่ ${match[1]}/${Number(match[2]) + 543}`;
+}
+
 export function degreeLabel(d: DegreeFields, locale: string): string {
   const en = locale === "en" && d.degreeNameEn;
   const degree = en ? d.degreeNameEn! : d.degreeNameTh;

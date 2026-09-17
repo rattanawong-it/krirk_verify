@@ -298,6 +298,7 @@ export async function approveRequest(
       fullName: displayName(student, locale),
       degree: degreeLabel(student, locale),
       graduationDate: student.graduationDate,
+      graduationTerm: student.graduationTerm,
       decision: "MANUAL",
       url: appUrl(`/verify/result/${refNo}?t=${token.token}`, locale),
       expiresDays: linkExpiresDays,

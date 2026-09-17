@@ -4,7 +4,12 @@ import type { ReactNode } from "react";
 import type { VerificationResult } from "@/generated/prisma/client";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-import { degreeLabel, fullNameEn, fullNameTh } from "@/lib/verification/display";
+import {
+  degreeLabel,
+  fullNameEn,
+  fullNameTh,
+  graduationTermLabel,
+} from "@/lib/verification/display";
 
 // F-VER-07 — ผลตรวจสอบครบตาม R-07 + ตราสัญลักษณ์ + เลขอ้างอิง + วันที่ตรวจสอบ
 // ใช้ร่วมกันระหว่างหน้ารายละเอียดคำขอ (portal) และ permalink สาธารณะ
@@ -53,7 +58,13 @@ export async function ResultCard({
       value: locale === "en" ? (result.facultyEn ?? result.facultyTh) : result.facultyTh,
     },
     { label: t("result.status"), value: t(`studentStatuses.${result.status}`) },
-    { label: t("result.graduationDate"), value: date(result.graduationDate) },
+    // Keystone ไม่มีวันสำเร็จการศึกษา → แสดงภาคที่สำเร็จแทน
+    result.graduationDate || !result.graduationTerm
+      ? { label: t("result.graduationDate"), value: date(result.graduationDate) }
+      : {
+          label: t("result.graduationTerm"),
+          value: graduationTermLabel(result.graduationTerm, locale) ?? t("result.none"),
+        },
     { label: t("result.councilApprovalDate"), value: date(result.councilApprovalDate) },
     {
       label: t("result.gpa"),

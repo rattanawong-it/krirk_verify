@@ -11,6 +11,7 @@ import {
   maskPassportNo,
 } from "@/lib/crypto";
 import { prisma } from "@/lib/db/prisma";
+import { getRegistryClient } from "@/lib/integrations/registry";
 import { sendTemplateMail } from "@/lib/email/mailer";
 import { appUrl } from "@/lib/utils/app-url";
 import {
@@ -80,6 +81,7 @@ export function toResultSnapshot(
     status: student.status,
     graduationDate: student.graduationDate,
     councilApprovalDate: student.councilApprovalDate,
+    graduationTerm: student.graduationTerm,
     sourceUpdatedAt: student.sourceUpdatedAt,
   };
 }
@@ -173,6 +175,7 @@ export async function submitRequest(
   const settings = await getSettings();
   const decision = decideVerification(candidates, {
     autoApproveEnabled: settings.autoApproveEnabled,
+    requireCouncilApproval: getRegistryClient().capabilities.councilApprovalDate,
   });
   const now = new Date();
   const approvedStudent =
@@ -249,6 +252,7 @@ export async function submitRequest(
           fullName: displayName(approvedStudent, locale),
           degree: degreeLabel(approvedStudent, locale),
           graduationDate: approvedStudent.graduationDate,
+          graduationTerm: approvedStudent.graduationTerm,
           decision: "AUTO",
           url: appUrl(`/verify/result/${request.refNo}?t=${token.token}`, locale),
           expiresDays: settings.linkExpiresDays,

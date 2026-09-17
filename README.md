@@ -140,15 +140,15 @@ sudo cp docker/cron/krirk-verify.cron /etc/cron.d/krirk-verify    # แก้ AP
 
 ### ระบบทะเบียนและการ sync
 
-| ตัวแปร                  |    จำเป็น    | ค่าเริ่มต้น | คำอธิบาย                                                                             |
-| ----------------------- | :----------: | ----------- | ------------------------------------------------------------------------------------ |
-| `REGISTRY_CLIENT`       |              | `mock`      | `http` = API จริง · `mock` = ข้อมูลสมมติในแอป                                        |
-| `REGISTRY_API_URL`      | เมื่อ `http` | —           | base URL ของ API ทะเบียน                                                             |
-| `REGISTRY_API_KEY`      |              | —           | ส่งเป็น `Authorization: Bearer ...`                                                  |
-| `REGISTRY_TIMEOUT_MS`   |              | `10000`     | timeout ต่อคำขอ (retry 3 ครั้งแบบ exponential backoff)                               |
-| `MOCK_REGISTRY_ENABLED` |              | —           | `true` เปิด route `/api/mock/registry` และ mock client · production ต้องเป็น `false` |
-| `SYNC_PAGE_SIZE`        |              | `500`       | จำนวนระเบียนต่อหน้าระหว่าง sync                                                      |
-| `SYNC_CRON_SCHEDULE`    |              | `0 2 * * *` | แสดงบนหน้าซิงก์เท่านั้น — เวลาจริงตั้งที่ system cron                                |
+| ตัวแปร                  |         จำเป็น          | ค่าเริ่มต้น                   | คำอธิบาย                                                                                                                      |
+| ----------------------- | :---------------------: | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `REGISTRY_CLIENT`       |                         | `mock`                        | `keystone` = Keystone Open API ของมหาวิทยาลัย · `http` = API ตามสัญญา `docs/registry-api-spec.md` · `mock` = ข้อมูลสมมติในแอป |
+| `REGISTRY_API_URL`      | เมื่อ `http`/`keystone` | —                             | base URL ของ API ทะเบียน                                                                                                      |
+| `REGISTRY_API_KEY`      |                         | —                             | `http` ส่งเป็น `Authorization: Bearer ...` · `keystone` ส่งเป็น header `x-api-key`                                            |
+| `REGISTRY_TIMEOUT_MS`   |                         | `10000` (`keystone`: `60000`) | timeout ต่อคำขอ (retry 3 ครั้งแบบ exponential backoff)                                                                        |
+| `MOCK_REGISTRY_ENABLED` |                         | —                             | `true` เปิด route `/api/mock/registry` และ mock client · production ต้องเป็น `false`                                          |
+| `SYNC_PAGE_SIZE`        |                         | `500`                         | จำนวนระเบียนต่อหน้าระหว่าง sync                                                                                               |
+| `SYNC_CRON_SCHEDULE`    |                         | `0 2 * * *`                   | แสดงบนหน้าซิงก์เท่านั้น — เวลาจริงตั้งที่ system cron                                                                         |
 
 ### โควตาและการตรวจสอบ
 

@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { decrypt, hashIdentifier } from "@/lib/crypto";
 import { isValidCronSecret } from "@/lib/auth/cron-secret";
-import { hasSourceChanged, toStudentRow } from "@/lib/integrations/registry/mapper";
+import {
+  hasSourceChanged,
+  sourceFingerprint,
+  toStudentRow,
+} from "@/lib/integrations/registry/mapper";
 import { MOCK_TEST_CASES, generateMockStudents } from "@/lib/integrations/registry/mock-data";
 
 const students = generateMockStudents(new Date("2026-09-15T00:00:00.000Z"));
@@ -37,16 +41,26 @@ describe("toStudentRow", () => {
 });
 
 describe("hasSourceChanged", () => {
-  const stored = new Date("2026-06-01T02:00:00.000Z");
+  const dto = byCode("6012345678");
 
-  it("ระเบียนใหม่หรือเวลาต้นทางใหม่กว่า = เปลี่ยน", () => {
-    expect(hasSourceChanged(null, "2026-06-01T02:00:00.000Z")).toBe(true);
-    expect(hasSourceChanged(stored, "2026-06-01T02:00:01.000Z")).toBe(true);
+  it("ระเบียนใหม่หรือเนื้อหาเปลี่ยน = เปลี่ยน", () => {
+    expect(hasSourceChanged(null, sourceFingerprint(dto))).toBe(true);
+    expect(hasSourceChanged(sourceFingerprint(dto), sourceFingerprint({ ...dto, gpa: 3.5 }))).toBe(
+      true,
+    );
   });
 
-  it("เวลาเท่าเดิมหรือเก่ากว่า = ไม่เปลี่ยน", () => {
-    expect(hasSourceChanged(stored, "2026-06-01T02:00:00.000Z")).toBe(false);
-    expect(hasSourceChanged(stored, "2026-05-01T00:00:00.000Z")).toBe(false);
+  it("เนื้อหาเท่าเดิม = ไม่เปลี่ยน และ fingerprint ไม่มีเลขบัตร", () => {
+    const fingerprint = sourceFingerprint(dto);
+    expect(hasSourceChanged(fingerprint, sourceFingerprint({ ...dto }))).toBe(false);
+    expect(fingerprint).not.toContain(dto.citizenId);
+    expect(toStudentRow(dto).sourceHash).toBe(fingerprint);
+  });
+
+  it("client ตามสัญญาเดิมถือว่ารายละเอียดครบ", () => {
+    const syncedAt = new Date("2026-09-15T02:00:00.000Z");
+    expect(toStudentRow(dto, syncedAt).detailSyncedAt).toBe(syncedAt);
+    expect(toStudentRow({ ...dto, detailComplete: false }, syncedAt).detailSyncedAt).toBeNull();
   });
 });
 

@@ -8,8 +8,12 @@ import {
   getRegistryClient,
 } from "@/lib/integrations/registry";
 import { REGISTRY_ERROR_CODES } from "@/lib/integrations/registry/errors";
-import { hasSourceChanged, toStudentRow } from "@/lib/integrations/registry/mapper";
-import type { RegistryStudent } from "@/lib/integrations/registry/types";
+import {
+  hasSourceChanged,
+  sourceFingerprint,
+  toStudentRow,
+} from "@/lib/integrations/registry/mapper";
+import type { SyncStudent } from "@/lib/integrations/registry/types";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
 import { notifySyncFailed } from "./notification.service";
 
@@ -55,10 +59,11 @@ function describeError(error: unknown): { errorCode: SyncErrorCode; errorMessage
   return { errorCode: "INTERNAL", errorMessage: message.slice(0, 500) };
 }
 
-// งานที่โปรเซสตายกลางคัน (เช่น container รีสตาร์ต) จะถือ lock ค้างไว้ — ปลดให้เมื่อเกินเวลา
+// งานที่โปรเซสตายกลางคัน (เช่น container รีสตาร์ต) จะถือ lock ค้างไว้ — ปลดให้เมื่อไม่มีความคืบหน้าเกินเวลา
+// ดูจาก updatedAt ไม่ใช่ startedAt: sync ครั้งแรกของ Keystone ดึงรายละเอียดรายคนหลายพันครั้ง อาจนานเกิน 1 ชั่วโมง
 async function releaseStaleLock(now = new Date()) {
   await prisma.syncJob.updateMany({
-    where: { runLock: BULK_RUN_LOCK, startedAt: { lt: new Date(now.getTime() - STALE_AFTER_MS) } },
+    where: { runLock: BULK_RUN_LOCK, updatedAt: { lt: new Date(now.getTime() - STALE_AFTER_MS) } },
     data: {
       runLock: null,
       status: "FAILED",
@@ -111,35 +116,70 @@ async function lastSuccessfulBulkStart(excludeJobId: string): Promise<Date | und
   return last?.startedAt;
 }
 
-async function upsertChanged(students: RegistryStudent[], syncedAt: Date): Promise<number> {
+// เติมรายละเอียดที่รายการแบบชุดไม่มี (Keystone: ชื่อไทย + GPAX) เฉพาะผู้สำเร็จการศึกษา — ข้อมูลที่ใช้แสดงผลตรวจสอบวุฒิ
+// BAD_RESPONSE / ไม่พบ → เก็บข้อมูลพื้นฐานไว้ (detailSyncedAt = null ไม่อนุมัติอัตโนมัติ) แล้วลองใหม่รอบหน้า
+// timeout / เชื่อมต่อไม่ได้ → โยนต่อให้งานล้ม ไม่ยิงซ้ำอีกหลายพันครั้ง
+async function withDetail(client: RegistryClient, student: SyncStudent): Promise<SyncStudent> {
+  if (!client.enrichStudent || student.detailComplete !== false || student.status !== "GRADUATED") {
+    return student;
+  }
+  try {
+    return await client.enrichStudent(student);
+  } catch (error) {
+    if (error instanceof RegistryError && error.code === "BAD_RESPONSE") {
+      console.warn("[sync] ดึงรายละเอียดรายคนไม่สำเร็จ", student.studentCode, error.message);
+      return student;
+    }
+    throw error;
+  }
+}
+
+async function upsertChanged(
+  client: RegistryClient,
+  students: SyncStudent[],
+  syncedAt: Date,
+): Promise<number> {
   if (students.length === 0) return 0;
 
   const codes = students.map((s) => s.studentCode);
   const stored = await prisma.student.findMany({
     where: { studentCode: { in: codes } },
-    select: { studentCode: true, sourceUpdatedAt: true },
+    select: { studentCode: true, sourceHash: true, detailSyncedAt: true },
   });
-  const storedAt = new Map(stored.map((s) => [s.studentCode, s.sourceUpdatedAt]));
-  const changed = students.filter((s) =>
-    hasSourceChanged(storedAt.get(s.studentCode), s.updatedAt),
-  );
-  const changedCodes = new Set(changed.map((s) => s.studentCode));
+  const storedBy = new Map(stored.map((s) => [s.studentCode, s]));
+
+  const rows: ReturnType<typeof toStudentRow>[] = [];
+  const unchangedCodes: string[] = [];
+  for (const student of students) {
+    const previous = storedBy.get(student.studentCode);
+    const fingerprint = sourceFingerprint(student);
+    const changed = hasSourceChanged(previous?.sourceHash, fingerprint);
+    // ระเบียนเดิมที่ยังขาดรายละเอียด (รอบก่อนดึงไม่สำเร็จ) ลองใหม่แม้ข้อมูลพื้นฐานไม่เปลี่ยน
+    const missingDetail =
+      student.detailComplete === false &&
+      student.status === "GRADUATED" &&
+      !previous?.detailSyncedAt;
+    if (!changed && !missingDetail) {
+      unchangedCodes.push(student.studentCode);
+      continue;
+    }
+    rows.push(toStudentRow(await withDetail(client, student), syncedAt, fingerprint));
+  }
 
   await prisma.$transaction([
-    ...changed.map((s) => {
-      const row = toStudentRow(s, syncedAt);
-      return prisma.student.upsert({
-        where: { studentCode: s.studentCode },
+    ...rows.map((row) =>
+      prisma.student.upsert({
+        where: { studentCode: row.studentCode },
         create: row,
         update: row,
-      });
-    }),
+      }),
+    ),
     prisma.student.updateMany({
-      where: { studentCode: { in: codes.filter((code) => !changedCodes.has(code)) } },
+      where: { studentCode: { in: unchangedCodes } },
       data: { syncedAt },
     }),
   ]);
-  return changed.length;
+  return rows.length;
 }
 
 // ไม่ throw — ความล้มเหลวทั้งหมดถูกบันทึกลง SyncJob (ถูกเรียกใน after() จึงไม่มีใครรับ error)
@@ -152,7 +192,10 @@ export async function executeBulkSync(
   let updatedSince: Date | undefined;
 
   try {
-    if (job.type === "INCREMENTAL") updatedSince = await lastSuccessfulBulkStart(job.id);
+    // ต้นทางที่ไม่รองรับ updatedSince (Keystone) ทำงานแบบเต็มชุด — ระเบียนที่ไม่เปลี่ยนถูกข้ามด้วย fingerprint
+    if (job.type === "INCREMENTAL" && client.capabilities.incrementalSync) {
+      updatedSince = await lastSuccessfulBulkStart(job.id);
+    }
     const size = pageSize();
 
     for (let page = 1; page <= MAX_PAGES; page++) {
@@ -161,13 +204,14 @@ export async function executeBulkSync(
 
       counts.recordsFetched += received;
       counts.recordsInvalid += result.invalid.length;
-      counts.recordsUpserted += await upsertChanged(result.students, new Date());
+      counts.recordsUpserted += await upsertChanged(client, result.students, new Date());
       if (result.invalid.length > 0) {
         console.warn("[sync] ข้ามระเบียนรูปแบบผิด", job.id, result.invalid.slice(0, 20));
       }
 
       await prisma.syncJob.update({ where: { id: job.id }, data: counts });
-      if (!result.hasMore || received === 0) break;
+      // Keystone: หนึ่งหน้า = หนึ่งช่วงรุ่น ซึ่งว่างได้ จึงหยุดตาม hasMore เท่านั้น (MAX_PAGES กันวนไม่รู้จบ)
+      if (!result.hasMore) break;
     }
 
     await prisma.syncJob.update({
@@ -218,7 +262,14 @@ export async function refreshStudent(
     prisma.syncJob.update({ where: { id: job.id }, data: { ...data, finishedAt: new Date() } });
 
   try {
-    const dto = await client.getStudent(studentCode);
+    const existing = await prisma.student.findUnique({
+      where: { studentCode },
+      select: { sourceHash: true, sourceLevel: true, sourceBatch: true },
+    });
+    const dto = await client.getStudent(studentCode, {
+      sourceLevel: existing?.sourceLevel ?? null,
+      sourceBatch: existing?.sourceBatch ?? null,
+    });
     if (!dto) {
       await finish({
         status: "FAILED",
@@ -228,18 +279,15 @@ export async function refreshStudent(
       return { ok: false, code: "NOT_FOUND" };
     }
 
-    const existing = await prisma.student.findUnique({
-      where: { studentCode },
-      select: { sourceUpdatedAt: true },
-    });
-    const row = toStudentRow(dto);
+    const fingerprint = sourceFingerprint(dto);
+    const row = toStudentRow(await withDetail(client, dto), new Date(), fingerprint);
     const student = await prisma.student.upsert({
       where: { studentCode },
       create: row,
       update: row,
       select: { id: true },
     });
-    const changed = hasSourceChanged(existing?.sourceUpdatedAt, dto.updatedAt);
+    const changed = hasSourceChanged(existing?.sourceHash, fingerprint);
 
     await finish({ status: "SUCCESS", recordsFetched: 1, recordsUpserted: 1 });
     writeAuditLog({

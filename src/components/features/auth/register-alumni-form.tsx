@@ -90,7 +90,7 @@ export function RegisterAlumniForm() {
                   <FormControl>
                     <Input
                       inputMode="numeric"
-                      maxLength={10}
+                      maxLength={12}
                       placeholder="6012345678"
                       className="h-11 pl-10 font-mono"
                       {...field}

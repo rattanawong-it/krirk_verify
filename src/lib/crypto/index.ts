@@ -28,6 +28,11 @@ export function hashIdentifier(value: string): string {
   return createHmac("sha256", getPepper()).update(normalizeIdentifier(value)).digest("hex");
 }
 
+// HMAC ของข้อความทั้งก้อน (ไม่ normalize) — ใช้ตรวจว่าข้อมูลต้นทางเปลี่ยนหรือไม่ โดยไม่เก็บเนื้อหา
+export function keyedDigest(value: string): string {
+  return createHmac("sha256", getPepper()).update(value).digest("hex");
+}
+
 export function encrypt(plainText: string): string {
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", getEncryptionKey(), iv);
