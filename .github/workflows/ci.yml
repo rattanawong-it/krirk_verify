@@ -1,0 +1,125 @@
+# CI — ตรวจทุก push เข้า main และทุก pull request
+# job check: typecheck + lint + format + unit test (ไม่ต้องใช้ฐานข้อมูล)
+# job e2e:   production build + Playwright บนฐานข้อมูลเปล่า (migrate + seed) และ Mailpit
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 24
+  # ข้าม husky ใน CI (ไม่มี git hook ให้ติดตั้ง)
+  HUSKY: 0
+
+jobs:
+  check:
+    name: Typecheck · Lint · Unit test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # เวอร์ชัน pnpm อ่านจาก packageManager ใน package.json
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      # postinstall สร้าง Prisma client ให้แล้ว
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
+
+  e2e:
+    name: E2E (production build)
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: krirk
+          POSTGRES_PASSWORD: krirk_ci_password
+          POSTGRES_DB: krirk_verify
+          # ให้ตรงกับ docker-compose dev — test ที่เขียน SQL เองใช้ now() AT TIME ZONE 'utc'
+          TZ: Asia/Bangkok
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U krirk -d krirk_verify"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # .env จาก .env.example + secret สุ่มใหม่ทุกรอบ (ค่าทดสอบเท่านั้น)
+      - name: Create .env
+        run: |
+          cp .env.example .env
+          # dotenv ใช้ค่าที่ประกาศทีหลังเมื่อคีย์ซ้ำ
+          {
+            echo "DATABASE_URL=postgresql://krirk:krirk_ci_password@localhost:5432/krirk_verify?schema=public"
+            echo "AUTH_SECRET=$(openssl rand -base64 32)"
+            echo "IDENTIFIER_PEPPER=$(openssl rand -hex 32)"
+            echo "ENCRYPTION_KEY=$(openssl rand -hex 32)"
+            echo "CRON_SECRET=$(openssl rand -hex 24)"
+          } >> .env
+
+      # seed สร้างบัญชีทดสอบทุกบทบาท (NODE_ENV=development จาก .env.example)
+      - name: Migrate and seed database
+        run: |
+          pnpm db:deploy
+          pnpm db:seed
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - run: pnpm build
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E
+        run: pnpm test:e2e
+        env:
+          CI: true
+
+      - name: Upload Playwright traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          retention-days: 7
