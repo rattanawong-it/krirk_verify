@@ -15,6 +15,7 @@ import {
 } from "@/lib/services/student.service";
 import { getRequestContext } from "@/lib/utils/request-context";
 import { studentQuerySchema } from "@/lib/validations/review";
+import { sortFacultyOptions } from "@/lib/verification/faculty-options";
 import {
   degreeLabel,
   displayName,
@@ -142,9 +143,9 @@ export default async function StudentsPage({
               className={fieldClass}
             >
               <option value="">{t("allFaculties")}</option>
-              {summary.faculties.map((f) => (
-                <option key={f.facultyTh} value={f.facultyTh}>
-                  {currentLocale === "en" ? (f.facultyEn ?? f.facultyTh) : f.facultyTh}
+              {sortFacultyOptions(summary.faculties, currentLocale).map((f) => (
+                <option key={f.value} value={f.value}>
+                  {currentLocale === "en" ? f.labelEn : f.labelTh}
                 </option>
               ))}
             </select>

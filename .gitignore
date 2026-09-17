@@ -58,3 +58,5 @@ next-env.d.ts
 
 # เอกสารจากผู้ให้บริการที่มี API key จริง — ห้าม commit
 docs/manual/KRUKeyStoneAPI*.pdf
+# ภาพหน้าจอที่มีข้อมูลนักศึกษาจริง — ห้าม commit
+project-ui/verify_sample*.png

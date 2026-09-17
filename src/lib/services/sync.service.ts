@@ -182,6 +182,35 @@ async function upsertChanged(
   return rows.length;
 }
 
+// Keystone ส่งชื่อไทยของคณะ/หลักสูตร/วุฒิเฉพาะผู้สำเร็จการศึกษา (StudentAcademicRecord) — ระเบียนอื่นเก็บชื่ออังกฤษไว้ในช่องไทย
+// เติมชื่อไทยจากคู่ชื่อ อังกฤษ → ไทย ที่พบในผู้สำเร็จการศึกษา (ชื่ออังกฤษต้องตรงกันทุกตัวอักษร เลือกคู่ที่พบบ่อยสุด)
+// ไม่กระทบ sourceHash (คำนวณจากข้อมูลต้นทาง) · sync รอบหน้าที่เขียนทับด้วยชื่ออังกฤษจะถูกเติมใหม่หลังจบรอบ
+const LOCALIZED_NAME_COLUMNS = [
+  ["facultyTh", "facultyEn"],
+  ["programTh", "programEn"],
+  ["degreeNameTh", "degreeNameEn"],
+] as const;
+
+export async function fillThaiNamesFromGraduates(): Promise<number> {
+  let updated = 0;
+  for (const [th, en] of LOCALIZED_NAME_COLUMNS) {
+    const thCol = Prisma.raw(`"${th}"`);
+    const enCol = Prisma.raw(`"${en}"`);
+    updated += await prisma.$executeRaw`
+      UPDATE students s SET ${thCol} = m.th
+      FROM (
+        SELECT DISTINCT ON (en) en, th FROM (
+          SELECT ${enCol} AS en, ${thCol} AS th, count(*) AS n FROM students
+          WHERE "detailSyncedAt" IS NOT NULL AND ${enCol} IS NOT NULL AND ${thCol} ~ '[ก-๛]'
+          GROUP BY 1, 2
+        ) pairs
+        ORDER BY en, n DESC, th
+      ) m
+      WHERE s.${enCol} = m.en AND s.${thCol} = s.${enCol} AND s."detailSyncedAt" IS NULL`;
+  }
+  return updated;
+}
+
 // ไม่ throw — ความล้มเหลวทั้งหมดถูกบันทึกลง SyncJob (ถูกเรียกใน after() จึงไม่มีใครรับ error)
 // ถ้าระบบทะเบียนล่มกลางทาง ระเบียนที่ upsert ไปแล้วยังอยู่ และระบบค้นหาจากข้อมูลเดิมได้ตามปกติ
 export async function executeBulkSync(
@@ -214,6 +243,12 @@ export async function executeBulkSync(
       if (!result.hasMore) break;
     }
 
+    // เติมชื่อไทยล้มเหลวไม่ทำให้ sync ล้ม — ข้อมูลหลักบันทึกครบแล้ว
+    const localizedNames = await fillThaiNamesFromGraduates().catch((error: unknown) => {
+      console.error("[sync] เติมชื่อภาษาไทยไม่สำเร็จ", job.id, error);
+      return 0;
+    });
+
     await prisma.syncJob.update({
       where: { id: job.id },
       data: { ...counts, status: "SUCCESS", runLock: null, finishedAt: new Date() },
@@ -223,7 +258,12 @@ export async function executeBulkSync(
       actorId: job.triggeredById,
       entityType: "SyncJob",
       entityId: job.id,
-      metadata: { type: job.type, ...counts, updatedSince: updatedSince?.toISOString() ?? null },
+      metadata: {
+        type: job.type,
+        ...counts,
+        localizedNames,
+        updatedSince: updatedSince?.toISOString() ?? null,
+      },
     });
   } catch (error) {
     const failure = describeError(error);
@@ -289,6 +329,9 @@ export async function refreshStudent(
     });
     const changed = hasSourceChanged(existing?.sourceHash, fingerprint);
 
+    await fillThaiNamesFromGraduates().catch((error: unknown) =>
+      console.error("[sync] เติมชื่อภาษาไทยไม่สำเร็จ", studentCode, error),
+    );
     await finish({ status: "SUCCESS", recordsFetched: 1, recordsUpserted: 1 });
     writeAuditLog({
       action: AuditAction.STUDENT_REFRESHED,

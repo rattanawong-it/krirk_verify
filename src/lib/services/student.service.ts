@@ -1,15 +1,16 @@
 import "server-only";
-import { isRegistryStudentCode } from "@/lib/validations/identifiers";
 import type { Prisma } from "@/generated/prisma/client";
 import { decrypt, hashIdentifier, maskCitizenId, maskPassportNo } from "@/lib/crypto";
 import { prisma } from "@/lib/db/prisma";
 import {
   formatCitizenId,
+  isRegistryStudentCode,
   isValidPassportNo,
   isValidThaiCitizenId,
   stripIdentifier,
 } from "@/lib/validations/identifiers";
 import type { StudentQuery } from "@/lib/validations/review";
+import { buildFacultyOptions } from "@/lib/verification/faculty-options";
 import { AuditAction, type RequestContext, writeAuditLog } from "./audit.service";
 
 // F-REG-03 / F-REG-07 — ค้นหาและดูข้อมูลผู้สำเร็จการศึกษา (เจ้าหน้าที่เท่านั้น)
@@ -50,11 +51,18 @@ export function studentSearchWhere(q: string | undefined): Prisma.StudentWhereIn
   return { OR: conditions };
 }
 
+// ตัวเลือกคณะใช้ชื่ออังกฤษเป็นค่า (ดู faculty-options.ts) · รับชื่อไทยด้วยเพื่อให้ลิงก์เดิมยังใช้ได้
+function facultyWhere(faculty: string): Prisma.StudentWhereInput {
+  return {
+    OR: [{ facultyEn: faculty }, { facultyEn: null, facultyTh: faculty }, { facultyTh: faculty }],
+  };
+}
+
 export async function searchStudents(query: StudentQuery, staff: Staff, context: RequestContext) {
   const where: Prisma.StudentWhereInput = {
     AND: [
       studentSearchWhere(query.q),
-      query.faculty ? { facultyTh: query.faculty } : {},
+      query.faculty ? facultyWhere(query.faculty) : {},
       query.status ? { status: query.status } : {},
       query.flagged ? { requiresManualReview: true } : {},
     ],
@@ -131,12 +139,11 @@ export async function getRegistrySummary() {
     prisma.student.count({ where: { requiresManualReview: true } }),
     prisma.student.count({ where: { passportNoHash: { not: null } } }),
     prisma.student.findMany({
-      distinct: ["facultyTh"],
+      distinct: ["facultyEn", "facultyTh"],
       select: { facultyTh: true, facultyEn: true },
-      orderBy: { facultyTh: "asc" },
     }),
   ]);
-  return { total, graduated, flagged, passport, faculties };
+  return { total, graduated, flagged, passport, faculties: buildFacultyOptions(faculties) };
 }
 
 export async function getStudentDetail(studentCode: string, staff: Staff, context: RequestContext) {
