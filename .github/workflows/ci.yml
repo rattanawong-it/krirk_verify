@@ -26,13 +26,16 @@ jobs:
     name: Typecheck · Lint · Unit test
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # postinstall (prisma generate) โหลด prisma.config.ts ซึ่งบังคับให้มี DATABASE_URL — generate ไม่ต่อฐานข้อมูล จึงใช้ค่าสมมติ
+      DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # เวอร์ชัน pnpm อ่านจาก packageManager ใน package.json
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -50,6 +53,9 @@ jobs:
     needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    env:
+      # ตั้งระดับ job (ไม่ใช่ใน .env) เพื่อให้ postinstall ของ pnpm install ใช้ได้ตั้งแต่ก่อนสร้าง .env
+      DATABASE_URL: postgresql://krirk:krirk_ci_password@localhost:5432/krirk_verify?schema=public
     services:
       postgres:
         image: postgres:16-alpine
@@ -72,9 +78,9 @@ jobs:
           - 1025:1025
           - 8025:8025
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -86,7 +92,6 @@ jobs:
           cp .env.example .env
           # dotenv ใช้ค่าที่ประกาศทีหลังเมื่อคีย์ซ้ำ
           {
-            echo "DATABASE_URL=postgresql://krirk:krirk_ci_password@localhost:5432/krirk_verify?schema=public"
             echo "AUTH_SECRET=$(openssl rand -base64 32)"
             echo "IDENTIFIER_PEPPER=$(openssl rand -hex 32)"
             echo "ENCRYPTION_KEY=$(openssl rand -hex 32)"
@@ -100,7 +105,7 @@ jobs:
           pnpm db:seed
 
       - name: Cache Next.js build
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
@@ -118,7 +123,7 @@ jobs:
 
       - name: Upload Playwright traces
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-test-results
           path: test-results/
