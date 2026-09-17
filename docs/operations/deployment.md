@@ -138,7 +138,7 @@ kv run --rm migrate tsx prisma/create-admin.ts --email admin@krirk.ac.th --name 
 | งาน | คำสั่ง | รอบที่แนะนำ | หมายเหตุ |
 |-----|--------|-------------|----------|
 | สำรองฐานข้อมูล | `scripts/backup-db.sh` | ทุกวัน 01:30 | ดู [backup-restore.md](backup-restore.md) |
-| Retention | `scripts/cron-run.sh retention` | ทุกวัน 01:45 | anonymise คำขอ + ลบ Audit Log และประวัติอีเมลที่พ้นกำหนด · ทำเสร็จก่อนตอบกลับ |
+| Retention | `scripts/cron-run.sh retention` | ทุกวัน 01:45 | anonymise คำขอ + ลบ Audit Log ประวัติอีเมล และงานแบบชุดที่พ้นกำหนด (งานที่ไม่ได้ยืนยันเกิน 7 วัน) · ทำเสร็จก่อนตอบกลับ |
 | Sync เต็ม | `scripts/cron-run.sh sync-full` | ทุกวัน 02:00 | ตอบ 202 แล้วทำต่อเบื้องหลัง · ดูผลที่หน้าซิงก์ข้อมูล · ต้องตรงกับ `SYNC_CRON_SCHEDULE` |
 | Sync เฉพาะที่เปลี่ยน | `scripts/cron-run.sh sync-incremental` | ทุกชั่วโมงในเวลาทำการ (ไม่บังคับ) | เปิดเมื่อ API ทะเบียนรองรับ `updatedSince` |
 | ส่งอีเมลซ้ำ | `scripts/cron-run.sh email-retry` | ทุก 15 นาที | retry 4 รอบ (5/30/120/360 นาที) แล้วรอผู้ดูแลกดส่งซ้ำ · อีเมลที่ค้างสถานะรอส่งเกิน 30 นาทีถูกส่งซ้ำในรอบนี้ |

@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { FormAlert } from "@/components/forms/form-alert";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { BATCH_DRAFT_EXPIRE_DAYS } from "@/lib/retention/cutoffs";
 
 // F-BAT-04 — ปุ่มยืนยันเริ่มตรวจสอบ · กดแล้วเซิร์ฟเวอร์ตอบ 202 และประมวลผลต่อเบื้องหลัง
 
@@ -43,9 +44,11 @@ export function BatchConfirmButton({ batchId, count }: { batchId: string; count:
           />
           {t("confirm")}
         </Button>
-        <span className="text-center text-[11.5px] text-muted-foreground sm:text-left">
+        <p className="text-center text-[11.5px] text-muted-foreground sm:text-left">
           {t("confirmNote", { count })}
-        </span>
+          <br />
+          {t("draftExpiry", { days: BATCH_DRAFT_EXPIRE_DAYS })}
+        </p>
       </div>
     </div>
   );

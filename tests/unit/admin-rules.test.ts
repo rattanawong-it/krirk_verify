@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   auditRetentionCutoff,
+  batchDraftCutoff,
   emailLogRetentionCutoff,
   requestRetentionCutoff,
 } from "@/lib/retention/cutoffs";
@@ -105,6 +106,12 @@ describe("จุดตัด retention (F-AUD-08)", () => {
   it("ประวัติอีเมล: ย้อนหลังตามจำนวนวัน", () => {
     expect(emailLogRetentionCutoff(new Date("2026-09-16T03:00:00Z"), 180).toISOString()).toBe(
       "2026-03-20T03:00:00.000Z",
+    );
+  });
+
+  it("งานแบบชุดที่ไม่ได้ยืนยัน: หมดอายุหลัง 7 วัน", () => {
+    expect(batchDraftCutoff(new Date("2026-09-17T03:00:00Z")).toISOString()).toBe(
+      "2026-09-10T03:00:00.000Z",
     );
   });
 });

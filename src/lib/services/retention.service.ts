@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import {
   ANONYMIZED_MARKER,
   auditRetentionCutoff,
+  batchDraftCutoff,
   emailLogRetentionCutoff,
   requestRetentionCutoff,
 } from "@/lib/retention/cutoffs";
@@ -15,6 +16,8 @@ import { RETENTION_LAST_RUN_KEY, getSettings } from "./settings.service";
 //   แต่คงแถวคำขอไว้ (เลขอ้างอิง สถานะ วันที่ หน่วยงาน) เพื่อให้รายงานสถิติย้อนหลังยังถูกต้อง
 // - audit log ที่พ้นระยะเก็บ: ลบทิ้ง
 // - ประวัติอีเมลที่พ้นระยะเก็บ: ลบทิ้ง (payload มีชื่อและวุฒิของผู้ถูกตรวจสอบ)
+// - งานแบบชุด (พร้อมแถวในไฟล์): ลบเมื่อพ้นระยะเก็บคำขอ · งานที่ไม่เคยยืนยัน (DRAFT) ลบหลัง 7 วัน
+//   คำขอที่ยื่นจากไฟล์ไม่ถูกลบ (batch_items.requestId เป็นฝั่งอ้างอิง) · ไม่แตะงานที่กำลังประมวลผล
 
 const BATCH_SIZE = 500;
 const MAX_BATCHES = 200;
@@ -24,6 +27,7 @@ export type RetentionRun = {
   anonymized: number;
   auditDeleted: number;
   emailDeleted: number;
+  batchDeleted: number;
   trigger: "cron" | "manual";
 };
 
@@ -34,6 +38,18 @@ function dueRequests(cutoff: Date): Prisma.VerificationRequestWhereInput {
   };
 }
 
+function dueBatchJobs(now: Date, retentionDays: number): Prisma.BatchJobWhereInput {
+  return {
+    OR: [
+      {
+        status: { not: "PROCESSING" },
+        createdAt: { lt: requestRetentionCutoff(now, retentionDays) },
+      },
+      { status: "DRAFT", createdAt: { lt: batchDraftCutoff(now) } },
+    ],
+  };
+}
+
 function parseLastRun(value: unknown): RetentionRun | null {
   const run = value as Partial<RetentionRun> | null;
   return run && typeof run.at === "string" ? (run as RetentionRun) : null;
@@ -41,7 +57,7 @@ function parseLastRun(value: unknown): RetentionRun | null {
 
 export async function getRetentionOverview(now: Date = new Date()) {
   const settings = await getSettings();
-  const [due, anonymizedTotal, auditDue, emailDue, lastRun] = await Promise.all([
+  const [due, anonymizedTotal, auditDue, emailDue, batchDue, lastRun] = await Promise.all([
     prisma.verificationRequest.count({
       where: dueRequests(requestRetentionCutoff(now, settings.retentionDays)),
     }),
@@ -52,6 +68,7 @@ export async function getRetentionOverview(now: Date = new Date()) {
     prisma.emailLog.count({
       where: { createdAt: { lt: emailLogRetentionCutoff(now, settings.emailLogRetentionDays) } },
     }),
+    prisma.batchJob.count({ where: dueBatchJobs(now, settings.retentionDays) }),
     prisma.appSetting.findUnique({ where: { key: RETENTION_LAST_RUN_KEY } }),
   ]);
   return {
@@ -59,6 +76,7 @@ export async function getRetentionOverview(now: Date = new Date()) {
     anonymizedTotal,
     auditDue,
     emailDue,
+    batchDue,
     lastRun: parseLastRun(lastRun?.value ?? null),
   };
 }
@@ -113,11 +131,17 @@ export async function runRetention(
     where: { createdAt: { lt: emailLogRetentionCutoff(now, settings.emailLogRetentionDays) } },
   });
 
+  // batch_items ถูกลบตาม FK (onDelete: Cascade)
+  const { count: batchDeleted } = await prisma.batchJob.deleteMany({
+    where: dueBatchJobs(now, settings.retentionDays),
+  });
+
   const run: RetentionRun = {
     at: now.toISOString(),
     anonymized,
     auditDeleted,
     emailDeleted,
+    batchDeleted,
     trigger: actorId ? "manual" : "cron",
   };
   await prisma.appSetting.upsert({

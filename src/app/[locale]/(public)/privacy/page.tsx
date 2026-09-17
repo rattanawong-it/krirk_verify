@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PolicyDocument } from "@/components/features/policy/policy-document";
 import type { AppLocale } from "@/i18n/routing";
+import { BATCH_DRAFT_EXPIRE_DAYS } from "@/lib/retention/cutoffs";
 import { getSettings } from "@/lib/services/settings.service";
 
 // F-AUD-07 — นโยบายความเป็นส่วนตัว (PDPA) · ระยะเก็บรักษาดึงจากค่าตั้งค่าระบบจริง
@@ -61,6 +62,7 @@ export default async function PrivacyPage({ params }: PageProps<"/[locale]/priva
               auditYears: settings.auditRetentionYears,
               linkDays: settings.linkExpiresDays,
               emailDays: settings.emailLogRetentionDays,
+              draftDays: BATCH_DRAFT_EXPIRE_DAYS,
             }),
           ],
         },

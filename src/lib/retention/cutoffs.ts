@@ -19,4 +19,11 @@ export function emailLogRetentionCutoff(now: Date, days: number): Date {
   return new Date(now.getTime() - days * DAY_MS);
 }
 
+// งานแบบชุดที่ผู้ขอไม่เคยกดยืนยัน (DRAFT) หมดอายุหลังจากนี้ — ไม่คืนโควตาแถวที่หักไปแล้ว
+export const BATCH_DRAFT_EXPIRE_DAYS = 7;
+
+export function batchDraftCutoff(now: Date): Date {
+  return new Date(now.getTime() - BATCH_DRAFT_EXPIRE_DAYS * DAY_MS);
+}
+
 export const ANONYMIZED_MARKER = "ANONYMIZED";

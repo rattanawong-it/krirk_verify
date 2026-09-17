@@ -45,6 +45,7 @@ export async function runRetentionAction(): Promise<ActionState> {
       anonymized: run.anonymized,
       auditDeleted: run.auditDeleted,
       emailDeleted: run.emailDeleted,
+      batchDeleted: run.batchDeleted,
     },
   };
 }

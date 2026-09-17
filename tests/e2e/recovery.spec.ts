@@ -191,3 +191,51 @@ test("retention ลบประวัติอีเมลที่เก่า�
   expect(left.rows.map((row) => row.id)).toEqual([recentId]);
   await db.query(`DELETE FROM email_logs WHERE id = $1`, [recentId]);
 });
+
+test("retention ลบงานแบบชุดที่พ้นระยะเก็บคำขอ และงานที่ไม่ได้ยืนยันเกิน 7 วัน", async ({
+  request,
+}) => {
+  const owner = await db.query(`SELECT id FROM users WHERE email = 'hr@thaihr.co.th'`);
+  const requesterId = owner.rows[0].id as string;
+  // ระยะเก็บคำขอค่าเริ่มต้น 5 ปี
+  const jobs = {
+    oldCompleted: ["COMPLETED", "6 years"],
+    oldProcessing: ["PROCESSING", "6 years"],
+    staleDraft: ["DRAFT", "8 days"],
+    freshDraft: ["DRAFT", "2 days"],
+    recentCompleted: ["COMPLETED", "30 days"],
+  } as const;
+  const ids = Object.fromEntries(
+    Object.keys(jobs).map((key) => [key, `e2e-batch-${key}-${randomUUID()}`]),
+  ) as Record<keyof typeof jobs, string>;
+  for (const [key, [status, age]] of Object.entries(jobs)) {
+    await db.query(
+      `INSERT INTO batch_jobs (id, "requesterId", "fileName", purpose, status, "consentAt", "createdAt", "updatedAt")
+         VALUES ($1, $2, 'retention-e2e.csv', 'EMPLOYMENT', $3, (now() AT TIME ZONE 'utc') - $4::interval,
+           (now() AT TIME ZONE 'utc') - $4::interval, now() AT TIME ZONE 'utc')`,
+      [ids[key as keyof typeof jobs], requesterId, status, age],
+    );
+  }
+  const itemId = `e2e-batch-item-${randomUUID()}`;
+  await db.query(
+    `INSERT INTO batch_items (id, "batchJobId", "rowNo", "searchValueMasked", "resultStatus")
+       VALUES ($1, $2, 1, '1-xxxx-xxxxx-xx-1', 'INVALID')`,
+    [itemId, ids.oldCompleted],
+  );
+
+  const res = await request.post("/api/cron/retention", { headers });
+  expect(res.status()).toBe(200);
+  expect(((await res.json()) as { batchDeleted: number }).batchDeleted).toBeGreaterThanOrEqual(2);
+
+  const left = await db.query(`SELECT id FROM batch_jobs WHERE id = ANY($1)`, [Object.values(ids)]);
+  expect(left.rows.map((row) => row.id).sort()).toEqual(
+    [ids.oldProcessing, ids.freshDraft, ids.recentCompleted].sort(),
+  );
+  // แถวในไฟล์ถูกลบตามงาน
+  const items = await db.query(`SELECT count(*)::int AS n FROM batch_items WHERE id = $1`, [
+    itemId,
+  ]);
+  expect(items.rows[0].n).toBe(0);
+
+  await db.query(`DELETE FROM batch_jobs WHERE id = ANY($1)`, [Object.values(ids)]);
+});
